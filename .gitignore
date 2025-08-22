@@ -1,0 +1,19 @@
+# ignore intellij idea files
+.idea/
+*.iml
+out/
+production/
+*.class
+
+# ignore OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# build directories
+target/
+build/
