@@ -38,8 +38,6 @@ public class LevelManager extends Observable {      // -> observers: interactabl
     private int currentRow;
     private int currentCol;
     private int[][] currentRoomData;    //room data: .txt files that defines the levels
-    boolean levelTransitioning = false;
-
     //----------------------------------------------------------------------------------------------------------------//
     // CONSTRUCTOR
     //----------------------------------------------------------------------------------------------------------------//
@@ -47,14 +45,14 @@ public class LevelManager extends Observable {      // -> observers: interactabl
     public LevelManager(TileManager tileManager, Player player) {
         this.tileManager = tileManager;
         this.player = player;
+        this.currentRow = 0;
+        this.currentCol = 0;
         worldLayout = new Room[5][8];   //world size
         //currentRoomData = new int[GameView.MAX_SCREEN_ROW][GameView.MAX_SCREEN_COL];   //a room is at most 32x16 tiles
         currentRoomData = new int[50][50];   //a room is at most 32x16 tiles
-
         this.addObserver(player);
 
-        initializeWorldLayout();
-        loadCurrentRoom();
+        worldLayout[0][0] = new Room(Room.RoomType.GROUND, 0, true);     //init a default room when initialiazing, otherwise it gives a null room (for some reason)
 
     }
     //----------------------------------------------------------------------------------------------------------------//
@@ -113,8 +111,6 @@ public class LevelManager extends Observable {      // -> observers: interactabl
 
 
         //@todo add random levels, select from 8 different levels, shuffle them throughtout the map
-
-
     }
 
     public void initializeTutorialLayout(){
@@ -135,7 +131,7 @@ public class LevelManager extends Observable {      // -> observers: interactabl
         worldLayout[0][5] = new Room(Room.RoomType.TUTORIAL, 5, true);
         worldLayout[0][6] = new Room(Room.RoomType.TUTORIAL, 6, true);
         worldLayout[0][7] = new Room(Room.RoomType.TUTORIAL, 7, true);
-
+//        loadCurrentRoom();
     }
 
 
@@ -434,6 +430,9 @@ public class LevelManager extends Observable {      // -> observers: interactabl
 
 
     public Room getCurrentRoom() {
+        if (worldLayout[currentRow][currentCol] == null) {
+            System.out.println("levelmanager -> getCurrentRoom() : [ERROR] room is null ar row=" + currentRow + " col=" + currentCol);
+        };
         return worldLayout[currentRow][currentCol];
     }
     public LevelManager getLevelManager() {
@@ -454,7 +453,6 @@ public class LevelManager extends Observable {      // -> observers: interactabl
     public Room[][] getWorldLayout() {
         return worldLayout;
     }
-
 
 
 

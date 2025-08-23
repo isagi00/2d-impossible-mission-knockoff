@@ -189,6 +189,12 @@ public class DroneView implements Observer {
 
         g2d.drawString("drone width, height: " + drone.getWidth() + " " + drone.getHeight(), drone.getX(), drone.getY() - 60);
 
+
+        //bottom right corner of the drone
+        g2d.drawOval(drone.getX() + drone.getWidth(), drone.getY() + drone.getHeight(), 5, 5);
+        //bottom left corner of the drone
+        g2d.drawOval(drone.getX(), drone.getY() + drone.getHeight(), 5, 5);
+
     }
 
 //----------------------------------------------------------------------------------------------------------------//

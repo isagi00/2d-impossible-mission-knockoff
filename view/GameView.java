@@ -115,11 +115,11 @@ public class GameView extends JPanel {
         //draw tiles, get the current room data from level manager
         tileManager.draw(g2d, levelManager.getCurrentRoomData());
 
-        //draw the enemies
-        enemyView.drawEnemies(g2d);
-
         //draw the room's interactive objects
         interactableObjectsView.drawInteractableObjects(g2d);
+
+        //draw the enemies
+        enemyView.drawEnemies(g2d);
 
         //DRAW THE PLAYER
         playerView.draw(g2d);

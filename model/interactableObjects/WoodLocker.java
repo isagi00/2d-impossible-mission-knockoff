@@ -27,7 +27,7 @@ public class WoodLocker extends InteractableObject {
         if (!isOpened) {
             isOpened = true;
             if (!player.getInventory().isInventoryFull()){
-                PokerCard pokerCard = PokerCard.getRandomPokerCard();
+                PokerCard pokerCard = PokerCard.getBoosted10Card();
                 player.getInventory().addItem(pokerCard);
                 System.out.println("paperbor : interact() -> added new pokercard to inventory -> " + pokerCard);
             }

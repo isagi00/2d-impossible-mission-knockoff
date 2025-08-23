@@ -34,7 +34,6 @@ public class Drone extends Entity{          //note that entity already extends o
     private final int MAX_VERTICAL_DISTANCE = ScreenSettings.TILE_SIZE; //chase the player only if its on the same platform
 
 
-
     //----------------------------------------------------------------------------------------//
     // CONSTRUCTOR
     //----------------------------------------------------------------------------------------//
@@ -42,7 +41,7 @@ public class Drone extends Entity{          //note that entity already extends o
     public Drone(int x, int y, Player player, LevelManager levelManager) {
         super(x, y, ScreenSettings.TILE_SIZE , ScreenSettings.TILE_SIZE, levelManager);
 
-        this.patrolRange = ScreenSettings.TILE_SIZE * 3;
+        this.patrolRange = ScreenSettings.TILE_SIZE * 10;
         this.player = player;
         this.levelManager = levelManager;
         setDirection("right");
@@ -114,7 +113,16 @@ public class Drone extends Entity{          //note that entity already extends o
                 //note that it is getY() - 1, , this way it checks slightly on top, so that it returns false.
                 //if there is no -1, it will checkCollisionWithTile will return true because it checks the bottom tile(floor).
 
-                if (!wallInFront && getX() < ScreenSettings.SCREEN_WIDTH && checkCollisionWithTile(getX(), getY() + 1)) {  //check collision with tile to the right, if there is not, then move right
+                //this checks the bottom right corner of the drone, and if there is not a tile while the drone is facing right, then it bounces back.
+                //this help avoiding cases where the drones walk on air
+                int bottomRightCornerX = getX() + getWidth();
+                int bottomRightCornerY = getY() + getHeight();
+                boolean tileOnBottomRight = true;
+                if(!checkCollisionWithTile(bottomRightCornerX, bottomRightCornerY)){
+                    tileOnBottomRight = false;
+                }
+
+                if (!wallInFront && getX() < ScreenSettings.SCREEN_WIDTH && checkCollisionWithTile(getX(), getY() + 1) && tileOnBottomRight) {  //check collision with tile to the right, if there is not, then move right
                     setX(getX() + SPEED);
                     setDirection("right");
                     isIdle = false;
@@ -132,12 +140,18 @@ public class Drone extends Entity{          //note that entity already extends o
         }
 
         if(!movingRight) {
-            // Move left until we return to starting position
+            // move left until the drone returns to the starting position
             if (currentPatrolPosition > 0) {
-
                 wallInFront = checkCollisionWithTile(getX() - SPEED, getY() - 1);
 
-                if(!wallInFront && getX() > 0 && checkCollisionWithTile(getX(), getY() + 1)) {   //check collision with tile to the left, if there is not, then move left
+                boolean tileOnBottomLeft = true;
+                int bottomLeftCornerX = getX();
+                int bottomLeftCornerY = getY() + getHeight();
+                if(!checkCollisionWithTile(bottomLeftCornerX, bottomLeftCornerY)){
+                    tileOnBottomLeft = false;
+                }
+
+                if(!wallInFront && getX() > 0 && checkCollisionWithTile(getX(), getY() + 1) && tileOnBottomLeft) {   //check collision with tile to the left, if there is not, then move left
                     setX(getX() - SPEED);
                     setDirection("left");
                     isIdle = false;
@@ -158,9 +172,18 @@ public class Drone extends Entity{          //note that entity already extends o
 
     private void chasePlayer() {
         int chaseSpeed = (int) (SPEED * 1.5);
-        if (getDirection().equals("right")) {       //if drone direction is righ
+        if (getDirection().equals("right")) {       //if drone direction is right
+            movingRight = true;
             int newX = getX() + chaseSpeed;
-            if (!checkCollisionWithTile(newX, getY() - 1)   && checkCollisionWithTile(getX(), getY() + 1) && getX() < ScreenSettings.SCREEN_WIDTH) {
+            int bottomRightCornerX = getX() + getWidth();
+            int bottomRightCornerY = getY() + getHeight();
+            boolean tileOnBottomRight = true;
+            if(!checkCollisionWithTile(bottomRightCornerX, bottomRightCornerY)){
+                tileOnBottomRight = false;
+            }
+
+            System.out.println("tile on bottom right " + tileOnBottomRight);
+            if (!checkCollisionWithTile(newX, getY() - 1)  && getX() < ScreenSettings.SCREEN_WIDTH && tileOnBottomRight && movingRight) {
                 //if there is no wall and floot under  AND it is lesser than the screen width, start chasing
                 setX(newX);
                 isChasing = true;
@@ -172,12 +195,22 @@ public class Drone extends Entity{          //note that entity already extends o
                 isChasing = false;
                 isMoving = true;
                 isIdle = false;
+                movingRight = false;
                 currentPatrolPosition--;
             }
         }
-        else { // direction is "left"
+        if(!movingRight) { // direction is "left"
             int newX = getX() - chaseSpeed;
-            if (!checkCollisionWithTile(newX, getY() - 1) && checkCollisionWithTile(getX(), getY() + 1) && getX() > 0) {
+            boolean tileOnBottomLeft = true;
+            int bottomLeftCornerX = getX();
+            int bottomLeftCornerY = getY() + getHeight();
+            if(!checkCollisionWithTile(bottomLeftCornerX, bottomLeftCornerY)){
+                tileOnBottomLeft = false;
+            }
+            System.out.println("tile on bottom left " + tileOnBottomLeft);
+
+
+            if (!checkCollisionWithTile(newX, getY() - 1) && getX() > 0 && tileOnBottomLeft) {
                 //no wall && there is tile under && x is greater than 0 left side of screen -> chase
                 setX(newX);
                 isChasing = true;
@@ -189,6 +222,7 @@ public class Drone extends Entity{          //note that entity already extends o
                 isChasing = false;
                 isMoving = true;
                 isIdle = false;
+                movingRight = true;
                 currentPatrolPosition++;
             }
         }

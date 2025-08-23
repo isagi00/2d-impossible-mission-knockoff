@@ -121,7 +121,7 @@ public class PokerCard extends Item{
 
     //boosted rates to get a face card
     public static PokerCard getBoostedFacePokerCard(){
-        if (Math.random() < 0.3){
+        if (Math.random() < 0.5){
             PokerCard[] faceCards = {jclub, qclub, kclub,
                                     jspade, qspade, kspade,
                                     jdiamond, qdiamond, kdiamond,
@@ -135,7 +135,7 @@ public class PokerCard extends Item{
 
     //boosted rates to get a 10 card
     public static PokerCard getBoosted10Card(){
-        if (Math.random() < 0.3){
+        if (Math.random() < 0.7){
             PokerCard[] tencards = {tenclub, tenspade, tendiamond, tenheart};
             return tencards[ (int) Math.random() * tencards.length];
         }

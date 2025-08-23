@@ -92,7 +92,7 @@ public class Main {
         else{
             levelManager.initializeWorldLayout();
         }
-
+        levelManager.loadCurrentRoom();
         gameController.startGameThread();       //start game thread
     }
 
