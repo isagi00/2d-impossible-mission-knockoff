@@ -12,7 +12,6 @@ import java.awt.image.BufferedImage;
 
 public class WoodLocker extends InteractableObject {
 
-    private BufferedImage lockerImage;
     public boolean isOpened = false;
 
     public WoodLocker(int x, int y) {
@@ -29,7 +28,7 @@ public class WoodLocker extends InteractableObject {
             if (!player.getInventory().isInventoryFull()){
                 PokerCard pokerCard = PokerCard.getBoosted10Card();
                 player.getInventory().addItem(pokerCard);
-                System.out.println("paperbor : interact() -> added new pokercard to inventory -> " + pokerCard);
+                System.out.println("WOODLOCKER : interact() -> added new pokercard to inventory -> " + pokerCard);
             }
             System.out.println("Wood locker opened");
         }

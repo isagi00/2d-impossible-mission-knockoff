@@ -1,16 +1,7 @@
 package model.interactableObjects;
 
-import model.CustomObservable;
-import model.CustomObserver;
 import model.entities.Player;
 import model.ScreenSettings;
-import model.inventoryrelated.ComputerCard;
-import model.inventoryrelated.Inventory;
-import model.inventoryrelated.Item;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class Computer extends InteractableObject{
 
@@ -18,7 +9,7 @@ public class Computer extends InteractableObject{
     private boolean isMenuVisible = false;
     private String[] menuOptions = {
             "deactivate enemies",
-            "..."
+            "quit"
     };
 
     private int selectedMenuOption = 0;

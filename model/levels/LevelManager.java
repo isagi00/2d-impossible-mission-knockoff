@@ -90,9 +90,9 @@ public class LevelManager extends Observable {      // -> observers: interactabl
         worldLayout[2][7] = null;
 
         //row 3: underground depth 3
-        worldLayout[3][0] = null;
+        worldLayout[3][0] = new Room(Room.RoomType.LEVEL, 4, true);
         worldLayout[3][1] = new Room(Room.RoomType.ELEVATOR, 3, true);
-        worldLayout[3][2] = null;
+        worldLayout[3][2] = new Room(Room.RoomType.LEVEL, 5, true);
         worldLayout[3][3] = null;
         worldLayout[3][4] = null;
         worldLayout[3][5] = null;

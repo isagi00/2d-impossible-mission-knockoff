@@ -12,7 +12,6 @@ public class InteractableObjectID {
     public static final int OBJECT_METALLOCKER = -6;
     public static final int OBJECT_WOODLOCKER = -7;
 
-    public static final int OBJECT_SPIKE = -8;
 
 
     public static boolean isInteractableObject(int value){

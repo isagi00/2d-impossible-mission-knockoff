@@ -105,10 +105,10 @@ public class Inventory extends Observable {
         if (items[inventorySlotIndex] == null) return;  //if the current inventory slot doesn't have anything return
 
         if(keyHeld){
-            System.out.println("[Inventory][updateDiscardProgress()] Key held:" + keyHeld);
+//            System.out.println("[Inventory][updateDiscardProgress()] Key held:" + keyHeld);
             if (!discardCompleted[inventorySlotIndex]){
                 discardProgress[inventorySlotIndex]++;
-                System.out.println("[Inventory][updateDiscardProgress()] Discard progress: " + Arrays.toString(discardProgress));
+//                System.out.println("[Inventory][updateDiscardProgress()] Discard progress: " + Arrays.toString(discardProgress));
                 if(discardProgress[inventorySlotIndex] >= DISCARD_COMPLETION_TIME){
                     discardCompleted[inventorySlotIndex] = true;
                     removeItem(inventorySlotIndex);
@@ -119,10 +119,10 @@ public class Inventory extends Observable {
             }
         }
         else{   //reset discard progress if the key held is released
-            System.out.println("[Inventory][updateDiscardProgress()] Key held:" + keyHeld);
+//            System.out.println("[Inventory][updateDiscardProgress()] Key held:" + keyHeld);
             if (discardProgress[inventorySlotIndex] > 0 && !discardCompleted[inventorySlotIndex]){
                 discardProgress[inventorySlotIndex] = 0;
-                System.out.println("[updateDiscardProgress()] resetting discard progress: " + Arrays.toString(discardProgress));
+//                System.out.println("[updateDiscardProgress()] resetting discard progress: " + Arrays.toString(discardProgress));
 //                setChanged();
 //                notifyObservers();
             }

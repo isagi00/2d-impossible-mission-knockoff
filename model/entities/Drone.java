@@ -84,6 +84,7 @@ public class Drone extends Entity{          //note that entity already extends o
             }
             if (playerInFront) {        //if the player is withing range chase
                 chasePlayer();
+
                 setChanged();
                 notifyObservers("chasing player");
             } else {                    //if not just patrol normally

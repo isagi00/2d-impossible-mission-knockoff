@@ -186,10 +186,10 @@ public class ScoreTracker implements Observer {
         int metalLockersTotalPoints = getMetalLockersTotalPoints();
         int woodLockersTotalPoints = getWoodLockersTotalPoints();
 
-        System.out.println("Paper boxes pts: " + getPaperBoxTotalPoints);
-        System.out.println("Red boxes pts : " + redBoxesTotalPoints);
-        System.out.println("Metal lockers pts : " + metalLockersTotalPoints);
-        System.out.println("Wood lockers pts: " + woodLockersTotalPoints);
+//        System.out.println("Paper boxes pts: " + getPaperBoxTotalPoints);
+//        System.out.println("Red boxes pts : " + redBoxesTotalPoints);
+//        System.out.println("Metal lockers pts : " + metalLockersTotalPoints);
+//        System.out.println("Wood lockers pts: " + woodLockersTotalPoints);
 
         return getPaperBoxTotalPoints + redBoxesTotalPoints + metalLockersTotalPoints + woodLockersTotalPoints;
     }
