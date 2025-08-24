@@ -1,5 +1,8 @@
 package view;
 
+import model.inventoryrelated.ComputerCard;
+import model.inventoryrelated.Inventory;
+import model.inventoryrelated.Item;
 import model.levels.LevelManager;
 import model.entities.Player;
 import model.interactableObjects.InteractableObject;
@@ -12,6 +15,9 @@ import view.itemViews.InventoryView;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.List;
@@ -50,9 +56,9 @@ public class GameView extends JPanel {
     private int frameCount = 0;
     private long lastFpsTime = System.nanoTime();
     private double fps = 0;
-    private final Font fpsFont = loadCustomFont("fonts/ThaleahFat.ttf", 25);
 
     // fonts
+    private final Font fpsFont = loadCustomFont("fonts/ThaleahFat.ttf", 25);
     public  final Font gameFont = loadCustomFont("fonts/ThaleahFat.ttf", 50);
     private final Font tutorialTextFont = loadCustomFont("fonts/ThaleahFat.ttf", 40);
 
@@ -81,25 +87,19 @@ public class GameView extends JPanel {
         loadBackgroundImage();
 
         //registering observer/observers
-        player.getInventory().addObserver((obs,obj) -> {inventoryView.updateItemViews(); player.getInventory().clearDirtyState();});
+        player.getInventory().addObserver((obs,obj) -> {
+            inventoryView.updateItemViews();
+            player.getInventory().clearDirtyState();});
+            repaint();  //request repaint when inventory changes
     }
 
     @Override
     public void paintComponent(Graphics g) {
-        //paintComponent is defined in the JComponent, the parent class of Jpanel.
+        //paintComponent is defined in the JComponent, the parent class of JPanel.
         //it is the primary method for CUSTOM drawing in swing components.
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        //fps tracking
-        frameCount++;
-        long currentTime = System.nanoTime();
-        double elapsedSec = (currentTime - lastFpsTime) / 1_000_000_000.0; //convert to seconds
-        if (elapsedSec >= 1.0) {
-            fps = frameCount / elapsedSec;
-            frameCount = 0;
-            lastFpsTime = currentTime;
-        }
         //enable text rendering
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -108,6 +108,15 @@ public class GameView extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
 
+         //fps tracking
+        frameCount++;
+        long currentTime = System.nanoTime();
+        double elapsedSec = (currentTime - lastFpsTime) / 1_000_000_000.0; //convert to seconds
+        if (elapsedSec >= 1.0) {
+            fps = frameCount / elapsedSec;
+            frameCount = 0;
+            lastFpsTime = currentTime;
+        }
 
         //load background first
         drawBackground(g2d);
@@ -121,13 +130,14 @@ public class GameView extends JPanel {
         //draw the enemies
         enemyView.drawEnemies(g2d);
 
-        //DRAW THE PLAYER
+        //draw the player
         playerView.draw(g2d);
 
         //draw the player's inventory
         inventoryView.draw(g2d);
 
-        if(levelManager.getCurrentRoom().getTutorialText() != null){       //load the text only if there is one, prevents null pointer exceptiond
+        //draw the tutorial level texts
+        if(levelManager.getCurrentRoom().getTutorialText() != null){       //load the text only if there is one, prevents null pointer exception
             String text = levelManager.getCurrentRoom().getTutorialText();
             g2d.setFont(tutorialTextFont);
             g2d.drawString(text,  50, 100 );
@@ -190,21 +200,20 @@ public class GameView extends JPanel {
             InteractableObject obj = player.getCurrentInteractable();
             //background
             g2d.setColor(new Color(0, 0, 0, 200));
-            g2d.fillRoundRect(obj.getX() + obj.getWidth(), obj.getY() - obj.getHeight(), ScreenSettings.TILE_SIZE, ScreenSettings.TILE_SIZE, 10, 10);
+            g2d.fillRoundRect(obj.getX() + ScreenSettings.TILE_SIZE, obj.getY() - ScreenSettings.TILE_SIZE, ScreenSettings.TILE_SIZE, ScreenSettings.TILE_SIZE, 10, 10);
             //text
             g2d.setColor(Color.WHITE);
             String interactionPrompt = "e";
-            g2d.drawString(interactionPrompt, obj.getX() + obj.getWidth() + 13, obj.getY() - 13 );
+            g2d.drawString(interactionPrompt, obj.getX() + ScreenSettings.TILE_SIZE + 13, obj.getY() - 13 );
             //progress bar
-            int progressBarWidth = obj.getWidth() - 10;
-            int filledWidth;
-            filledWidth = (int)((double)obj.getInteractionProgress() / obj.SEARCH_COMPLETE_TIME * progressBarWidth);
+            int progressBarWidth = ScreenSettings.TILE_SIZE - 10;
+            int filledWidth = (int)((double)obj.getInteractionProgress() / obj.getSearchCompleteTime() * progressBarWidth);
             //remaining interaction progress
             g2d.setColor(Color.GRAY);
-            g2d.fillRect(obj.getX() + obj.getWidth() + 5, obj.getY() - 10, progressBarWidth, 5);
+            g2d.fillRect(obj.getX() + ScreenSettings.TILE_SIZE + 5, obj.getY() - 10, progressBarWidth, 5);
             //current interaction progress
             g2d.setColor(Color.WHITE);
-            g2d.fillRect(obj.getX() + obj.getWidth() + 5, obj.getY() - 10, filledWidth, 5);
+            g2d.fillRect(obj.getX() + ScreenSettings.TILE_SIZE + 5, obj.getY() - 10, filledWidth, 5);
         }
     }
 

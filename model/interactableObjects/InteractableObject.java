@@ -13,10 +13,10 @@ public abstract class InteractableObject extends Observable {
     protected int width;
     protected int height;
 
-    int interactionProgress;
-    boolean interactionCompleted;
-    public int SEARCH_COMPLETE_TIME = 90;
-    boolean isInteractable = true;
+    private int interactionProgress;
+    private boolean interactionCompleted;
+    private int SEARCH_COMPLETE_TIME = 90;
+    private boolean isInteractable = true;
 
     public InteractableObject(int x, int y, int width, int height) {
         this.x = x;
@@ -55,6 +55,7 @@ public abstract class InteractableObject extends Observable {
     public int getInteractionProgress() { return interactionProgress; }
     public boolean isInteractionCompleted() { return interactionCompleted; }
     public boolean getIsInteractable() { return isInteractable; }
+    public int getSearchCompleteTime() { return SEARCH_COMPLETE_TIME; }
 
     public void setInteractionCompleted(boolean interactionCompleted) { this.interactionCompleted = interactionCompleted; }
 

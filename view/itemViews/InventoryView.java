@@ -3,8 +3,6 @@ package view.itemViews;
 import model.inventoryrelated.*;
 import model.ScreenSettings;
 
-import view.itemViews.ItemView;
-
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -15,7 +13,7 @@ import java.util.Observer;
 
 public class InventoryView implements Observer {
 
-    BufferedImage inventorySlot;
+    BufferedImage inventorySlotImage;
     private int slotWidth = (int)(ScreenSettings.TILE_SIZE * 1.5);
     private int slotHeight = (int) (ScreenSettings.TILE_SIZE * 1.5);
 
@@ -29,8 +27,8 @@ public class InventoryView implements Observer {
         this.inventory = inventory;
         this.itemViews = new ItemView[inventory.getCapacity()];  //set the max capacity to the inventory capacity
 
-        for(int i = 0; i < inventory.getCapacity(); i++){
-            itemViews[i] = null;    //fill the invetory with nulls
+        for(int i = 0; i < inventory.getCapacity(); i++) {  //initialize all the item views to null
+            itemViews[i] = null;
         }
 
         loadSprites();
@@ -43,7 +41,7 @@ public class InventoryView implements Observer {
 
     private void loadSprites() {
         try{
-            inventorySlot = ImageIO.read(getClass().getClassLoader().getResourceAsStream("inventory/inventorySlot.png"));
+            inventorySlotImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("inventory/inventorySlot.png"));
 //            System.out.println("loaded inventory slot(s)");
         }catch(Exception e){
 //            System.out.println("failed to load inventory slot(s)");
@@ -59,10 +57,8 @@ public class InventoryView implements Observer {
 
         for (int i = 0; i < inventory.getCapacity(); i++) {
             int x = startX + i * slotWidth;
-
             //draw slot backgrounds
-            g2d.drawImage(inventorySlot, x, startY, slotWidth,slotHeight, null);
-
+            g2d.drawImage(inventorySlotImage, x, startY, slotWidth,slotHeight, null);
 
             // draw items
             ItemView itemView = itemViews[i];
@@ -76,6 +72,19 @@ public class InventoryView implements Observer {
 //                    System.out.println("Inventoryview -> draw() : drawing other views");
                 }
             }
+
+            //draw the item discard progress if active
+            float progress = inventory.getDiscardProgress(i);
+//            System.out.println("[InventoryView][draw()] discard progress: " + progress);
+            if (progress > 0) {
+                int progressBarHeight = (int) (slotHeight * progress);
+                int progressBarY = startY + slotHeight - progressBarHeight;
+                //draw semi transparent discard progress bar on the slot
+                g2d.setColor(new Color(255, 0, 0, 100));
+                g2d.fillRect(x, progressBarY, slotWidth, progressBarHeight);
+            }
+
+
         }
 
 
@@ -107,10 +116,7 @@ public class InventoryView implements Observer {
                 itemViews[i] = null; //clear the slot
             }
         }
-
-
     }
-
 
     @Override
     public void update(Observable o, Object arg) {

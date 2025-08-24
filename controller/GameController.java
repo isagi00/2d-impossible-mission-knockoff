@@ -2,6 +2,7 @@ package controller;
 
 import model.entities.Drone;
 import model.entities.Player;
+import model.inventoryrelated.Inventory;
 import model.levels.LevelManager;
 import view.GameView;
 
@@ -23,7 +24,7 @@ public class GameController implements Runnable {
     GameView gameView;
 
     //controller, handles inputs
-    KeyHandler keyHandler;
+    InputHandler inputHandler;
 
     //game loop
     private Thread gameThread;
@@ -37,9 +38,9 @@ public class GameController implements Runnable {
     private GameState currentState = GameState.PLAYING;
 
 
-    public GameController(Player player, KeyHandler keyHandler, GameView gameView, LevelManager levelManager) {
+    public GameController(Player player, InputHandler inputHandler, GameView gameView, LevelManager levelManager) {
         this.player = player;
-        this.keyHandler = keyHandler;
+        this.inputHandler = inputHandler;
         this.gameView = gameView;
         this.levelManager = levelManager;
     }
@@ -82,15 +83,15 @@ public class GameController implements Runnable {
             if (currentState == GameState.PLAYING) {    //update game state if not paused
                 //MODEL
                 //update player model
-                player.update(keyHandler.upPressed,
-                        keyHandler.downPressed,
-                        keyHandler.leftPressed,
-                        keyHandler.rightPressed,
-                        keyHandler.spacePressed,
-                        keyHandler.ePressed,
-                        keyHandler.upArrowPressed,
-                        keyHandler.downArrowPressed,
-                        keyHandler.enterPressed
+                player.update(inputHandler.upPressed,
+                        inputHandler.downPressed,
+                        inputHandler.leftPressed,
+                        inputHandler.rightPressed,
+                        inputHandler.spacePressed,
+                        inputHandler.ePressed,
+                        inputHandler.upArrowPressed,
+                        inputHandler.downArrowPressed,
+                        inputHandler.enterPressed
                 );
 
                 if(player.getIsExtracted()){
@@ -107,6 +108,14 @@ public class GameController implements Runnable {
 
                 //always request repaint
                 gameView.repaint(); // -> THIS CALLS PAINT COMPONENT METHOD IN GAMEVIEW
+
+                //update the discard progress for each slot
+                Inventory inventory = player.getInventory();
+                inventory.updateDiscardProgress(0, inputHandler.onePressed);
+                inventory.updateDiscardProgress(1, inputHandler.twoPressed);
+                inventory.updateDiscardProgress(2, inputHandler.threePressed);
+                inventory.updateDiscardProgress(3, inputHandler.fourPressed);
+                inventory.updateDiscardProgress(4, inputHandler.fivePressed);
             }
 
             else if (currentState == GameState.RESULT) {

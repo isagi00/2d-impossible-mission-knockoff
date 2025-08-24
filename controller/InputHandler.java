@@ -9,19 +9,25 @@ import java.awt.event.KeyListener;
  * should not render anything
  * should not store persistent game state
  */
-public class KeyHandler implements KeyListener {
-
+public class InputHandler implements KeyListener {
+    //player movement
     public boolean leftPressed;
     public boolean rightPressed;
     public boolean upPressed;
     public boolean downPressed;
     public boolean spacePressed;
-    public boolean hPressed;    //toggle tiles hitboxes
+    //player interaction
     public boolean ePressed;    //interact with object
-
+    //player menu navigation
     public boolean enterPressed;
     public boolean upArrowPressed;
     public boolean downArrowPressed;
+    //player inventory discard
+    public boolean onePressed;
+    public boolean twoPressed;
+    public boolean threePressed;
+    public boolean fourPressed;
+    public boolean fivePressed;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -45,9 +51,7 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_SPACE) {
             spacePressed = true;
         }
-        if (code == KeyEvent.VK_H) {
-            hPressed = true;
-        }
+
         if (code == KeyEvent.VK_E) {
             ePressed = true;
         }
@@ -62,6 +66,24 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_DOWN) {
             downArrowPressed = true;
 //            System.out.println("down arrow pressed");
+        }
+
+        if (code == KeyEvent.VK_1){
+            onePressed = true;
+            System.out.println("[InputHandler][keyPressed()] one pressed");
+        }
+        if (code == KeyEvent.VK_2){
+            twoPressed = true;
+            System.out.println("[InputHandler][keyPressed()] two pressed");
+        }
+        if (code == KeyEvent.VK_3){
+            threePressed = true;
+        }
+        if (code == KeyEvent.VK_4){
+            fourPressed = true;
+        }
+        if (code == KeyEvent.VK_5){
+            fivePressed = true;
         }
 
     }
@@ -84,9 +106,7 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_SPACE) {
             spacePressed = false;
         }
-        if (code == KeyEvent.VK_H) {
-            hPressed = false;
-        }
+
         if (code == KeyEvent.VK_E) {
             ePressed = false;
         }
@@ -103,6 +123,23 @@ public class KeyHandler implements KeyListener {
 //            System.out.println("down arrow released");
         }
 
+        if (code == KeyEvent.VK_1) {
+            onePressed = false;
+        }
+        if (code == KeyEvent.VK_2) {
+            twoPressed = false;
+        }
+        if (code == KeyEvent.VK_3) {
+            threePressed = false;
+        }
+        if (code == KeyEvent.VK_4) {
+            fourPressed = false;
+        }
+        if (code == KeyEvent.VK_5) {
+            fivePressed = false;
+        }
+
+
     }
 
 
@@ -114,7 +151,6 @@ public class KeyHandler implements KeyListener {
         upPressed = false;
         downPressed = false;
         spacePressed = false;
-        hPressed = false;
         ePressed = false;
         enterPressed = false;
         upArrowPressed = false;

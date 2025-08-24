@@ -1,7 +1,7 @@
 package main;
 
 import controller.GameController;
-import controller.KeyHandler;
+import controller.InputHandler;
 import model.levels.LevelManager;
 import model.tiles.TileManager;
 import model.entities.Player;
@@ -11,7 +11,6 @@ import view.TitleScreenView;
 import view.ResultScreenView;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -43,7 +42,7 @@ public class Main {
 
     private static void startMainGame(JFrame window, boolean playTutorial) {
         //load the model instances
-        KeyHandler keyHandler = new KeyHandler();
+        InputHandler inputHandler = new InputHandler();
         TileManager tileManager = new TileManager();
         Player player = new Player();
         LevelManager levelManager = new LevelManager(tileManager, player);
@@ -56,7 +55,7 @@ public class Main {
         ResultScreenView resultScreenView = new ResultScreenView(player);
 
         //load the game controller instance
-        GameController gameController = new GameController(player, keyHandler, gameView, levelManager);
+        GameController gameController = new GameController(player, inputHandler, gameView, levelManager);
 
         //add the view to the window
         JLayeredPane layeredPane = new JLayeredPane();
@@ -77,7 +76,7 @@ public class Main {
 
         //setup all key handler instances
         KeyListener pauseMenuKeyListener = setupPauseMenuKeyListener(window, pauseMenuView, gameView, gameController);
-        KeyListener gameKeyListener = setupGameKeyListener(window, gameView, gameController, keyHandler, pauseMenuView);
+        KeyListener gameKeyListener = setupGameKeyListener(window, gameView, gameController, inputHandler, pauseMenuView);
 
         gameView.addKeyListener(gameKeyListener);
         pauseMenuView.addKeyListener(pauseMenuKeyListener);
@@ -153,7 +152,7 @@ public class Main {
     }
 
     //game key listener
-    private static KeyListener setupGameKeyListener(JFrame window, GameView gameView, GameController gameController, KeyHandler keyHandler, PauseMenuView pauseMenuView) {
+    private static KeyListener setupGameKeyListener(JFrame window, GameView gameView, GameController gameController, InputHandler inputHandler, PauseMenuView pauseMenuView) {
         KeyListener gameKeyListener = new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {}
@@ -165,7 +164,7 @@ public class Main {
                 if (keyCode == KeyEvent.VK_ESCAPE && gameController.getGameState() == GameController.GameState.PLAYING ) {//game in running -> pause it
                     SwingUtilities.invokeLater(() -> {
                         gameController.togglePause();       //pause the game
-                        keyHandler.resetAllKeys();          //reset key pressed before pausing
+                        inputHandler.resetAllKeys();          //reset key pressed before pausing
                         gameView.setFocusable(false);       //remove focus from gameview
                         pauseMenuView.setVisible(true);
 
@@ -178,14 +177,14 @@ public class Main {
                 }
                 else {
                     // forward other keys to the regular key handler
-                    keyHandler.keyPressed(e);
+                    inputHandler.keyPressed(e);
                 }
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
                 if (gameController.getGameState() == GameController.GameState.PLAYING) {
-                    keyHandler.keyReleased(e);
+                    inputHandler.keyReleased(e);
                 }
             }
         };

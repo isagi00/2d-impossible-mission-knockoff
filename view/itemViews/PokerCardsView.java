@@ -86,7 +86,7 @@ public class PokerCardsView extends ItemView{
             acediamond = ImageIO.read(getClass().getClassLoader().getResourceAsStream("items/darkpokercards/acediamond.png"));
 
             joker = ImageIO.read(getClass().getClassLoader().getResourceAsStream("items/darkpokercards/JOKER.png"));
-            System.out.println("loaded poker card sprites");
+//            System.out.println("[PokerCardsView][loadSprites()]loaded poker card sprites");
         }catch (Exception e) {
             e.printStackTrace();
         }
