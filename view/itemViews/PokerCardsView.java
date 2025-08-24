@@ -6,20 +6,22 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+
 public class PokerCardsView extends ItemView{
 
-    private BufferedImage oneclub, twoclub, threeclub, fourclub, fiveclub, sixclub, sevenclub, eightclub, nineclub, tenclub, elevenclub, twelveclub, thirteenclub, fourteenclub, jclub, qclub, kclub, aceclub;
-    private BufferedImage onespade, twospade, threespade, fourspade, fivespade, sixspade, sevenspade, eightspade, ninespade, tenspade, elevenspade, twelvespade, thirteenspade, fourteenspade, jspade, qspade, kspade, acespade;
-    private BufferedImage oneheart, twoheart, threeheart, fourheart, fiveheart, sixheart, sevenheart, eightheart, nineheart, tenheart, elevenheart, twelveheart, thirteenheart, fourteenheart, jheart, qheart, kheart, aceheart;
-    private BufferedImage onediamond, twodiamond, threediamond, fourdiamond, fivediamond, sixdiamond, sevendiamond, eightdiamond, ninediamond, tendiamond, elevendiamond, twelvediamond, thirteendiamond, fourteendiamond, jdiamond, qdiamond, kdiamond, acediamond;
+    private static BufferedImage oneclub, twoclub, threeclub, fourclub, fiveclub, sixclub, sevenclub, eightclub, nineclub, tenclub, jclub, qclub, kclub, aceclub;
+    private static BufferedImage onespade, twospade, threespade, fourspade, fivespade, sixspade, sevenspade, eightspade, ninespade, tenspade,  jspade, qspade, kspade, acespade;
+    private static BufferedImage oneheart, twoheart, threeheart, fourheart, fiveheart, sixheart, sevenheart, eightheart, nineheart, tenheart, jheart, qheart, kheart, aceheart;
+    private static BufferedImage onediamond, twodiamond, threediamond, fourdiamond, fivediamond, sixdiamond, sevendiamond, eightdiamond, ninediamond, tendiamond, jdiamond, qdiamond, kdiamond, acediamond;
+
     private BufferedImage joker;
     private BufferedImage currentSprite;
 
-    public PokerCardsView(PokerCard card) {
-        super(card);
+
+    public PokerCardsView() {
         loadSprites();
-        setCurrentSprite(card);
     }
+
 
 
     @Override
@@ -93,7 +95,10 @@ public class PokerCardsView extends ItemView{
 
     }
 
-    private void setCurrentSprite(PokerCard card) {
+
+
+
+    protected void setCurrentSprite(PokerCard card) {
         String cardName = card.getName();
 
         switch (cardName){
@@ -163,13 +168,12 @@ public class PokerCardsView extends ItemView{
         }
     }
 
-    public void draw(Graphics2D g2d, int x, int y, int width, int height) {
 
-        if (currentSprite != null) {
-            g2d.drawImage(currentSprite, x, y, width, height, null);
-        }
 
+    public BufferedImage getCurrentSprite(){
+        return currentSprite;
     }
+
 
 
 }

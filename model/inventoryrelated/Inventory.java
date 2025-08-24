@@ -52,6 +52,7 @@ public class Inventory extends Observable {
 
         setChanged();
         notifyObservers();
+        clearChanged();
     }
 
     public boolean isInventoryFull(){
@@ -76,19 +77,19 @@ public class Inventory extends Observable {
         setChanged();
         notifyObservers();
         clearChanged();
+
     }
 
     public void removeComputerCard(ComputerCard computerCard) {
         for (int i = 0; i < capacity; i++) {
             if (items[i] == computerCard) {
                 items[i] = null;
-
-                setChanged();
-                notifyObservers();
-                clearChanged();
                 break;
             }
         }
+        setChanged();
+        notifyObservers();
+        clearChanged();
     }
 
     public ComputerCard getComputerCard() {

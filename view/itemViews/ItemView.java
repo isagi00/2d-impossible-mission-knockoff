@@ -3,6 +3,7 @@ package view.itemViews;
 import model.inventoryrelated.Item;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public abstract class ItemView {
     Item item;
@@ -11,6 +12,11 @@ public abstract class ItemView {
         this.item = item;
     }
 
+    public ItemView(){}
+
+    public ItemView(BufferedImage itemSprite){
+
+    }
 
 
     public void loadSprites() {}

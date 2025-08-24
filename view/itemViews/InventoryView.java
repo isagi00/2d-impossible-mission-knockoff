@@ -13,19 +13,21 @@ import java.util.Observer;
 
 public class InventoryView implements Observer {
 
-    BufferedImage inventorySlotImage;
+    private BufferedImage inventorySlotImage;
     private int slotWidth = (int)(ScreenSettings.TILE_SIZE * 1.5);
     private int slotHeight = (int) (ScreenSettings.TILE_SIZE * 1.5);
-
     private ItemView[] itemViews;
 
-    Inventory inventory;
+    private Inventory inventory;
+    private PokerCardsView pokerCardsView;
 
 
 
     public InventoryView(Inventory inventory) {
         this.inventory = inventory;
         this.itemViews = new ItemView[inventory.getCapacity()];  //set the max capacity to the inventory capacity
+
+        this.pokerCardsView = new PokerCardsView(); //initialize the poker card sprites
 
         for(int i = 0; i < inventory.getCapacity(); i++) {  //initialize all the item views to null
             itemViews[i] = null;
@@ -53,8 +55,8 @@ public class InventoryView implements Observer {
         int totalInventoryWidth = inventory.getCapacity() * slotWidth;
         int startX = (ScreenSettings.SCREEN_WIDTH - totalInventoryWidth) / 2;
         int startY = ScreenSettings.SCREEN_HEIGHT - slotHeight - 20;
-        //draw slots and items
 
+        //draw slots and items
         for (int i = 0; i < inventory.getCapacity(); i++) {
             int x = startX + i * slotWidth;
             //draw slot backgrounds
@@ -63,9 +65,9 @@ public class InventoryView implements Observer {
             // draw items
             ItemView itemView = itemViews[i];
             if(itemView != null){       //is not empty
-                if(itemView instanceof PokerCardsView pcv){
-                    pcv.draw(g2d, x + 15, startY + 10, slotWidth - 30, slotHeight - 20);
-//                    System.out.println("Inventoryview -> draw() : drawing poker cards view");
+                if(itemView instanceof PokerCardView pokerCardView){
+                    pokerCardView.draw(g2d, x + 15, startY + 10, slotWidth - 30, slotHeight - 20);
+                    System.out.println("[InventoryView] drawing pokerCardView");
                 }
                 else {
                     itemView.draw(g2d, x, startY, slotWidth, slotHeight);      //draw the item
@@ -107,7 +109,10 @@ public class InventoryView implements Observer {
             }
 
             else if (item instanceof PokerCard pokerCard){
-                itemViews[i] = new PokerCardsView(pokerCard);
+                pokerCardsView.setCurrentSprite(pokerCard);     //I am the goat. (fixed major performance issue with pokercardsview)
+                BufferedImage currentPokerCardSprite = pokerCardsView.getCurrentSprite();
+                itemViews[i] = new PokerCardView(currentPokerCardSprite);
+
             }
 
             //OTHER ITEMS GO HERE
