@@ -7,31 +7,28 @@ import java.awt.*;
 
 public class Drone extends Entity{          //note that entity already extends observable
     //----------------------------------------------------------------------------------------//
-    // DRONE STATES
-    //----------------------------------------------------------------------------------------//
-    private boolean isIdle = true;
-    private boolean isMoving = false;
-    private boolean isAttacking = false;
-    private boolean isChasing = false;
-    private boolean isDisabled = false;
-    private boolean movingRight = true;
-    private boolean wallInFront = false;
-    //----------------------------------------------------------------------------------------//
     // FIELDS
     //----------------------------------------------------------------------------------------//
     //other models
     private Player player;
     private LevelManager levelManager;
 
-    //patrol related
-    private int patrolRange;
-    private int currentPatrolPosition = 0;
 
     //drone constants
     private int SPEED = 2;
     private int ATTACK_RANGE = ScreenSettings.TILE_SIZE * 2;
     private int CHASE_RANGE = ScreenSettings.TILE_SIZE * 4;
     private final int MAX_VERTICAL_DISTANCE = ScreenSettings.TILE_SIZE; //chase the player only if its on the same platform
+    private int PATROL_RANGE;
+    private int currentPatrolPosition = 0;
+
+    //drone states
+    private boolean isIdle = true;
+    private boolean isMoving = false;
+    private boolean isChasing = false;
+    private boolean isDisabled = false;
+    private boolean movingRight = true;
+    private boolean wallInFront = false;
 
 
     //----------------------------------------------------------------------------------------//
@@ -41,7 +38,7 @@ public class Drone extends Entity{          //note that entity already extends o
     public Drone(int x, int y, Player player, LevelManager levelManager) {
         super(x, y, ScreenSettings.TILE_SIZE , ScreenSettings.TILE_SIZE, levelManager);
 
-        this.patrolRange = ScreenSettings.TILE_SIZE * 10;
+        this.PATROL_RANGE = ScreenSettings.TILE_SIZE * 10;
         this.player = player;
         this.levelManager = levelManager;
         setDirection("right");
@@ -57,32 +54,32 @@ public class Drone extends Entity{          //note that entity already extends o
         // if drone is disabled and player touches him make him cry anyways muhahaha
         if (!player.getGameOver()){     //if player is not dead
             if (checkCollisionWithPlayer()) {           //check collision with him
-                System.out.println("setting game over to true on player. checkCollisionWithPlayer()");
+                System.out.println("[Drone][update()]setting game over to true on player. checkCollisionWithPlayer()");
                 player.setGameOver(true);           // ded
             }
         }
 
         if (!isDisabled) {
             boolean sameLevel = Math.abs(player.getY() - getY()) <= MAX_VERTICAL_DISTANCE;      //check if drone and player are on the same platfrom (level)
-            boolean playerInFront = false;
+            boolean playeWithinChaseRange = false;
 
             if (sameLevel) {            //if they are on the same level
                 //if drone facing right and player is on the right
                 if (getDirection().equals("right") && player.getX() > getX()) {
                     int distance = player.getX() - getX();
                     if (distance <= CHASE_RANGE) {              //if he also is withing chase range, then chase him
-                        playerInFront = true;
+                        playeWithinChaseRange = true;
                     }
                 }
                 //same thing but for left facing drone
                 else if (getDirection().equals("left") && player.getX() < getX()) {
                     int distance = getX() - player.getX();
                     if (distance <= CHASE_RANGE) {
-                        playerInFront = true;
+                        playeWithinChaseRange = true;
                     }
                 }
             }
-            if (playerInFront) {        //if the player is withing range chase
+            if (playeWithinChaseRange) {        //if the player is withing range chase
                 chasePlayer();
 
                 setChanged();
@@ -108,7 +105,7 @@ public class Drone extends Entity{          //note that entity already extends o
     private void patrol(){
         if (movingRight) {
             // Move right until we reach the patrol boundary
-            if (currentPatrolPosition < patrolRange) {
+            if (currentPatrolPosition < PATROL_RANGE) {
 
                 wallInFront = checkCollisionWithTile(getX() + SPEED, getY() - 1);
                 //note that it is getY() - 1, , this way it checks slightly on top, so that it returns false.
@@ -183,7 +180,7 @@ public class Drone extends Entity{          //note that entity already extends o
                 tileOnBottomRight = false;
             }
 
-            System.out.println("tile on bottom right " + tileOnBottomRight);
+            System.out.println("[Drone][chasePlayer()]tile on bottom right " + tileOnBottomRight);
             if (!checkCollisionWithTile(newX, getY() - 1)  && getX() < ScreenSettings.SCREEN_WIDTH && tileOnBottomRight && movingRight) {
                 //if there is no wall and floot under  AND it is lesser than the screen width, start chasing
                 setX(newX);
@@ -208,7 +205,7 @@ public class Drone extends Entity{          //note that entity already extends o
             if(!checkCollisionWithTile(bottomLeftCornerX, bottomLeftCornerY)){
                 tileOnBottomLeft = false;
             }
-            System.out.println("tile on bottom left " + tileOnBottomLeft);
+            System.out.println("[Dog][chasePlayer()]tile on bottom left " + tileOnBottomLeft);
 
 
             if (!checkCollisionWithTile(newX, getY() - 1) && getX() > 0 && tileOnBottomLeft) {
@@ -234,16 +231,6 @@ public class Drone extends Entity{          //note that entity already extends o
     private boolean checkCollisionWithPlayer() {
         Rectangle droneHitbox = new Rectangle(getX() + 5, getY() + 15, getWidth() - 10, getHeight() - 15);
         Rectangle playerHitbox = new Rectangle(player.getX() + 10, player.getY() + 3, player.getWidth() - 20, player.getHeight());
-
-
-//        g2d.drawRect(drone.getX() + 5, drone.getY() + 15, drone.getWidth() - 10, drone.getHeight() - 15);
-//        g2d.drawRect(player.getX() + 10, player.getY() + 3, player.width - 20, player.height);
-
-
-//        System.out.println("droen rect rect: " + droneHitbox);
-//        System.out.println("player rect: " + playerHitbox);
-//        System.out.println("intersects? " + droneHitbox.intersects(playerHitbox));
-
         return droneHitbox.intersects(playerHitbox);
     }
 
@@ -270,8 +257,8 @@ public class Drone extends Entity{          //note that entity already extends o
         return isIdle;
     }
 
-    public int getPatrolRange() {
-        return patrolRange;
+    public int getPATROL_RANGE() {
+        return PATROL_RANGE;
     }
 
     public boolean getIsMoving() {

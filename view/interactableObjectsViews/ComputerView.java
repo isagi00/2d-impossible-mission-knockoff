@@ -2,7 +2,6 @@ package view.interactableObjectsViews;
 
 
 import model.interactableObjects.Computer;
-import view.GameView;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

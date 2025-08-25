@@ -2,7 +2,7 @@ package main;
 
 
 import controller.TitleScreenController;
-import view.TitleScreenView;
+import view.gamePanelViews.TitleScreenView;
 import javax.swing.*;
 
 

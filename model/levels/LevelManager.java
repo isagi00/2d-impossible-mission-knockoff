@@ -1,6 +1,7 @@
 package model.levels;
 
 import model.ScreenSettings;
+import model.entities.Dog;
 import model.entities.Drone;
 import model.entities.Player;
 import model.interactableObjects.*;
@@ -296,6 +297,11 @@ public class LevelManager extends Observable {      // -> observers: interactabl
                         placeDrone(currentRoom, tileX, tileY);
                         currentRoomData[row][col] = 0;
                         break;
+                    case 'd':
+                        placeDog(currentRoom, tileX, tileY);
+                        currentRoomData[row][col] = 0;
+                        break;
+
 
                     default:
                         // if not a recognized object marker treat as empty space
@@ -420,7 +426,13 @@ public class LevelManager extends Observable {      // -> observers: interactabl
     private void placeDrone(Room currentRoom, int x, int y) {
         Drone drone = new Drone(x, y, player, this);
         currentRoom.addDrone(drone);
-        System.out.println("levelmanager -> paceDrone() :  placed drone");
+        System.out.println("[LevelManager][placeDrone()] :  placed drone");
+    }
+
+    private void placeDog(Room currentRoom, int x, int y) {
+        Dog dog = new Dog(x, y, player, this);
+        currentRoom.addDog(dog);
+        System.out.println("[LevelManager][placeDog()] :  placed dog");
     }
 
 

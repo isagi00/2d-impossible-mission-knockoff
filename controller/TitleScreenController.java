@@ -5,7 +5,7 @@ import model.ScreenSettings;
 import model.entities.Player;
 import model.levels.LevelManager;
 import model.tiles.TileManager;
-import view.*;
+import view.gamePanelViews.*;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;

@@ -1,13 +1,8 @@
 package model.interactableObjects;
 
 import model.entities.Player;
-import model.inventoryrelated.BoBo;
 import model.inventoryrelated.PokerCard;
-import view.GameView;
 import model.ScreenSettings;
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class MetalLocker extends InteractableObject {
     public boolean isOpened = false;

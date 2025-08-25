@@ -1,4 +1,4 @@
-package view;
+package view.gamePanelViews;
 
 
 import model.ScoreTracker;

@@ -2,13 +2,7 @@ package model.interactableObjects;
 
 import model.ScreenSettings;
 import model.entities.Player;
-import model.inventoryrelated.BoBo;
 import model.inventoryrelated.PokerCard;
-import view.GameView;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class WoodLocker extends InteractableObject {
 

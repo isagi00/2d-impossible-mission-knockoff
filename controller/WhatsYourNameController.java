@@ -1,7 +1,7 @@
 package controller;
 
-import view.GameView;
-import view.WhatsYourNameView;
+import view.gamePanelViews.GameView;
+import view.gamePanelViews.WhatsYourNameView;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

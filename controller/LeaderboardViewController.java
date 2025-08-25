@@ -1,8 +1,7 @@
 package controller;
 
-import model.Leaderboard;
-import view.LeaderboardView;
-import view.TitleScreenView;
+import view.gamePanelViews.LeaderboardView;
+import view.gamePanelViews.TitleScreenView;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;

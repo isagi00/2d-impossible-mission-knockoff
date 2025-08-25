@@ -1,5 +1,6 @@
-package view;
+package view.entityViews;
 
+import model.entities.Dog;
 import model.entities.Drone;
 import model.entities.Entity;
 import model.levels.LevelManager;
@@ -15,6 +16,7 @@ import java.util.Observer;
 public class EnemyView implements Observer {
 
     private List<DroneView> droneViews = new ArrayList<>();
+    private List<DogView> dogViews = new ArrayList<>();
 
     private Room currentRoom;
     private LevelManager levelManager;
@@ -42,17 +44,21 @@ public class EnemyView implements Observer {
 
     private void initializeViews() {
         droneViews.clear();
+        dogViews.clear();
 
-        for( Entity enemy : currentRoom.getDrones()) {
-            if (enemy instanceof Drone drone) {
-                droneViews.add(new DroneView(drone));
-            }
+        for( Drone drone : currentRoom.getDrones()) {
+            droneViews.add(new DroneView(drone));
         }
-        System.out.println("EnemyView -> initializeViews(): initializing enemy views");
+        for(Dog dog : currentRoom.getDogs() ) {
+            dogViews.add(new DogView(dog));
+        }
+
+        System.out.println("[EnemyView][initializeViews()] initializing enemy views");
     }
 
     private void refreshViews() {
         droneViews.clear();
+        dogViews.clear();
 
         initializeViews();
         System.out.println("EnemyView -> refreshViews(): refreshing enemy views");
@@ -63,6 +69,9 @@ public class EnemyView implements Observer {
     public void drawEnemies(Graphics2D g2d) {
         for (DroneView droneView : droneViews) {
             droneView.draw(g2d);
+        }
+        for (DogView dogView : dogViews) {
+            dogView.draw(g2d);
         }
 
     }

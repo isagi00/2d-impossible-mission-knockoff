@@ -1,8 +1,8 @@
 package controller;
 
-import view.GameView;
-import view.PauseMenuView;
-import view.TitleScreenView;
+import view.gamePanelViews.GameView;
+import view.gamePanelViews.PauseMenuView;
+import view.gamePanelViews.TitleScreenView;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;

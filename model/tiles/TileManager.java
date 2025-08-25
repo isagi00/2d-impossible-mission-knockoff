@@ -1,7 +1,6 @@
 package model.tiles;
 
 import model.ScreenSettings;
-import view.GameView;
 
 
 import javax.imageio.ImageIO;

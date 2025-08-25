@@ -1,12 +1,10 @@
-package view;
+package view.entityViews;
 
 import model.entities.Drone;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -114,7 +112,7 @@ public class DroneView implements Observer {
         if (drone.getIsIdle()){
             // idle animation
             spriteCounter++;
-            if (spriteCounter  >= 15) {     //slower than running animation
+            if (spriteCounter  >= 30) {     //slower than running animation
                 spriteNum = (spriteNum % 4) + 1; //cycle through 4 idle frames
                 spriteCounter = 0;
             }
@@ -146,7 +144,7 @@ public class DroneView implements Observer {
 // main draw method
 //----------------------------------------------------------------------------------------------------------------//
 
-    protected void draw(Graphics2D g2d){
+    public void draw(Graphics2D g2d){
         BufferedImage image = null;
         updateFrameCounter();
 
@@ -165,17 +163,15 @@ public class DroneView implements Observer {
 
         g2d.drawImage(image, drone.getX(), drone.getY(), drone.getWidth(), drone.getHeight(), null);
 
-        //not chasing
-        if (drone.getIsChasing() ?
-                g2d.drawImage(chasing, drone.getX() + drone.getWidth(), drone.getY() - 20, null) :
-                g2d.drawImage(notChasing, drone.getX() + drone.getWidth(), drone.getY() - 20, null))
 
-
+        //drone image size
         g2d.drawRect(drone.getX(), drone.getY(), drone.getWidth(), drone.getHeight());
+
+        //drone hitbox
         g2d.setColor(Color.GREEN);
         g2d.drawRect(drone.getX() + 5, drone.getY() + 15, drone.getWidth() - 10, drone.getHeight() - 15);
 
-        g2d.setColor(Color.YELLOW);
+        //info
         g2d.drawString("drone direction: " + drone.getDirection(), drone.getX(), drone.getY() - 10);
         g2d.drawString("current patrol position: " + drone.getCurrentPatrolPosition(), drone.getX(), drone.getY() - 20);
         g2d.drawString("wall in front: " + drone.getWallInFront(), drone.getX(), drone.getY() - 30);

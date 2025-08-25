@@ -1,27 +1,21 @@
-package view;
+package view.gamePanelViews;
 
-import controller.ResultScreenController;
-import model.inventoryrelated.ComputerCard;
-import model.inventoryrelated.Inventory;
-import model.inventoryrelated.Item;
 import model.levels.LevelManager;
 import model.entities.Player;
 import model.interactableObjects.InteractableObject;
 import model.levels.Room;
 import model.tiles.TileManager;
 import model.ScreenSettings;
+import view.entityViews.EnemyView;
+import view.entityViews.PlayerView;
 import view.interactableObjectsViews.InteractableObjectsView;
 import view.itemViews.InventoryView;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
-import java.util.List;
 
 
 /** MAIN RENDERING, TAKES ALL THE VIEWS AND RENDERS

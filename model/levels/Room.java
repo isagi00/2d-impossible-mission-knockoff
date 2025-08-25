@@ -1,5 +1,6 @@
 package model.levels;
 
+import model.entities.Dog;
 import model.entities.Drone;
 import model.entities.Entity;
 import model.interactableObjects.InteractableObject;
@@ -31,6 +32,7 @@ public class Room {
 
     //ENEMIES IN THE ROOM
     private List<Drone> drones = new ArrayList<>();
+    private List<Dog> dogs = new ArrayList<>();
 
     //tutorial text in the room
     private String tutorialText;
@@ -104,6 +106,10 @@ public class Room {
         for(Drone drone: drones) {
             drone.deactivate();
         }
+
+        for (Dog dog: dogs) {
+            dog.deactivate();
+        }
     }
 
 
@@ -125,14 +131,16 @@ public class Room {
     public void addDrone(Drone drone){
         drones.add(drone);
     }
-
     public void clearDrones(){
         drones.clear();
     }
-
     public List<Drone> getDrones() {
         return drones;
     }
+
+    public void addDog(Dog dog){dogs.add(dog);}
+    public void clearDogs(){dogs.clear();}
+    public List<Dog> getDogs() {return dogs;}
 
 
     //GETTERS

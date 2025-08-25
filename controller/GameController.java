@@ -1,13 +1,11 @@
 package controller;
 
-import model.Leaderboard;
+import model.entities.Dog;
 import model.entities.Drone;
 import model.entities.Player;
 import model.inventoryrelated.Inventory;
 import model.levels.LevelManager;
-import view.GameView;
-
-import javax.swing.*;
+import view.gamePanelViews.GameView;
 
 /** what it should do:
  * -process input
@@ -104,6 +102,11 @@ public class GameController implements Runnable {
                 //update drones
                 for (Drone drone : levelManager.getCurrentRoom().getDrones()) {
                     drone.update();
+                }
+
+                //update dogs
+                for (Dog dog : levelManager.getCurrentRoom().getDogs()){
+                    dog.update();
                 }
 
                 // handle level transition

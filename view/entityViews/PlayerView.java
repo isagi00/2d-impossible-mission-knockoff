@@ -1,4 +1,4 @@
-package view;
+package view.entityViews;
 
 
 import model.entities.Player;
