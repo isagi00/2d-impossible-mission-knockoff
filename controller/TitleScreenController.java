@@ -1,5 +1,6 @@
 package controller;
 
+import model.Leaderboard;
 import model.ScreenSettings;
 import model.entities.Player;
 import model.levels.LevelManager;
@@ -146,7 +147,8 @@ public class TitleScreenController implements KeyListener {
 
         System.out.println("[TitleScreenController][displayLeaderboard()] title screen view set to not visible ");
         //create new leaderboard view instance
-        LeaderboardView leaderboardView = new LeaderboardView();
+        Leaderboard leaderboard = Leaderboard.getInstance();
+        LeaderboardView leaderboardView = new LeaderboardView(leaderboard);
         window.add(leaderboardView);
         leaderboardView.setBounds(0, 0, ScreenSettings.SCREEN_WIDTH , ScreenSettings.SCREEN_HEIGHT);
         leaderboardView.setVisible(true);

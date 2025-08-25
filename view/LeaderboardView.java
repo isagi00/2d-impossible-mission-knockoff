@@ -2,7 +2,6 @@ package view;
 
 import model.Leaderboard;
 import model.ScreenSettings;
-import model.entities.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,8 +22,8 @@ public class LeaderboardView extends JPanel {
 
     private int padding = 50;
 
-    public LeaderboardView(){
-        this.leaderboard = new Leaderboard();
+    public LeaderboardView(Leaderboard leaderboard){
+        this.leaderboard = leaderboard;
         setPreferredSize(new Dimension(ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT));
         setOpaque(true);
         setFocusable(true);
@@ -83,7 +82,7 @@ public class LeaderboardView extends JPanel {
         int titleY = padding;
         g2d.drawString(leaderboardTitle, titleX, titleY);
 
-        List<Integer> scores = leaderboard.getLeaderboard();
+        List<Integer> scores = leaderboard.getLeaderbordEntryScores();
         int startY = titleY + fm.getHeight() + padding;
         g2d.setColor(Color.WHITE);
         g2d.setFont(leaderboardFont);
@@ -91,6 +90,11 @@ public class LeaderboardView extends JPanel {
             g2d.drawString(i + 1 + ".", padding * 2, startY + (padding * i));
             g2d.drawString(Integer.toString(scores.get(i)), titleX, startY+ (padding * i));
             g2d.drawString("pts", titleX + (padding * 7), startY + (padding * i));
+        }
+
+        List<String>  names = leaderboard.getLeaderbordEntryNames();
+        for (int i = 0; i < names.size(); i++) {
+            g2d.drawString(names.get(i), padding * 3, startY + (padding * i));
         }
 
 

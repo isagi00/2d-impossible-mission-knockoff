@@ -1,5 +1,6 @@
 package controller;
 
+import model.Leaderboard;
 import view.LeaderboardView;
 import view.TitleScreenView;
 
@@ -15,7 +16,6 @@ public class LeaderboardViewController implements KeyListener {
     public LeaderboardViewController(JFrame window, LeaderboardView leaderboardView) {
         this.window = window;
         this.leaderboardView = leaderboardView;
-
     }
 
     @Override

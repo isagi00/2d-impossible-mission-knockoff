@@ -1,10 +1,10 @@
 package model;
 
+import controller.WhatsYourNameController;
 import model.entities.Player;
 import model.inventoryrelated.Inventory;
 import model.inventoryrelated.Item;
 import model.inventoryrelated.PokerCard;
-import model.Leaderboard;
 
 import java.util.*;
 
@@ -18,6 +18,7 @@ public class ScoreTracker implements Observer {
     private int metalLockersOpened = 0;
     private int woodLockersOpened = 0;
 
+    private Leaderboard leaderboard = Leaderboard.getInstance();
 
     @Override
     public void update(Observable o, Object arg) {
@@ -220,12 +221,10 @@ public class ScoreTracker implements Observer {
         if(getIsTwoPair(pokerCardValues)) {
             total *= 2;
         }
-
+        String name = WhatsYourNameController.getSubmittedName();
         //after calculating the gran total points, add the points to the leaderboard.
-        Leaderboard leaderBoard = new Leaderboard();
-        leaderBoard.addScore(total);        //foken beautiful, it only gets added once, thought it would add multiple times
-        System.out.println("[ScoreTracker][getGrandTotalPoints] added points to leaderboard:  " + leaderBoard.toString() );
-
+        leaderboard.addScore(name, total);        //foken beautiful, it only gets added once, thought it would add multiple times
+        System.out.println("[ScoreTracker][getGrandTotalPoints] added points to leaderboard:  " + name + " " + total );
         return total;
     }
 

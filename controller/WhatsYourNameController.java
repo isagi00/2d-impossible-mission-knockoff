@@ -12,7 +12,7 @@ public class WhatsYourNameController implements KeyListener {
     private StringBuilder currentName;
     private int maxNameLength;
 
-    private String submittedName;
+    private static String submittedName;
 
     private GameView gameView;
 
@@ -60,7 +60,9 @@ public class WhatsYourNameController implements KeyListener {
     }
 
 
-
+    public static String getSubmittedName() {
+        return submittedName;
+    }
 
 
 
