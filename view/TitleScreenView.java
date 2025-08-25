@@ -18,6 +18,7 @@ public class TitleScreenView extends JPanel {
     private final String[] options = {
             "new game",
             "play tutorial",
+            "leaderboard",
             "quit"
     };
 
@@ -29,7 +30,7 @@ public class TitleScreenView extends JPanel {
 
         menuFont = loadCustomFont("fonts/ThaleahFat.ttf", 40f);
         selectedFont = loadCustomFont("fonts/ThaleahFat.ttf", 50f);
-        loadTitle();
+        loadTitleScreenBackgroundImage();
     }
 
 
@@ -54,7 +55,7 @@ public class TitleScreenView extends JPanel {
     }
 
 
-    private void loadTitle() {
+    private void loadTitleScreenBackgroundImage() {
         try{
             title = ImageIO.read(getClass().getClassLoader().getResourceAsStream("titlescreen/title.png"));
             System.out.println("Loaded title ");
@@ -99,8 +100,8 @@ public class TitleScreenView extends JPanel {
                 g2d.setFont(fontToUse);
                 g2d.setColor(new Color(255,215, 0));
                 g2d.drawString(options[i], startX, startY + (verticalSpacing * i));
-            }//not highlighted/selected -> gray
-            else{
+            }
+            else{ //not highlighted/selected -> gray
                 g2d.setFont(fontToUse);
                 g2d.setColor(Color.GRAY);
             }

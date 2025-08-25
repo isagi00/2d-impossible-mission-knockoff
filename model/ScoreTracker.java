@@ -4,6 +4,7 @@ import model.entities.Player;
 import model.inventoryrelated.Inventory;
 import model.inventoryrelated.Item;
 import model.inventoryrelated.PokerCard;
+import model.Leaderboard;
 
 import java.util.*;
 
@@ -22,22 +23,22 @@ public class ScoreTracker implements Observer {
     public void update(Observable o, Object arg) {
         if( o instanceof Player) {
             if (arg.equals("paper box opened")) {
-                paperBoxesOpened++;
+                this.paperBoxesOpened++;
                 getObjectPoints();
                 System.out.println("score tracker -> paper box opened: " + paperBoxesOpened);
             }
             else if (arg.equals("red box opened")) {
-                redBoxesOpened++;
+                this.redBoxesOpened++;
                 getObjectPoints();
                 System.out.println("score tracker -> red box opened: " + redBoxesOpened);
             }
             else if (arg.equals("metal locker opened")) {
-                metalLockersOpened++;
+                this.metalLockersOpened++;
                 getObjectPoints();
                 System.out.println("score tracker -> meta lockers opened: " + metalLockersOpened);
             }
             else if ( arg.equals("wood locker opened")) {
-                woodLockersOpened++;
+                this.woodLockersOpened++;
                 getObjectPoints();
                 System.out.println("scoretracker -> wood lockers opened: " + woodLockersOpened);
             }
@@ -219,15 +220,14 @@ public class ScoreTracker implements Observer {
         if(getIsTwoPair(pokerCardValues)) {
             total *= 2;
         }
+
+        //after calculating the gran total points, add the points to the leaderboard.
+        Leaderboard leaderBoard = new Leaderboard();
+        leaderBoard.addScore(total);        //foken beautiful, it only gets added once, thought it would add multiple times
+        System.out.println("[ScoreTracker][getGrandTotalPoints] added points to leaderboard:  " + leaderBoard.toString() );
+
         return total;
     }
-
-
-
-
-
-
-
 
 
     public int getPaperBoxesOpened() {

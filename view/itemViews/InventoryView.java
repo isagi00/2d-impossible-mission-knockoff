@@ -67,7 +67,7 @@ public class InventoryView implements Observer {
             if(itemView != null){       //is not empty
                 if(itemView instanceof PokerCardView pokerCardView){
                     pokerCardView.draw(g2d, x + 15, startY + 10, slotWidth - 30, slotHeight - 20);
-                    System.out.println("[InventoryView] drawing pokerCardView");
+//                    System.out.println("[InventoryView] drawing pokerCardView");
                 }
                 else {
                     itemView.draw(g2d, x, startY, slotWidth, slotHeight);      //draw the item

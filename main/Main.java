@@ -1,19 +1,10 @@
 package main;
 
-import controller.GameController;
-import controller.InputHandler;
-import controller.TitleScreenController;
-import model.levels.LevelManager;
-import model.tiles.TileManager;
-import model.entities.Player;
-import view.GameView;
-import view.PauseMenuView;
-import view.TitleScreenView;
-import view.ResultScreenView;
 
+import controller.TitleScreenController;
+import view.TitleScreenView;
 import javax.swing.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+
 
 public class Main {
 
@@ -37,6 +28,13 @@ public class Main {
         titleScreenView.addKeyListener(titleScreenController);
         titleScreenView.setFocusable(true);
         titleScreenView.requestFocus();
+
+
+        //leaderboard works
+//        Leaderboard leaderboard = new Leaderboard();
+//        List<Integer> leaderboardScores = leaderboard.getLeaderboard();
+//        System.out.println("[Main] leaderboard scores: " + leaderboardScores);
+//        leaderboard.addScore(300);
     }
 
 }
