@@ -212,6 +212,7 @@ public class LevelManager extends Observable {      // -> observers: interactabl
         try{
             //clear enemies and interactable objects, then load, to avoid reloading more enemies/interactable objects.
             getCurrentRoom().clearDrones();
+            getCurrentRoom().clearDogs();
             getCurrentRoom().clearInteractableObjects();
 
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(roomPath);        //import the text file

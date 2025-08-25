@@ -12,7 +12,7 @@ public class Dog extends Entity {
 
     //dog constants
     private int SPEED = 4;
-    private int CHASE_RANGE = ScreenSettings.TILE_SIZE * 6;
+    private int CHASE_RANGE = ScreenSettings.TILE_SIZE * 3;
     private final int MAX_VERTICAL_DISTANCE = ScreenSettings.TILE_SIZE;
     private int PATROL_RANGE;
     private int currentPatrolPosition = 0;
@@ -83,7 +83,7 @@ public class Dog extends Entity {
 
 
     private boolean checkCollisionWithPlayer(){
-        Rectangle dogHitBox = new Rectangle(getX() + 5, getY() + 5, getWidth() - 10, getHeight() - 10);
+        Rectangle dogHitBox = new Rectangle(getX() + 10, getY() + 50, getWidth() - 20, getHeight() - 50);
         Rectangle playerHitbox = new Rectangle(player.getX() + 10, player.getY() + 3, player.getWidth() - 20, player.getHeight());
         return dogHitBox.intersects(playerHitbox);
     }
@@ -105,7 +105,7 @@ public class Dog extends Entity {
             int wallCheckX = wallCheckCol * ScreenSettings.TILE_SIZE;
             wallInFront = isPointOnSolidTile(wallCheckX, getY() + getHeight()/2);
 
-            System.out.println("[Dog][chasePlayer()]tile on bottom right " + groundAhead);
+//            System.out.println("[Dog][chasePlayer()]tile on bottom right " + groundAhead);
 
             if (!wallInFront && newX < ScreenSettings.SCREEN_WIDTH - getWidth() && groundAhead) {
                 setX(newX);
@@ -130,12 +130,11 @@ public class Dog extends Entity {
             int groundCheckY = getY() + getHeight() + 1;
             groundAhead = isPointOnSolidTile(groundCheckX, groundCheckY);
 
-            // FIXED: Correct wall detection for left movement
+            //wall detection for left movement
             int wallCheckCol = (newX + getWidth() - 1) / ScreenSettings.TILE_SIZE;
             int wallCheckX = wallCheckCol * ScreenSettings.TILE_SIZE;
             wallInFront = isPointOnSolidTile(wallCheckX, getY() + getHeight()/2);
 
-            // FIXED: Check against 0 (not just > 0)
             if (!wallInFront && newX > 0 && groundAhead) {
                 setX(newX);
                 isChasing = true;
@@ -163,12 +162,11 @@ public class Dog extends Entity {
                 int groundCheckY = getY() + getHeight() + 1;
                 groundAhead = isPointOnSolidTile(groundCheckX, groundCheckY);
 
-                // FIXED: Correct wall detection
+                // wall detection
                 int wallCheckCol = (newX + getWidth()) / ScreenSettings.TILE_SIZE;
                 int wallCheckX = wallCheckCol * ScreenSettings.TILE_SIZE;
                 wallInFront = isPointOnSolidTile(wallCheckX, getY() + getHeight()/2);
 
-                // FIXED: Check against SCREEN_WIDTH - getWidth()
                 if (!wallInFront && newX < ScreenSettings.SCREEN_WIDTH - getWidth() && groundAhead) {
                     setX(newX);
                     setDirection("right");
@@ -192,12 +190,12 @@ public class Dog extends Entity {
                 int groundCheckY = getY() + getHeight() + 1;
                 groundAhead = isPointOnSolidTile(groundCheckX, groundCheckY);
 
-                // FIXED: Correct wall detection for left movement
+                //wall detection for left movement
                 int wallCheckCol = (newX + getWidth() - 1) / ScreenSettings.TILE_SIZE;
                 int wallCheckX = wallCheckCol * ScreenSettings.TILE_SIZE;
                 wallInFront = isPointOnSolidTile(wallCheckX, getY() + getHeight()/2);
 
-                // FIXED: Check against 0 (not just > 0)
+
                 if(!wallInFront && newX > 0 && groundAhead ){
                     setX(newX);
                     setDirection("left");
@@ -216,26 +214,26 @@ public class Dog extends Entity {
     }
 
     /**
-     * Checks if a single point is on a solid tile
-     * @param x Pixel x-coordinate to check
-     * @param y Pixel y-coordinate to check
+     * checks if a single point is on a solid tile
+     * @param x pixel x-coordinate to check
+     * @param y pixel y-coordinate to check
      * @return true if the point is on a solid tile
      */
     private boolean isPointOnSolidTile(int x, int y) {
-        // Convert point to tile coordinates
+        //convert point to tile coordinates
         int col = x / ScreenSettings.TILE_SIZE;
         int row = y / ScreenSettings.TILE_SIZE;
 
-        // Check if within room bounds
+        //check if within room bounds
         if (row < 0 || row >= ScreenSettings.MAX_SCREEN_ROW ||
                 col < 0 || col >= ScreenSettings.MAX_SCREEN_COL) {
             return false; // Or true if you want boundaries to be solid
         }
 
-        // Get the tile at that position
+        //get the tile at that position
         int tileNum = levelManager.getCurrentRoomData()[row][col];
 
-        // Check if it's a solid tile
+        //check if it's a solid tile
         return tileNum > 0 && levelManager.getTile(tileNum).collision;
     }
 

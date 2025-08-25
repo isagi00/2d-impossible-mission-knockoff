@@ -5,14 +5,13 @@ import model.levels.LevelManager;
 
 import java.awt.*;
 
-public class Drone extends Entity{          //note that entity already extends observable
+public class Drone extends Entity {
     //----------------------------------------------------------------------------------------//
     // FIELDS
     //----------------------------------------------------------------------------------------//
     //other models
     private Player player;
     private LevelManager levelManager;
-
 
     //drone constants
     private int SPEED = 2;
@@ -29,14 +28,14 @@ public class Drone extends Entity{          //note that entity already extends o
     private boolean isDisabled = false;
     private boolean movingRight = true;
     private boolean wallInFront = false;
-
+    private boolean groundAhead = false;
 
     //----------------------------------------------------------------------------------------//
     // CONSTRUCTOR
     //----------------------------------------------------------------------------------------//
 
     public Drone(int x, int y, Player player, LevelManager levelManager) {
-        super(x, y, ScreenSettings.TILE_SIZE , ScreenSettings.TILE_SIZE, levelManager);
+        super(x, y, ScreenSettings.TILE_SIZE, ScreenSettings.TILE_SIZE, levelManager);
 
         this.PATROL_RANGE = ScreenSettings.TILE_SIZE * 10;
         this.player = player;
@@ -44,15 +43,13 @@ public class Drone extends Entity{          //note that entity already extends o
         setDirection("right");
     }
 
-
-
     //----------------------------------------------------------------------------------------//
     // MAIN UPDATE METHOD
     //----------------------------------------------------------------------------------------//
 
     public void update() {
         // if drone is disabled and player touches him make him cry anyways muhahaha
-        if (!player.getGameOver()){     //if player is not dead
+        if (!player.getGameOver()) {     //if player is not dead
             if (checkCollisionWithPlayer()) {           //check collision with him
                 System.out.println("[Drone][update()]setting game over to true on player. checkCollisionWithPlayer()");
                 player.setGameOver(true);           // ded
@@ -60,135 +57,127 @@ public class Drone extends Entity{          //note that entity already extends o
         }
 
         if (!isDisabled) {
-            boolean sameLevel = Math.abs(player.getY() - getY()) <= MAX_VERTICAL_DISTANCE;      //check if drone and player are on the same platfrom (level)
-            boolean playeWithinChaseRange = false;
+            boolean sameLevel = Math.abs(player.getY() - getY()) <= MAX_VERTICAL_DISTANCE;      //check if drone and player are on the same platform (level)
+            boolean playerWithinChaseRange = false;
 
             if (sameLevel) {            //if they are on the same level
                 //if drone facing right and player is on the right
                 if (getDirection().equals("right") && player.getX() > getX()) {
                     int distance = player.getX() - getX();
-                    if (distance <= CHASE_RANGE) {              //if he also is withing chase range, then chase him
-                        playeWithinChaseRange = true;
+                    if (distance <= CHASE_RANGE) {              //if he also is within chase range, then chase him
+                        playerWithinChaseRange = true;
                     }
                 }
                 //same thing but for left facing drone
                 else if (getDirection().equals("left") && player.getX() < getX()) {
                     int distance = getX() - player.getX();
                     if (distance <= CHASE_RANGE) {
-                        playeWithinChaseRange = true;
+                        playerWithinChaseRange = true;
                     }
                 }
             }
-            if (playeWithinChaseRange) {        //if the player is withing range chase
+            if (playerWithinChaseRange) {        //if the player is within range chase
                 chasePlayer();
-
                 setChanged();
                 notifyObservers("chasing player");
             } else {                    //if not just patrol normally
                 isChasing = false;
                 patrol();
-
                 setChanged();
                 notifyObservers("patrolling");
             }
-
         }
-
-
     }
 
     //----------------------------------------------------------------------------------------//
     // methods called in the main update method
     //----------------------------------------------------------------------------------------//
 
-
-    private void patrol(){
+    private void patrol() {
         if (movingRight) {
-            // Move right until we reach the patrol boundary
             if (currentPatrolPosition < PATROL_RANGE) {
+                int newX = getX() + SPEED;
+                int groundCheckX = newX + getWidth() - 5;
+                int groundCheckY = getY() + getHeight() + 1;
+                groundAhead = isPointOnSolidTile(groundCheckX, groundCheckY);
 
-                wallInFront = checkCollisionWithTile(getX() + SPEED, getY() - 1);
-                //note that it is getY() - 1, , this way it checks slightly on top, so that it returns false.
-                //if there is no -1, it will checkCollisionWithTile will return true because it checks the bottom tile(floor).
+                // check at the tile boundary for walls
+                int wallCheckCol = (newX + getWidth()) / ScreenSettings.TILE_SIZE;
+                int wallCheckX = wallCheckCol * ScreenSettings.TILE_SIZE;
+                wallInFront = isPointOnSolidTile(wallCheckX, getY() + getHeight()/2);
 
-                //this checks the bottom right corner of the drone, and if there is not a tile while the drone is facing right, then it bounces back.
-                //this help avoiding cases where the drones walk on air
-                int bottomRightCornerX = getX() + getWidth();
-                int bottomRightCornerY = getY() + getHeight();
-                boolean tileOnBottomRight = true;
-                if(!checkCollisionWithTile(bottomRightCornerX, bottomRightCornerY)){
-                    tileOnBottomRight = false;
-                }
+                if (!wallInFront &&
+                        newX < ScreenSettings.SCREEN_WIDTH - getWidth() &&
+                        groundAhead) {
 
-                if (!wallInFront && getX() < ScreenSettings.SCREEN_WIDTH && checkCollisionWithTile(getX(), getY() + 1) && tileOnBottomRight) {  //check collision with tile to the right, if there is not, then move right
-                    setX(getX() + SPEED);
+                    setX(newX);
                     setDirection("right");
                     isIdle = false;
                     isMoving = true;
                     currentPatrolPosition++;
-                }
-                else{       //if there is wall to the right, then go back to the left
+                } else {       //found a wall or edge
                     movingRight = false;
                 }
-            }
-            // reached right max patrol range, turn around
-            else {
+            } else {   // reached right max patrol range, turn around
                 movingRight = false;
             }
-        }
-
-        if(!movingRight) {
-            // move left until the drone returns to the starting position
+        } else {
             if (currentPatrolPosition > 0) {
-                wallInFront = checkCollisionWithTile(getX() - SPEED, getY() - 1);
+                int newX = getX() - SPEED;
+                int groundCheckX = newX + 5;
+                int groundCheckY = getY() + getHeight() + 1;
+                groundAhead = isPointOnSolidTile(groundCheckX, groundCheckY);
 
-                boolean tileOnBottomLeft = true;
-                int bottomLeftCornerX = getX();
-                int bottomLeftCornerY = getY() + getHeight();
-                if(!checkCollisionWithTile(bottomLeftCornerX, bottomLeftCornerY)){
-                    tileOnBottomLeft = false;
-                }
+                // Check at the tile boundary for walls
+                int wallCheckCol = (newX + getWidth() - 1) / ScreenSettings.TILE_SIZE;
+                int wallCheckX = wallCheckCol * ScreenSettings.TILE_SIZE;
+                wallInFront = isPointOnSolidTile(wallCheckX, getY() + getHeight()/2);
 
-                if(!wallInFront && getX() > 0 && checkCollisionWithTile(getX(), getY() + 1) && tileOnBottomLeft) {   //check collision with tile to the left, if there is not, then move left
-                    setX(getX() - SPEED);
+                if (!wallInFront &&
+                        newX > 0 &&
+                        groundAhead) {
+
+                    setX(newX);
                     setDirection("left");
                     isIdle = false;
                     isMoving = true;
                     currentPatrolPosition--;
-                }
-                else{   //if there is wall to the left, then go back to the right
+                } else {   //found a wall or edge
                     movingRight = true;
                 }
-            }
-            // reached the starting point, turn right
-            else {
+            } else {   // reached the starting point, turn right
                 movingRight = true;
             }
         }
     }
 
-
     private void chasePlayer() {
         int chaseSpeed = (int) (SPEED * 1.5);
-        if (getDirection().equals("right")) {       //if drone direction is right
+
+        if (getDirection().equals("right")) {
             movingRight = true;
             int newX = getX() + chaseSpeed;
-            int bottomRightCornerX = getX() + getWidth();
-            int bottomRightCornerY = getY() + getHeight();
-            boolean tileOnBottomRight = true;
-            if(!checkCollisionWithTile(bottomRightCornerX, bottomRightCornerY)){
-                tileOnBottomRight = false;
-            }
 
-            System.out.println("[Drone][chasePlayer()]tile on bottom right " + tileOnBottomRight);
-            if (!checkCollisionWithTile(newX, getY() - 1)  && getX() < ScreenSettings.SCREEN_WIDTH && tileOnBottomRight && movingRight) {
-                //if there is no wall and floot under  AND it is lesser than the screen width, start chasing
+            // check ground ahead of new position
+            int groundCheckX = newX + getWidth() - 5;
+            int groundCheckY = getY() + getHeight() + 1;
+            groundAhead = isPointOnSolidTile(groundCheckX, groundCheckY);
+
+            // check wall at new position
+            int wallCheckCol = (newX + getWidth()) / ScreenSettings.TILE_SIZE;
+            int wallCheckX = wallCheckCol * ScreenSettings.TILE_SIZE;
+            wallInFront = isPointOnSolidTile(wallCheckX, getY() + getHeight()/2);
+
+            if (!wallInFront &&
+                    newX < ScreenSettings.SCREEN_WIDTH - getWidth() &&
+                    groundAhead) {
+
                 setX(newX);
                 isChasing = true;
                 isMoving = true;
                 isIdle = false;
                 currentPatrolPosition++;
-            } else {            //if theres wall turn around and stop chasing
+            } else {
                 setDirection("left");
                 isChasing = false;
                 isMoving = true;
@@ -197,25 +186,30 @@ public class Drone extends Entity{          //note that entity already extends o
                 currentPatrolPosition--;
             }
         }
-        if(!movingRight) { // direction is "left"
+
+        if (!movingRight) { // direction is "left"
             int newX = getX() - chaseSpeed;
-            boolean tileOnBottomLeft = true;
-            int bottomLeftCornerX = getX();
-            int bottomLeftCornerY = getY() + getHeight();
-            if(!checkCollisionWithTile(bottomLeftCornerX, bottomLeftCornerY)){
-                tileOnBottomLeft = false;
-            }
-            System.out.println("[Dog][chasePlayer()]tile on bottom left " + tileOnBottomLeft);
 
+            // check ground ahead of new position
+            int groundCheckX = newX + 5;
+            int groundCheckY = getY() + getHeight() + 1;
+            groundAhead = isPointOnSolidTile(groundCheckX, groundCheckY);
 
-            if (!checkCollisionWithTile(newX, getY() - 1) && getX() > 0 && tileOnBottomLeft) {
-                //no wall && there is tile under && x is greater than 0 left side of screen -> chase
+            // check wall at new position
+            int wallCheckCol = (newX + getWidth() - 1) / ScreenSettings.TILE_SIZE;
+            int wallCheckX = wallCheckCol * ScreenSettings.TILE_SIZE;
+            wallInFront = isPointOnSolidTile(wallCheckX, getY() + getHeight()/2);
+
+            if (!wallInFront &&
+                    newX > 0 &&
+                    groundAhead) {
+
                 setX(newX);
                 isChasing = true;
                 isMoving = true;
                 isIdle = false;
                 currentPatrolPosition--;
-            } else {        //wall or the is no tile under -> turn around and stop chasing
+            } else {
                 setDirection("right");
                 isChasing = false;
                 isMoving = true;
@@ -224,8 +218,6 @@ public class Drone extends Entity{          //note that entity already extends o
                 currentPatrolPosition++;
             }
         }
-
-
     }
 
     private boolean checkCollisionWithPlayer() {
@@ -234,24 +226,37 @@ public class Drone extends Entity{          //note that entity already extends o
         return droneHitbox.intersects(playerHitbox);
     }
 
+    /**
+     * checks if a single point is on a solid tile
+     * @param x Pixel x-coordinate to check
+     * @param y Pixel y-coordinate to check
+     * @return true if the point is on a solid tile
+     */
+    private boolean isPointOnSolidTile(int x, int y) {
+        //convert point to tile coordinates
+        int col = x / ScreenSettings.TILE_SIZE;
+        int row = y / ScreenSettings.TILE_SIZE;
 
-    public void deactivate(){       //used in room, to disable drone through computer.
+        //check if within room bounds
+        if (row < 0 || row >= ScreenSettings.MAX_SCREEN_ROW ||
+                col < 0 || col >= ScreenSettings.MAX_SCREEN_COL) {
+            return false;
+        }
+
+        //get the tile at that position
+        int tileNum = levelManager.getCurrentRoomData()[row][col];
+
+        //check if it's a solid tile
+        return tileNum > 0 && levelManager.getTile(tileNum).collision;
+    }
+
+    public void deactivate() {       //used in room, to disable drone through computer.
         isDisabled = true;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    //----------------------------------------------------------------------------------------//
+    // GETTERS
+    //----------------------------------------------------------------------------------------//
 
     public boolean getIsIdle() {
         return isIdle;
@@ -272,6 +277,11 @@ public class Drone extends Entity{          //note that entity already extends o
     public boolean getWallInFront() {
         return wallInFront;
     }
+
+    public boolean getGroundAhead() {
+        return groundAhead;
+    }
+
     public boolean getIsChasing() {
         return isChasing;
     }
@@ -279,10 +289,4 @@ public class Drone extends Entity{          //note that entity already extends o
     public boolean getIsDisabled() {
         return isDisabled;
     }
-
-
-
-
-
-
 }
