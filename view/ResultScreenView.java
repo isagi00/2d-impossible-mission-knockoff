@@ -31,6 +31,8 @@ public class ResultScreenView extends JPanel  {
         this.player = player;
         this.scoreTracker = player.getScoreTracker();
 
+        setFocusable(true);
+
     }
 
     private Font loadCustomFont(String fontPath, float size) {
@@ -78,44 +80,43 @@ public class ResultScreenView extends JPanel  {
 
         g2d.setFont(resultFont);
         g2d.setColor(Color.WHITE);
+        //paper boxes opened score
         String paperboxes = "paper boxes opened: ";
         String paperboxesopened = String.valueOf(scoreTracker.getPaperBoxesOpened());
-        g2d.drawString(paperboxes, padding, titleMetrics.getHeight() + padding * 2);
-        g2d.drawString(paperboxesopened, padding * 13, titleMetrics.getHeight() + padding * 2);
-        g2d.drawString("x 100", xX, titleMetrics.getHeight() + padding * 2);
-        g2d.drawString("=  " + scoreTracker.getPaperBoxTotalPoints(), totalPointsX, titleMetrics.getHeight() + padding * 2);
+        g2d.drawString(paperboxes, padding, titleMetrics.getHeight() + padding );
+        g2d.drawString(paperboxesopened, padding * 13, titleMetrics.getHeight() + padding);
+        g2d.drawString("x 100", xX, titleMetrics.getHeight() + padding);
+        g2d.drawString("=  " + scoreTracker.getPaperBoxTotalPoints(), totalPointsX, titleMetrics.getHeight() + padding);
+        g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding);
 
-        g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 2);
-
-
+        //red boxes opened score
         String redboxes = "red boxes opened: ";
         String redboxesopened = String.valueOf(scoreTracker.getRedBoxesOpened());
-        g2d.drawString(redboxes, padding, titleMetrics.getHeight() + padding * 3);
-        g2d.drawString(redboxesopened, padding * 13, titleMetrics.getHeight() + padding * 3);
-        g2d.drawString("x 1000", xX, titleMetrics.getHeight() + padding * 3);
-        g2d.drawString("=  " + scoreTracker.getRedBoxesTotalPoints(), totalPointsX, titleMetrics.getHeight() + padding * 3);
+        g2d.drawString(redboxes, padding, titleMetrics.getHeight() + padding * 2);
+        g2d.drawString(redboxesopened, padding * 13, titleMetrics.getHeight() + padding * 2);
+        g2d.drawString("x 1000", xX, titleMetrics.getHeight() + padding * 2);
+        g2d.drawString("=  " + scoreTracker.getRedBoxesTotalPoints(), totalPointsX, titleMetrics.getHeight() + padding * 2);
+        g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 2);
 
-        g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 3);
-
+        //metal lockers opened score
         String metallockers = "metal lockers opened: ";
         String metallockersopened = String.valueOf(scoreTracker.getMetalLockersOpened());
-        g2d.drawString(metallockers, padding, titleMetrics.getHeight() + padding * 4);
-        g2d.drawString(metallockersopened, padding * 13, titleMetrics.getHeight() + padding * 4);
-        g2d.drawString("x 500", xX, titleMetrics.getHeight() + padding * 4);
-        g2d.drawString("=  " + scoreTracker.getMetalLockersTotalPoints(), totalPointsX, titleMetrics.getHeight() + padding * 4);
-
+        g2d.drawString(metallockers, padding, titleMetrics.getHeight() + padding * 3);
+        g2d.drawString(metallockersopened, padding * 13, titleMetrics.getHeight() + padding * 3);
+        g2d.drawString("x 500", xX, titleMetrics.getHeight() + padding * 3);
+        g2d.drawString("=  " + scoreTracker.getMetalLockersTotalPoints(), totalPointsX, titleMetrics.getHeight() + padding * 3);
         g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 4);
 
+        //wood lockers opened score
         String woodlockers = "wooden lockers opened: ";
         String woodlockersopened = String.valueOf(scoreTracker.getWoodLockersOpened());
-        g2d.drawString(woodlockers, padding, titleMetrics.getHeight() + padding * 5);
-        g2d.drawString(woodlockersopened, padding * 13, titleMetrics.getHeight() + padding * 5);
-        g2d.drawString("x 250", xX, titleMetrics.getHeight() + padding * 5);
-        g2d.drawString("=  " + scoreTracker.getWoodLockersTotalPoints(), totalPointsX, titleMetrics.getHeight() + padding * 5);
+        g2d.drawString(woodlockers, padding, titleMetrics.getHeight() + padding * 4);
+        g2d.drawString(woodlockersopened, padding * 13, titleMetrics.getHeight() + padding * 4);
+        g2d.drawString("x 250", xX, titleMetrics.getHeight() + padding * 4);
+        g2d.drawString("=  " + scoreTracker.getWoodLockersTotalPoints(), totalPointsX, titleMetrics.getHeight() + padding * 4);
+        g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 4);
 
-        g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 5);
-
-
+        //score from cards
         String cards = "card values: ";
         List<Integer> cardValues = scoreTracker.getCardValues(player);  //move this outside later
         String values;
@@ -127,62 +128,65 @@ public class ResultScreenView extends JPanel  {
                     .map(cardValue -> String.valueOf(cardValue))
                     .collect(Collectors.joining(" + "));
         }
-        g2d.drawString(values, padding * 9, titleMetrics.getHeight() + padding * 6);
-        g2d.drawString(cards, padding, titleMetrics.getHeight() + padding * 6);
-        g2d.drawString("x 1000", xX, titleMetrics.getHeight() + padding * 6);
-        g2d.drawString( "= " + scoreTracker.getPokerCardsTotalPoints(cardValues), totalPointsX, titleMetrics.getHeight() + padding * 6);
+        g2d.drawString(values, padding * 9, titleMetrics.getHeight() + padding * 5);
+        g2d.drawString(cards, padding, titleMetrics.getHeight() + padding * 5);
+        g2d.drawString("x 1000", xX, titleMetrics.getHeight() + padding * 5);
+        g2d.drawString( "=  " + scoreTracker.getPokerCardsTotalPoints(cardValues), totalPointsX, titleMetrics.getHeight() + padding * 5);
+        g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 5);
+
+        // total: interactable object pts + card pts
+        g2d.drawString("total:", padding, titleMetrics.getHeight() + padding * 6);
+        g2d.drawString( "=  " + scoreTracker.getTotalPoints(cardValues), totalPointsX, titleMetrics.getHeight() + padding * 6);
         g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 6);
 
-
-
-        g2d.drawString("total:", padding, titleMetrics.getHeight() + padding * 7);
-        g2d.drawString( "= " + scoreTracker.getTotalPoints(cardValues), totalPointsX, titleMetrics.getHeight() + padding * 7);
-        g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 7);
-
-
+        //multipliers (title)
         String multiplier = "multipliers: ";
         g2d.setColor(Color.MAGENTA);
         g2d.setFont(multiplierFont);
-        g2d.drawString(multiplier, padding * 13, titleMetrics.getHeight() + padding * 8);
+        g2d.drawString(multiplier, padding * 13, titleMetrics.getHeight() + padding * 7);
         g2d.setFont(resultFont);
 
-
+        //straight set
         String straight = "STRAIGHT: ";
         g2d.setColor(scoreTracker.getIsStraight(cardValues) ? Color.YELLOW : Color.GRAY);
-        g2d.drawString(straight, padding, titleMetrics.getHeight() + padding * 9);
-        g2d.drawString("pts x 5" , totalPointsX, titleMetrics.getHeight() + padding * 9);
+        g2d.drawString(straight, padding, titleMetrics.getHeight() + padding * 8);
+        g2d.drawString("pts x 5" , totalPointsX, titleMetrics.getHeight() + padding * 8);
 
-
+        //all face cards set
         String allfacecards = "ALL FACE CARDS: ";
         g2d.setColor(scoreTracker.getIsAllFaceCards(cardValues) ? Color.YELLOW : Color.GRAY);
-        g2d.drawString(allfacecards, padding, titleMetrics.getHeight() + padding * 10);
-        g2d.drawString("pts x 4", totalPointsX, titleMetrics.getHeight() + padding * 10);
+        g2d.drawString(allfacecards, padding, titleMetrics.getHeight() + padding * 9);
+        g2d.drawString("pts x 4", totalPointsX, titleMetrics.getHeight() + padding * 9);
 
-
+        //four of a kind set
         String fourofakind = "FOUR OF A KIND: ";
         g2d.setColor(scoreTracker.getIsFourOfAKind(cardValues) ? Color.YELLOW : Color.GRAY);
-        g2d.drawString(fourofakind, padding, titleMetrics.getHeight() + padding * 11);
-        g2d.drawString("pts x 4 " , totalPointsX, titleMetrics.getHeight() + padding * 11);
+        g2d.drawString(fourofakind, padding, titleMetrics.getHeight() + padding * 10);
+        g2d.drawString("pts x 4 " , totalPointsX, titleMetrics.getHeight() + padding * 10);
 
-
-
+        //three of a kind set
         String threeofakind = "THREE OF A KIND: ";
         g2d.setColor(scoreTracker.getIsThreeOfAKind(cardValues) ? Color.YELLOW : Color.GRAY);
-        g2d.drawString(threeofakind, padding, titleMetrics.getHeight() + padding * 12);
-        g2d.drawString("pts x 3", totalPointsX, titleMetrics.getHeight() + padding * 12);
+        g2d.drawString(threeofakind, padding, titleMetrics.getHeight() + padding * 11);
+        g2d.drawString("pts x 3", totalPointsX, titleMetrics.getHeight() + padding * 11);
 
+        //two pair set
         String twopair = "TWO PAIR: ";
         g2d.setColor(scoreTracker.getIsTwoPair(cardValues) ? Color.YELLOW : Color.GRAY);
-        g2d.drawString(twopair, padding, titleMetrics.getHeight() + padding * 13);
-        g2d.drawString("pts x 2  " , totalPointsX, titleMetrics.getHeight() + padding * 13);
+        g2d.drawString(twopair, padding, titleMetrics.getHeight() + padding * 12);
+        g2d.drawString("pts x 2  " , totalPointsX, titleMetrics.getHeight() + padding * 12);
 
-
+        //grand total (with multipliers)
         g2d.setColor(Color.ORANGE);
         g2d.setFont(totalFont);
         String total = "GRAND TOTAL :       " + scoreTracker.getGrandTotalPoints(cardValues);
-        g2d.drawString(total, padding, titleMetrics.getHeight() + padding * 14);
-        g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 14);
+        g2d.drawString(total, padding, titleMetrics.getHeight() + padding * 13);
+        g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 13);
 
+        //to the main menu text
+        g2d.setFont(resultFont);
+        g2d.setColor(Color.WHITE);
+        g2d.drawString("press enter to go to the main menu", padding, titleMetrics.getHeight() + padding * 14);
     }
 
 

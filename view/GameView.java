@@ -1,5 +1,6 @@
 package view;
 
+import controller.ResultScreenController;
 import model.inventoryrelated.ComputerCard;
 import model.inventoryrelated.Inventory;
 import model.inventoryrelated.Item;
@@ -47,7 +48,10 @@ public class GameView extends JPanel {
     InteractableObjectsView interactableObjectsView;
     InventoryView inventoryView;
     EnemyView enemyView;
+
     ResultScreenView resultScreenView;
+    //game window
+    private JFrame window;
 
     //bg
     BufferedImage background;
@@ -55,7 +59,7 @@ public class GameView extends JPanel {
     //fps tracking vars
     private int frameCount = 0;
     private long lastFpsTime = System.nanoTime();
-    private double fps = 0;
+    private double fps;
 
     // fonts
     private final Font fpsFont = loadCustomFont("fonts/ThaleahFat.ttf", 25);
@@ -66,7 +70,9 @@ public class GameView extends JPanel {
     //----------------------------------------------------------------------------------------------------------------//
     // CONSTRUCTOR, ! DEPENDS PURELY ON MODELS !
     //----------------------------------------------------------------------------------------------------------------//
-    public GameView(Player player, TileManager tileManager, LevelManager levelManager) {
+    public GameView(Player player, TileManager tileManager, LevelManager levelManager, JFrame window) {
+        this.window = window;
+
         //models
         this.tileManager = tileManager;
         this.levelManager = levelManager;
@@ -77,13 +83,15 @@ public class GameView extends JPanel {
         this.inventoryView = new InventoryView(player.getInventory());
         this.interactableObjectsView = new InteractableObjectsView(levelManager);
         this.enemyView = new EnemyView(levelManager);
-        this.resultScreenView = new ResultScreenView(player);
+
+
 
         //other
         setPreferredSize(new Dimension(ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT));
         setBackground(Color.BLACK);
         setDoubleBuffered(true);
         setOpaque(true);
+        //loading background image
         loadBackgroundImage();
 
         //registering observer/observers
@@ -147,11 +155,14 @@ public class GameView extends JPanel {
         //draw the game text
         drawGameText(g2d);
 
-        //if the players extracts then draw the result screen
-        if (player.getIsExtracted()) {  // or player.getExtracted()
+        if (player.getIsExtracted() && resultScreenView != null) {
             resultScreenView.setVisible(true);
-            resultScreenView.paintComponent(g2d);  // draw result screen overlay
+            resultScreenView.requestFocusInWindow();
         }
+
+
+
+
 
         g2d.dispose();
     }
@@ -245,6 +256,11 @@ public class GameView extends JPanel {
         else{
             g2d.drawImage(background, 0,0, ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT, null);
         }
+    }
+
+
+    public void setResultScreenView(ResultScreenView resultScreenView) {
+        this.resultScreenView = resultScreenView;
     }
 
 

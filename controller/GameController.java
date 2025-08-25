@@ -6,6 +6,8 @@ import model.inventoryrelated.Inventory;
 import model.levels.LevelManager;
 import view.GameView;
 
+import javax.swing.*;
+
 /** what it should do:
  * -process input
  * -updates model based on input
@@ -116,10 +118,12 @@ public class GameController implements Runnable {
                 inventory.updateDiscardProgress(2, inputHandler.threePressed);
                 inventory.updateDiscardProgress(3, inputHandler.fourPressed);
                 inventory.updateDiscardProgress(4, inputHandler.fivePressed);
-            }
 
-            else if (currentState == GameState.RESULT) {
-                gameView.repaint();
+                if (player.getIsExtracted()) {
+                    currentState = GameState.RESULT;
+                }
+
+
             }
 
             //handle frame timing
