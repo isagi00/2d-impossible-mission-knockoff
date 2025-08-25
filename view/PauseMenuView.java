@@ -17,7 +17,7 @@ public class PauseMenuView extends JPanel{
     public PauseMenuView() {
         setPreferredSize(new Dimension(ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT));
         setBackground(Color.BLACK);    //semi transparent
-        setOpaque(false);               //allow   transparency
+        setOpaque(false);               //allow transparency
         setFocusable(true);
     }
 
