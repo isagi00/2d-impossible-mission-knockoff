@@ -25,9 +25,7 @@ public class Leaderboard {
     }
 
     private void loadLeaderBoard() {
-        File file = new File(LEADERBOARD_FILENAME);
         InputStream in = getClass().getClassLoader().getResourceAsStream(LEADERBOARD_FILENAME);
-        leaderboard.clear();
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in))) {
             for (int i = 0; i < 10; i++) {      //for 10 lines
                 String line = bufferedReader.readLine();        //read each line

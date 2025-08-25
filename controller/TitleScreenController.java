@@ -4,10 +4,7 @@ import model.ScreenSettings;
 import model.entities.Player;
 import model.levels.LevelManager;
 import model.tiles.TileManager;
-import view.GameView;
-import view.PauseMenuView;
-import view.ResultScreenView;
-import view.TitleScreenView;
+import view.*;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -60,6 +57,9 @@ public class TitleScreenController implements KeyListener {
                 break;
             case "play tutorial":
                 startMainGame(true);
+                break;
+            case "leaderboard":
+                displayLeaderboard();
                 break;
             case "exit":
                 System.exit(0);
@@ -129,6 +129,31 @@ public class TitleScreenController implements KeyListener {
 
         System.out.println("[TitleScreenController][startMainGame()] window focus owner: " + window.getFocusOwner());
         gameController.startGameThread();
+    }
+
+
+    private void displayLeaderboard() {
+        window.remove(titleScreenView);
+        window.revalidate();
+        window.repaint();
+
+        System.out.println("[TitleScreenController][displayLeaderboard()] title screen view set to not visible ");
+        //create new leaderboard view instance
+        LeaderboardView leaderboardView = new LeaderboardView();
+        window.add(leaderboardView);
+        leaderboardView.setBounds(0, 0, ScreenSettings.SCREEN_WIDTH , ScreenSettings.SCREEN_HEIGHT);
+        leaderboardView.setVisible(true);
+        leaderboardView.requestFocusInWindow();
+        window.repaint();
+        System.out.println("[TitleScreenController][displayLeaderboard()] leaderboard view set to visible ");
+
+        //connect the controller
+        LeaderboardViewController leaderboardViewController = new LeaderboardViewController(window, leaderboardView);
+        leaderboardView.addKeyListener(leaderboardViewController);
+
+
+
+
     }
 
 
