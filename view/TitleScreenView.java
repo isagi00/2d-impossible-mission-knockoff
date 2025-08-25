@@ -65,11 +65,15 @@ public class TitleScreenView extends JPanel {
     }
 
     public void selectNextOption() {
-        selectedOption = (selectedOption + 1) % options.length;
+        if (selectedOption != options.length - 1) {
+            selectedOption = (selectedOption + 1) % options.length;
+        }
     }
 
     public void selectPreviousOption() {
-        selectedOption = (selectedOption - 1) % options.length;
+        if (selectedOption != 0) {
+            selectedOption = (selectedOption - 1) % options.length;
+        }
     }
 
     public String getSelectedOption() {

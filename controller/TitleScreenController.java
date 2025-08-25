@@ -83,7 +83,9 @@ public class TitleScreenController implements KeyListener {
         //load game view components
         GameView gameView = new GameView(player, tileManager, levelManager, window);
         PauseMenuView pauseMenuView = new PauseMenuView();
-        WhatsYourNameView whatsYourNameView = new WhatsYourNameView();
+
+
+//        WhatsYourNameView whatsYourNameView = new WhatsYourNameView();
 
         //result screen view
         ResultScreenView resultScreenView = new ResultScreenView(player);
@@ -105,17 +107,17 @@ public class TitleScreenController implements KeyListener {
 
         gameView.setBounds(0,0 , window.getWidth(), window.getHeight());
         pauseMenuView.setBounds(0,0 , window.getWidth(), window.getHeight());
-        whatsYourNameView.setBounds(0,0 , window.getWidth(), window.getHeight());
+//        whatsYourNameView.setBounds(0,0 , window.getWidth(), window.getHeight());
 
 
         layeredPane.add(gameView, JLayeredPane.DEFAULT_LAYER);
         layeredPane.add(pauseMenuView, JLayeredPane.PALETTE_LAYER);
         layeredPane.add(resultScreenView, JLayeredPane.MODAL_LAYER);
-        layeredPane.add(whatsYourNameView, JLayeredPane.POPUP_LAYER);
+//        layeredPane.add(whatsYourNameView, JLayeredPane.POPUP_LAYER);
 
 
         pauseMenuView.setVisible(false);
-        whatsYourNameView.setVisible(true);
+//        whatsYourNameView.setVisible(true);
 
 
         gameView.setResultScreenView(resultScreenView);
@@ -125,14 +127,26 @@ public class TitleScreenController implements KeyListener {
         pauseMenuView.addKeyListener(pauseMenuController);
         GameKeyListener gameKeyListener = new GameKeyListener(gameController, inputHandler, gameView,pauseMenuView, window);
         gameView.addKeyListener(gameKeyListener);
-        WhatsYourNameController whatsYourNameController = new WhatsYourNameController(whatsYourNameView, gameView);
-        whatsYourNameView.addKeyListener(whatsYourNameController);
-        whatsYourNameView.requestFocusInWindow();
+//        WhatsYourNameController whatsYourNameController = new WhatsYourNameController(whatsYourNameView, gameView);
+//        whatsYourNameView.addKeyListener(whatsYourNameController);
+//        whatsYourNameView.requestFocusInWindow();
 //        gameView.requestFocusInWindow();
 
         //load current level
-        if(playTutorial) levelManager.initializeTutorialLayout();
-        else levelManager.initializeWorldLayout();
+        if(playTutorial) {
+            levelManager.initializeTutorialLayout();
+            gameView.requestFocusInWindow();
+        }
+        else {
+            levelManager.initializeWorldLayout();
+            WhatsYourNameView whatsYourNameView = new WhatsYourNameView();
+            whatsYourNameView.setBounds(0,0 , window.getWidth(), window.getHeight());
+            layeredPane.add(whatsYourNameView, JLayeredPane.POPUP_LAYER);
+            whatsYourNameView.setVisible(true);
+            WhatsYourNameController whatsYourNameController = new WhatsYourNameController(whatsYourNameView, gameView);
+            whatsYourNameView.addKeyListener(whatsYourNameController);
+            whatsYourNameView.requestFocusInWindow();
+        }
         levelManager.loadCurrentRoom();
 
         System.out.println("[TitleScreenController][startMainGame()] window focus owner: " + window.getFocusOwner());
