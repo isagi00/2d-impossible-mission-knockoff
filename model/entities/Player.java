@@ -117,6 +117,31 @@ public class Player extends Entity implements Observer {
 
         //player movement, gravity, climbing, interactions logic
         if (!gameOver) {                //if player is alive
+            showingInteractionPrompt = updateCurrentInteractable();
+
+
+            //computer menu navigation (if the menu is visible, the player won't be able to move
+            if (currentInteractable instanceof Computer computer && computer.getIsMenuVisible()){
+//                System.out.println("current interactable: " + currentInteractable);
+//                System.out.println("DEBUG: Menu is visible, selected option: " + computer.getSelectedMenuOption());
+//                System.out.println("computer .getismenuvisible()" + computer.getIsMenuVisible());
+                if (upArrowPressed) {
+                    computer.navigateMenuUp();
+                    System.out.println("menu up : player update()");
+                }
+                if (downArrowPressed) {
+                    computer.navigateMenuDown();
+                    System.out.println("menu down : player update()");
+                }
+                if (enterPressed) {
+                    computer.selectMenuOption(this);
+                    computer.cancelMenu();  //after selecting an option close the menu
+                }
+                return; //return here early, so all the movement logic gets skipped
+            }
+
+
+
 
             //apply gravity to the player
             verticalSpeed += GRAVITY;
@@ -220,25 +245,8 @@ public class Player extends Entity implements Observer {
                 }
             }
 
-            //computer menu navigation
-            if (currentInteractable instanceof Computer computer && computer.getIsMenuVisible()){
-//                System.out.println("current interactable: " + currentInteractable);
-//                System.out.println("DEBUG: Menu is visible, selected option: " + computer.getSelectedMenuOption());
-//                System.out.println("computer .getismenuvisible()" + computer.getIsMenuVisible());
-                if (upArrowPressed) {
-                    computer.navigateMenuUp();
-                    System.out.println("menu up : player update()");
-                }
-                if (downArrowPressed) {
-                    computer.navigateMenuDown();
-                    System.out.println("menu down : player update()");
-                }
-                if (enterPressed) {
-                    computer.selectMenuOption(this);
-                    computer.cancelMenu();  //after selecting an option close the menu
-                }
-            }
         }
+
         //player reset handling
         if(gameOver) {      //if player dies, then reset to last checkpoint after waiting 2 seconds
             isMoving = false;

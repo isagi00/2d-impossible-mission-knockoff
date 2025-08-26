@@ -31,13 +31,13 @@ public class Computer extends InteractableObject{
 
 
     public void navigateMenuUp(){
-        if(isMenuVisible && menuOptions.length > 0){
+        if(isMenuVisible && selectedMenuOption > 0){
             selectedMenuOption = (selectedMenuOption - 1) % menuOptions.length;
         }
     }
 
     public void navigateMenuDown(){
-        if(isMenuVisible){
+        if(isMenuVisible && selectedMenuOption < menuOptions.length - 1){
             selectedMenuOption = (selectedMenuOption + 1) % menuOptions.length;
         }
     }

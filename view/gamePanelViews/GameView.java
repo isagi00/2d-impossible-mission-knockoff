@@ -142,7 +142,7 @@ public class GameView extends JPanel {
         if(levelManager.getCurrentRoom().getTutorialText() != null){       //load the text only if there is one, prevents null pointer exception
             String text = levelManager.getCurrentRoom().getTutorialText();
             g2d.setFont(tutorialTextFont);
-            g2d.setColor(Color.WHITE);
+            g2d.setColor(Color.MAGENTA);
             g2d.drawString(text,  50, 100 );
         }
 
