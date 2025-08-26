@@ -1,13 +1,15 @@
 package controller;
 
+import view.AudioManager;
 import view.gamePanelViews.LeaderboardView;
 import view.gamePanelViews.TitleScreenView;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Observable;
 
-public class LeaderboardViewController implements KeyListener {
+public class LeaderboardViewController extends Observable implements KeyListener{
 
     private LeaderboardView leaderboardView;
     private JFrame window;
@@ -15,6 +17,9 @@ public class LeaderboardViewController implements KeyListener {
     public LeaderboardViewController(JFrame window, LeaderboardView leaderboardView) {
         this.window = window;
         this.leaderboardView = leaderboardView;
+
+
+        this.addObserver(AudioManager.getInstance());
     }
 
     @Override
@@ -26,6 +31,11 @@ public class LeaderboardViewController implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             backToMainMenu();
+
+            setChanged();
+            notifyObservers("menu enter");
+            clearChanged();
+
         }
     }
 

@@ -1,15 +1,17 @@
 package controller;
 
 
+import view.AudioManager;
 import view.gamePanelViews.GameView;
 import view.gamePanelViews.PauseMenuView;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Observable;
 
 //handles in game controls and pause game toggling
-public class GameKeyListener implements KeyListener {
+public class GameKeyListener extends Observable implements KeyListener {
     private final GameController gameController;
     private final InputHandler inputHandler;
     private final GameView gameView;
@@ -22,6 +24,8 @@ public class GameKeyListener implements KeyListener {
         this.gameView = gameView;
         this.pauseMenuView = pauseMenuView;
         this.window = window;
+
+        this.addObserver(AudioManager.getInstance());
     }
 
 
@@ -35,6 +39,10 @@ public class GameKeyListener implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE && gameController.getGameState() == GameController.GameState.PLAYING) {
             gameController.togglePause();
             inputHandler.resetAllKeys();
+
+            setChanged();
+            notifyObservers("esc pressed");
+            clearChanged();
 
             gameView.setFocusable(false);
 

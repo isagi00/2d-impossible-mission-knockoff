@@ -1,6 +1,8 @@
 package view;
 
-import controller.TitleScreenController;
+import controller.*;
+import model.Leaderboard;
+import view.gamePanelViews.LeaderboardView;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -16,7 +18,7 @@ public class AudioManager implements Observer {
 
 
     private AudioManager() {        //load all sound fx when creating this audio manager instance
-        soundEffects = new ConcurrentHashMap<>();
+        soundEffects = new HashMap<>();
         loadSoundEffects();
     }
 
@@ -46,6 +48,56 @@ public class AudioManager implements Observer {
                     break;
             }
         }
+        else if (o instanceof LeaderboardViewController){
+            switch((String)(arg)){
+                case "menu enter":
+                    playSound("menu enter");
+                    System.out.println("[AudioManager] played menu enter sound effect");
+                    break;
+            }
+        }
+
+        else if (o instanceof WhatsYourNameController){
+            switch((String)(arg)){
+                case "enter pressed":
+                    playSound("menu enter");
+                    System.out.println("[AudioManager] played name submitted sound effect");
+                    break;
+                case "key typed":
+                    playSound("entered char");
+                    System.out.println("[AudioManager] played key typed sound effect");
+                    break;
+                case "backspace pressed":
+                    playSound("deleted char");
+                    System.out.println("[AudioManager] played backspace pressed sound effect");
+                    break;
+            }
+        }
+
+        else if (o instanceof PauseMenuController){
+            switch((String)(arg)){
+                case "menu up":
+                    playSound("menu up");
+                    System.out.println("[AudioManager] played menu up sound effect");
+                    break;
+                case "menu down":
+                    playSound("menu down");
+                    System.out.println("[AudioManager] played menu down sound effect");
+                    break;
+                case "menu enter":
+                    playSound("menu enter");
+                    System.out.println("[AudioManager] played menu enter sound effect");
+                    break;
+            }
+        }
+        else if (o instanceof GameKeyListener){
+            switch((String)(arg)){
+                case "esc pressed":
+                    playSound("deleted char");
+                    System.out.println("[AudioManager] played esc pressed sound effect");
+                    break;
+            }
+        }
 
     }
 
@@ -58,6 +110,7 @@ public class AudioManager implements Observer {
         //enter name sounds
         loadSound("entered char", "sounds/enteredchar.wav");
         loadSound("deleted char", "sounds/deletedchar.wav");
+
     }
 
 
@@ -71,9 +124,9 @@ public class AudioManager implements Observer {
             }
             AudioInputStream ais = AudioSystem.getAudioInputStream(soundurl);   //this creates audio stream from the url does the heavy lifting hell yea
             ais.mark(Integer.MAX_VALUE);        // mark the start of the audio...
-            List<Clip> audioClips = new ArrayList<>(3);         //MAX 3 INSTANCES OF THE SAME AUDIOCLIP
+            List<Clip> audioClips = new ArrayList<>(5);         //MAX 5 INSTANCES OF THE SAME AUDIO CLIP
 
-            for (int i = 0; i < 5; i ++){       //pre load multiple instantces of the same clip under the same name, so that if player spams a key audio still gets reproduced
+            for (int i = 0; i < 5; i ++){       //pre-load multiple instances of the same clip under the same name, so that if player spams a key audio still gets reproduced
                 ais.reset();            //... and reset back to it
                 Clip audioClip = AudioSystem.getClip();  //creates the audio 'clip' and opens it
                 audioClip.open(ais);
@@ -95,7 +148,7 @@ public class AudioManager implements Observer {
         new Thread(() -> {
             //without creating a new thread, the audio would freeze the game thread, so that even in the title screen
             //the game would freeze for around 200ms when navigating the menu.
-            //by creating new little threads when the audio plays, there is no game thread freezing anymore... pretty interesting ngl
+            //by creating new little threads when the audio plays, there is no game thread freezing anymoreì
             List<Clip> audioClips = soundEffects.get(soundName);
 
             Clip availableClip = null ;         //start with no availableClip clip
@@ -106,7 +159,7 @@ public class AudioManager implements Observer {
                 }
             }
 
-            //if all the different instatnce of the same sound are occupied then just dont play the sound xd
+            //if all the different instatnce of the same sound are occupied then just dont play the sound
             if (availableClip == null){
                 return;
             }

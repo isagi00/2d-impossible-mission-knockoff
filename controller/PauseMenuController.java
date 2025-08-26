@@ -1,5 +1,6 @@
 package controller;
 
+import view.AudioManager;
 import view.gamePanelViews.GameView;
 import view.gamePanelViews.PauseMenuView;
 import view.gamePanelViews.TitleScreenView;
@@ -7,8 +8,9 @@ import view.gamePanelViews.TitleScreenView;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Observable;
 
-public class PauseMenuController implements KeyListener{
+public class PauseMenuController extends Observable implements KeyListener{
     private final JFrame window;
     private final PauseMenuView pauseMenuView;
     private final GameView gameView;
@@ -19,6 +21,8 @@ public class PauseMenuController implements KeyListener{
         this.pauseMenuView = pauseMenuView;
         this.gameView = gameView;
         this.gameController = gameController;
+
+        this.addObserver(AudioManager.getInstance());
     }
 
 
@@ -36,13 +40,27 @@ public class PauseMenuController implements KeyListener{
             case KeyEvent.VK_UP:
                 pauseMenuView.selectPreviousOption();
                 pauseMenuView.repaint();
+
+                setChanged();
+                notifyObservers("menu up");
+                clearChanged();
+
                 break;
             case KeyEvent.VK_DOWN:
                 pauseMenuView.selectNextOption();
                 pauseMenuView.repaint();
+
+                setChanged();
+                notifyObservers("menu down");
+                clearChanged();
+
                 break;
             case KeyEvent.VK_ENTER:
                 handleEnterInput();
+
+                setChanged();
+                notifyObservers("menu enter");
+                clearChanged();
                 break;
         }
     }

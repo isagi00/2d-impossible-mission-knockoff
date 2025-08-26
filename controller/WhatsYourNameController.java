@@ -1,12 +1,14 @@
 package controller;
 
+import view.AudioManager;
 import view.gamePanelViews.GameView;
 import view.gamePanelViews.WhatsYourNameView;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Observable;
 
-public class WhatsYourNameController implements KeyListener {
+public class WhatsYourNameController extends Observable implements KeyListener {
 
     private WhatsYourNameView whatsYourNameView;
     private StringBuilder currentName;
@@ -22,6 +24,8 @@ public class WhatsYourNameController implements KeyListener {
         this.gameView = gameView;
         currentName = new StringBuilder();
         maxNameLength = 7;
+
+        this.addObserver(AudioManager.getInstance());
     }
 
 
@@ -32,6 +36,11 @@ public class WhatsYourNameController implements KeyListener {
             if (currentName.length() <= maxNameLength){
                 currentName.append(c);
                 whatsYourNameView.updateNameDisplay(currentName.toString()); //update the view at each letter typed in
+
+                setChanged();
+                notifyObservers("key typed");
+                clearChanged();
+
             }
         }
         e.consume();
@@ -45,11 +54,19 @@ public class WhatsYourNameController implements KeyListener {
             this.submittedName = currentName.toString();
             whatsYourNameView.setVisible(false);
             gameView.requestFocusInWindow();
+
+            setChanged();
+            notifyObservers("enter pressed");
+            clearChanged();
         }
 
         if (code == KeyEvent.VK_BACK_SPACE && !currentName.isEmpty()){
             currentName.deleteCharAt(currentName.length() - 1);
             whatsYourNameView.updateNameDisplay(currentName.toString());
+
+            setChanged();
+            notifyObservers("backspace pressed");
+            clearChanged();
         }
 
     }

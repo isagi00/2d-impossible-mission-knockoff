@@ -22,11 +22,15 @@ public class PauseMenuView extends JPanel{
     }
 
     public void selectNextOption(){
-        selectedOption = (selectedOption + 1) %  OPTIONS.length;
+        if (selectedOption < OPTIONS.length - 1){
+            selectedOption = (selectedOption + 1) %  OPTIONS.length;
+        }
     }
 
     public void selectPreviousOption(){
-        selectedOption = (selectedOption - 1) %  OPTIONS.length;
+        if (selectedOption > 0){
+            selectedOption = (selectedOption - 1) %  OPTIONS.length;
+        }
     }
 
     public String getSelectedOption(){
