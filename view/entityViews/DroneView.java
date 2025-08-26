@@ -31,6 +31,8 @@ public class DroneView implements Observer {
     private int spriteCounter = 0;
     private int spriteNum  = 0;
 
+    private boolean wasDisabled = false;
+
 
     public DroneView(Drone drone) {
         this.drone = drone;
@@ -109,34 +111,39 @@ public class DroneView implements Observer {
 
     private void updateFrameCounter(){
         spriteCounter++;
-        if (drone.getIsIdle()){
-            // idle animation
-            spriteCounter++;
-            if (spriteCounter  >= 30) {     //slower than running animation
-                spriteNum = (spriteNum % 4) + 1; //cycle through 4 idle frames
-                spriteCounter = 0;
-            }
+
+        //check if drone just became disabled
+        if (drone.getIsDisabled() && !wasDisabled){
+            spriteNum = 1; //start from first frame
+            spriteCounter = 0;
+            wasDisabled = true;
         }
 
-        if(drone.getIsMoving()){
-            //moving animation
-            spriteCounter++;
-            if (spriteCounter  >= 8) {     //slower than running animation
-                spriteNum = (spriteNum % 6) + 1; //cycle through 4 idle frames
-                spriteCounter = 0;
-            }
-        }
 
         if (drone.getIsDisabled()){
-            spriteCounter++;
-            if (spriteCounter  >= 5) {
+            if (spriteCounter  >= 15) {
                 spriteNum = spriteNum + 1;
                 spriteCounter = 0;
                 if (spriteNum >= 6) {
                     spriteNum = 6;
                 }
             }
+        }
 
+        else if (drone.getIsIdle()){
+            // idle animation   (unused becuase had to implement different behaviour. it is here tho)
+            if (spriteCounter  >= 30) {     //slower than running animation
+                spriteNum = (spriteNum % 4) + 1; //cycle through 4 idle frames
+                spriteCounter = 0;
+            }
+        }
+
+        else if(drone.getIsMoving()){
+            //moving animation
+            if (spriteCounter  >= 6) {     //slower than running animation
+                spriteNum = (spriteNum % 6) + 1; //cycle through 4 idle frames
+                spriteCounter = 0;
+            }
         }
 
     }

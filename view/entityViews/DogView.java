@@ -27,6 +27,9 @@ public class DogView implements Observer {
     private int spriteCounter = 0;
     private int spriteNum = 0;
 
+    //display the dog disabled animation from 0
+    private boolean wasDisabled = false;
+
     public DogView(Dog dog) {
         this.dog = dog;
         loadSprites();
@@ -84,9 +87,28 @@ public class DogView implements Observer {
     }
 
     private void updateFrameCounter(){
-        spriteCounter++;
+        spriteCounter++;        //increment once per frame
+
+        //check if dog just became disabled
+        if (dog.getIsDisabled() && !wasDisabled){
+            spriteNum = 1; //start from first frame
+            spriteCounter = 0;
+            wasDisabled = true;
+        }
+
+        //dog disabled animation
+        if (dog.getIsDisabled()){
+            if (spriteCounter > 15){
+                if (spriteNum < 6){    //keep the dog in the last disabled frame
+                    spriteNum++;
+                }
+                spriteCounter = 0;
+            }
+        }
+
+
         //idle animation
-        if (dog.getIsIdle()){
+        else if (dog.getIsIdle()){
             spriteCounter++;
             if (spriteCounter > 30){
                 spriteNum = (spriteNum % 4) + 1;
@@ -95,24 +117,16 @@ public class DogView implements Observer {
         }
 
         //running animation
-        if (dog.getIsMoving()){
+        else if (dog.getIsMoving()){
             spriteCounter++;
-            if (spriteCounter > 8){
+            if (spriteCounter > 10){
                 spriteNum = (spriteNum % 6) + 1;
                 spriteCounter = 0;
             }
         }
 
-        //dog disabled animation
-        if (dog.getIsDisabled()){
-            spriteCounter++;
-            if (spriteCounter > 5){
-                spriteNum = spriteNum+ 1;
-                spriteCounter = 0;
-                if (spriteNum >= 6){    //keep the dog in the last disabled frame
-                    spriteNum = 6;
-                }
-            }
+        else{
+            spriteCounter = 0;  //reset the counter if not in any animation frame
         }
     }
 
@@ -146,7 +160,6 @@ public class DogView implements Observer {
         g2d.drawString("dog direction: " + dog.getDirection(), dog.getX(), dog.getY() - 10);
         g2d.drawString("current patrol position: " + dog.getCurrentPatrolPosition(), dog.getX(), dog.getY() - 20);
         g2d.drawString("wall in front: " + dog.getWallInFront(), dog.getX(), dog.getY() - 30);
-        g2d.drawString("[ground ahead] " + dog.getGroundAhead(), dog.getX(), dog.getY() - 70);
         g2d.drawString("is chasing: " + dog.getIsChasing(), dog.getX(), dog.getY() - 40);
 
 
@@ -156,6 +169,8 @@ public class DogView implements Observer {
         g2d.drawOval(dog.getX(), dog.getY(), 3, 3);
 
         g2d.drawString("dog width, height: " + dog.getWidth() + " " + dog.getHeight(), dog.getX(), dog.getY() - 60);
+        g2d.drawString("[ground ahead] " + dog.getGroundAhead(), dog.getX(), dog.getY() - 70);
+        g2d.drawString("[idle time]" + dog.getWaitTime(), dog.getX(), dog.getY() - 80);
 
 
         //bottom right corner of the dog

@@ -15,6 +15,8 @@ public class Dog extends Entity {
     private int CHASE_RANGE = ScreenSettings.TILE_SIZE * 3;
     private final int MAX_VERTICAL_DISTANCE = ScreenSettings.TILE_SIZE;
     private int PATROL_RANGE;
+    private int WAIT_TIME = 180;
+    private int waitCounter = 0;
     private int currentPatrolPosition = 0;
 
     //dog states
@@ -25,6 +27,7 @@ public class Dog extends Entity {
     private boolean movingRight = true;
     private boolean wallInFront = false;
     private boolean groundAhead;
+    private boolean isWaiting = false;
 
 
     public Dog(int x, int y, Player player, LevelManager levelManager) {
@@ -39,6 +42,16 @@ public class Dog extends Entity {
     }
 
     public void update(){
+
+        if(isWaiting){
+            waitCounter--;
+            if(waitCounter <= 0){   //if finished waiting
+                isWaiting = false;
+                isIdle = false;     //resume movement after waiting
+            }
+            return;         //pause the update method here when the dog is waiting
+        }
+
         if (!player.getGameOver()) {
             if (checkCollisionWithPlayer()) {
                 System.out.println("[Dog][update()]setting game over to true on player. checkCollisionWithPlayer()");
@@ -115,15 +128,16 @@ public class Dog extends Entity {
                 currentPatrolPosition ++;
             }
             else{
+                startWaiting();     //when changin direction, wait for a little bit before turning
                 setDirection("left");
                 isChasing = false;
-                isMoving = true;
-                isIdle = false;
+                isMoving = false;
+                isIdle = true;
                 movingRight = false;
                 currentPatrolPosition --;
             }
         }
-        if (!movingRight){  //moving left
+        else{  //moving left
             int newX = getX() - chaseSpeed;
 
             int groundCheckX = newX + 5;
@@ -143,10 +157,11 @@ public class Dog extends Entity {
                 currentPatrolPosition --;
             }
             else{
+                startWaiting();      //when stopping, wait for a little bit
                 setDirection("right");
                 isChasing = false;
-                isMoving = true;
-                isIdle = false;
+                isMoving = false;
+                isIdle = true;
                 movingRight = true;
                 currentPatrolPosition ++;
             }
@@ -175,14 +190,16 @@ public class Dog extends Entity {
                     currentPatrolPosition++;
                 }
                 else{   //found a wall or edge
+                    startWaiting();     //start waiting for a lil bit
                     movingRight = false;
                 }
             }
             else{   //reached max patrol range
+                startWaiting();         //wait for lil
                 movingRight = false;
             }
         }
-        if (!movingRight){
+        else{
             if (currentPatrolPosition > 0){
                 int newX = getX() - SPEED;
 
@@ -204,14 +221,26 @@ public class Dog extends Entity {
                     currentPatrolPosition --;
                 }
                 else{       //wall or edge
+                    startWaiting();     //wait for a lil
+                    isIdle = true;
                     movingRight = true;
                 }
             }
             else{   //reached the starting point to the left
+                startWaiting();     //wait
+                isIdle = true;
                 movingRight = true;
             }
         }
     }
+
+    private void startWaiting(){
+       isWaiting = true;
+       waitCounter = WAIT_TIME;
+       isIdle = true;
+       isMoving = false;
+    }
+
 
     /**
      * checks if a single point is on a solid tile
@@ -263,6 +292,10 @@ public class Dog extends Entity {
     }
     public boolean getGroundAhead(){
         return groundAhead;
+    }
+
+    public int getWaitTime(){
+        return WAIT_TIME;
     }
 
     public void deactivate(){

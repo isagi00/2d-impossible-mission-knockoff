@@ -32,6 +32,8 @@ public class PlayerView  implements Observer {
     private int spriteCounter;
     private int spriteNum;
 
+    private boolean wasJumping;
+
 
     public PlayerView(Player player) {
         this.player = player;
@@ -48,6 +50,15 @@ public class PlayerView  implements Observer {
 //  MOVES FORWARD THE SPRITES
 //
     private void updateFrameCounter() {
+        spriteCounter++;
+
+        if (player.getIsJumping() && !wasJumping) {
+            spriteNum = 1;  //reset to the first jump frame
+            spriteCounter = 0;  //reset the counter
+        }
+        wasJumping = player.getIsJumping();
+
+
 
         //GAME OVER
         boolean isGameOver = player.getGameOver();
@@ -57,31 +68,26 @@ public class PlayerView  implements Observer {
         }
         wasGameOver = isGameOver;
         if(isGameOver) {
-            spriteCounter++;        //tracks how many frames have passed.
             if (spriteCounter >= 8) {       //every 4 frames, updates the spritenumber. (higher = lower speed)
                 if(spriteNum < 9) {
                     spriteNum = spriteNum + 1;    //cycles through the sprites.       total sprites = 8
                 }
                 spriteCounter = 0;
             }
-            return;
         }
 
         // climbing animation
-        if(player.getIsClimbing()){
-            spriteCounter++;
+        else if(player.getIsClimbing()){
             if (spriteCounter >= 12) {   //animation speed
                 spriteNum = (spriteNum % 4) + 1;        //total frames
                 spriteCounter = 0;
             }
-            return;
         }
 
 
         //jumping animation
-        if (player.getIsJumping()) {
-            spriteCounter++;
-            if (spriteCounter >= 20) {
+        else if (player.getIsJumping()) {
+            if (spriteCounter >= 9) {
                 spriteNum = (spriteNum % 8) + 1;
                 spriteCounter = 0;
             }
@@ -89,18 +95,15 @@ public class PlayerView  implements Observer {
 
 
         // running animation
-        if (player.getIsMoving()) {
-            spriteCounter++;
+        else if (player.getIsMoving()) {
             if (spriteCounter >= 6) {
                 spriteNum = (spriteNum % 6) + 1;    //4 running frames
                 spriteCounter = 0;
             }
-            return;
         }
 
-        // idle animation
-        spriteCounter++;
-        if (spriteCounter  >= 30) {     //slower than running animation
+        // idle animation (initially didnt put a boolean to track the player idle state...
+        else if (spriteCounter  >= 23) {     //slower than running animation
             spriteNum = (spriteNum % 4) + 1; //cycle through 4 idle frames
             spriteCounter = 0;
         }

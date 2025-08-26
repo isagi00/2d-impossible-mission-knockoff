@@ -223,7 +223,9 @@ public class ScoreTracker implements Observer {
         }
         String name = WhatsYourNameController.getSubmittedName();
         //after calculating the gran total points, add the points to the leaderboard.
-        leaderboard.addScore(name, total);        //foken beautiful, it only gets added once, thought it would add multiple times
+        if (name != null) {     // dont add to leaderboard if the tutorial was played.
+            leaderboard.addScore(name, total);        //foken beautiful, it only gets added once, thought it would add multiple times
+        }
         System.out.println("[ScoreTracker][getGrandTotalPoints] added points to leaderboard:  " + name + " " + total );
         return total;
     }
