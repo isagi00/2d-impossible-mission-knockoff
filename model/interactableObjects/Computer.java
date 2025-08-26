@@ -8,8 +8,8 @@ public class Computer extends InteractableObject{
     private boolean isBeingAccessed = false;
     private boolean isMenuVisible = false;
     private String[] menuOptions = {
-            "deactivate enemies",
-            "quit"
+            "deactivate drones",
+            "deactivate dogs"
     };
 
     private int selectedMenuOption = 0;
@@ -23,7 +23,7 @@ public class Computer extends InteractableObject{
 
     @Override
     public void interact(Player player) {
-       System.out.println("Computer -> interact(player) : player accessing computer ");
+//       System.out.println("[Computer][interact(player)] : player accessing computer ");
        isBeingAccessed = true;
        isMenuVisible = true;
        selectedMenuOption = 0;
@@ -46,12 +46,13 @@ public class Computer extends InteractableObject{
         if (!isMenuVisible) return;
         switch (selectedMenuOption) {
             case 0:
-                System.out.println("Computer -> selectMenuOption(Player): selected menu option 0: deactivate enemies");
-                player.getLevelManager().getCurrentRoom().deactivateAllEnemies();
+                System.out.println("[Computer][selectMenuOption(Player)]: selected menu option 0: deactivate drones");
+                player.getLevelManager().getCurrentRoom().deactivateAllDrones();
                 break;
             case 1:
-                System.out.println("Computer -> selectMenuOption(Player): selected menu option 1: other ....");
-//                player.getLevelManager().getCurrentRoom()...
+                System.out.println("[Computer][selectMenuOption(Player)]: selected menu option 1: deactivate dogs");
+                player.getLevelManager().getCurrentRoom().deactivateAllDogs();
+                break;
         }
     }
 

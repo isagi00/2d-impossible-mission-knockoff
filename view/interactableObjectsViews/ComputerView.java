@@ -16,7 +16,7 @@ public class ComputerView {
     Computer computer;
 
     private int MENU_WIDTH = 300;
-    private int MENU_HEIGHT = 150;
+    private int MENU_HEIGHT = 90;
 
     private Font menuFont;
 
@@ -81,10 +81,10 @@ public class ComputerView {
         int menuY = computer.getY() - computer.getHeight() - 40;
 
         //menu background
-        g2d.setColor(new Color(0,0,0, 220));    //semi transparent
+        g2d.setColor(new Color(0,0,0, 120));    //semi transparent
         g2d.fillRoundRect(menuX, menuY, MENU_WIDTH, MENU_HEIGHT,10,10);
 
-        //BORDER?
+        //menu border
         g2d.setColor(Color.WHITE);
         g2d.drawRoundRect(menuX, menuY, MENU_WIDTH, MENU_HEIGHT,10,10);
 
@@ -99,10 +99,10 @@ public class ComputerView {
         g2d.drawString(other, menuX + 45 , menuY + 65);
         //currently selected option
         if(computer.getSelectedMenuOption() == 0){
-            g2d.drawString(">", menuX + 15 , menuY + 45);
+            g2d.drawString(">>", menuX + 15 , menuY + 45);
         }
         if(computer.getSelectedMenuOption() == 1){
-            g2d.drawString(">", menuX + 15 , menuY + 65);
+            g2d.drawString(">>", menuX + 15 , menuY + 65);
         }
 
         g2d.setFont(originalFont);

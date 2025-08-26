@@ -102,11 +102,22 @@ public class Room {
 
 
 
-    public void deactivateAllEnemies() {
+    public void deactivateAllEnemies() {        //used to deactivate all enemies.
         for(Drone drone: drones) {
             drone.deactivate();
         }
+        for (Dog dog: dogs) {
+            dog.deactivate();
+        }
+    }
 
+    public void deactivateAllDrones(){
+        for(Drone drone: drones) {
+            drone.deactivate();
+        }
+    }
+
+    public void deactivateAllDogs(){
         for (Dog dog: dogs) {
             dog.deactivate();
         }
