@@ -176,27 +176,20 @@ public class DroneView implements Observer {
 
         //drone hitbox
         g2d.setColor(Color.GREEN);
-        g2d.drawRect(drone.getX() + 5, drone.getY() + 15, drone.getWidth() - 10, drone.getHeight() - 15);
+        g2d.drawRect(drone.getX() + 10, drone.getY() + 25, drone.getWidth() - 20, drone.getHeight() - 25);
+
+        g2d.drawImage(drone.getIsChasing() ? chasing : notChasing, drone.getX() + 10, drone.getY() - 20, null);
 
         //info
         g2d.drawString("drone direction: " + drone.getDirection(), drone.getX(), drone.getY() - 10);
         g2d.drawString("current patrol position: " + drone.getCurrentPatrolPosition(), drone.getX(), drone.getY() - 20);
         g2d.drawString("wall in front: " + drone.getWallInFront(), drone.getX(), drone.getY() - 30);
         g2d.drawString("is chasing: " + drone.getIsChasing(), drone.getX(), drone.getY() - 40);
-
-
-        g2d.setColor(Color.WHITE);
         g2d.drawString("x: " + drone.getX() + "y:" + drone.getY(), drone.getX(), drone.getY() - 50);
-
-        g2d.drawOval(drone.getX(), drone.getY(), 3, 3);
-
         g2d.drawString("drone width, height: " + drone.getWidth() + " " + drone.getHeight(), drone.getX(), drone.getY() - 60);
-
-
-        //bottom right corner of the drone
-        g2d.drawOval(drone.getX() + drone.getWidth(), drone.getY() + drone.getHeight(), 5, 5);
-        //bottom left corner of the drone
-        g2d.drawOval(drone.getX(), drone.getY() + drone.getHeight(), 5, 5);
+        g2d.drawOval(drone.getX(), drone.getY(), 3, 3);
+        g2d.drawOval(drone.getX() + drone.getWidth(), drone.getY() + drone.getHeight(), 5, 5); //bottom right corner of the drone
+        g2d.drawOval(drone.getX(), drone.getY() + drone.getHeight(), 5, 5); //bottom left corner of the drone
 
     }
 

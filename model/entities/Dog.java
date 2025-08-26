@@ -12,7 +12,7 @@ public class Dog extends Entity {
 
     //dog constants
     private int SPEED = 4;
-    private int CHASE_RANGE = ScreenSettings.TILE_SIZE * 3;
+    private int CHASE_RANGE = ScreenSettings.TILE_SIZE * 5;
     private final int MAX_VERTICAL_DISTANCE = ScreenSettings.TILE_SIZE;
     private int PATROL_RANGE;
     private int WAIT_TIME = 180;
@@ -96,13 +96,14 @@ public class Dog extends Entity {
 
 
     private boolean checkCollisionWithPlayer(){
-        Rectangle dogHitBox = new Rectangle(getX() + 10, getY() + 50, getWidth() - 20, getHeight() - 50);
+        Rectangle dogHitBox = new Rectangle(getX() + 20, getY() + 65, getWidth() - 40, getHeight() - 65);
+
         Rectangle playerHitbox = new Rectangle(player.getX() + 10, player.getY() + 3, player.getWidth() - 20, player.getHeight());
         return dogHitBox.intersects(playerHitbox);
     }
 
     private void chasePlayer(){
-        int chaseSpeed = SPEED * 2;
+        int chaseSpeed = (int) (SPEED * 1.7);
 
         if (getDirection().equals("right")){
             movingRight = true;

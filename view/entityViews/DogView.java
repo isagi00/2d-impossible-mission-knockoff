@@ -23,6 +23,9 @@ public class DogView implements Observer {
     private BufferedImage idleR1, idleR2, idleR3, idleR4;
     private BufferedImage idleL1, idleL2, idleL3, idleL4;
 
+    //chasing indicators
+    private BufferedImage chasing, notchasing;
+
     //used for cycling the sprites
     private int spriteCounter = 0;
     private int spriteNum = 0;
@@ -76,6 +79,9 @@ public class DogView implements Observer {
             idleL2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/idleL2.png"));
             idleL3 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/idleL3.png"));
             idleL4 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/idleL4.png"));
+
+            chasing = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/chasing.png"));
+            notchasing = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/notchasing.png"));
 
             System.out.println("[DogView] loaded dog sprites");
         }
@@ -147,13 +153,15 @@ public class DogView implements Observer {
         }
 
         g2d.drawImage(image, dog.getX(), dog.getY(), dog.getWidth(), dog.getHeight(), null);
+        g2d.drawImage(dog.getIsChasing() ? chasing : notchasing, dog.getX() + 30, dog.getY() + 20, null);
 
         //sprite size
         g2d.setColor(Color.BLACK);
         g2d.drawRect(dog.getX(), dog.getY(), dog.getWidth(), dog.getHeight());
+
         //actual hitbox size
         g2d.setColor(Color.GREEN);
-        g2d.drawRect(dog.getX() + 10, dog.getY() + 50, dog.getWidth() - 20, dog.getHeight() - 50);
+        g2d.drawRect(dog.getX() + 20, dog.getY() + 65, dog.getWidth() - 40, dog.getHeight() - 65);
 
         g2d.setColor(Color.GREEN);
         //info
@@ -161,22 +169,14 @@ public class DogView implements Observer {
         g2d.drawString("current patrol position: " + dog.getCurrentPatrolPosition(), dog.getX(), dog.getY() - 20);
         g2d.drawString("wall in front: " + dog.getWallInFront(), dog.getX(), dog.getY() - 30);
         g2d.drawString("is chasing: " + dog.getIsChasing(), dog.getX(), dog.getY() - 40);
-
-
         g2d.setColor(Color.WHITE);
         g2d.drawString("x: " + dog.getX() + "y:" + dog.getY(), dog.getX(), dog.getY() - 50);
-
         g2d.drawOval(dog.getX(), dog.getY(), 3, 3);
-
         g2d.drawString("dog width, height: " + dog.getWidth() + " " + dog.getHeight(), dog.getX(), dog.getY() - 60);
         g2d.drawString("[ground ahead] " + dog.getGroundAhead(), dog.getX(), dog.getY() - 70);
         g2d.drawString("[idle time]" + dog.getWaitTime(), dog.getX(), dog.getY() - 80);
-
-
-        //bottom right corner of the dog
-        g2d.drawOval(dog.getX() + dog.getWidth(), dog.getY() + dog.getHeight(), 5, 5);
-        //bottom left corner of the dog
-        g2d.drawOval(dog.getX(), dog.getY() + dog.getHeight(), 5, 5);
+        g2d.drawOval(dog.getX() + dog.getWidth(), dog.getY() + dog.getHeight(), 5, 5); //bottom right corner of the dog
+        g2d.drawOval(dog.getX(), dog.getY() + dog.getHeight(), 5, 5); //bottom left corner of the dog
 
     }
 

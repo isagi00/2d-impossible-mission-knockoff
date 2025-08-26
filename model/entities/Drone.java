@@ -221,7 +221,7 @@ public class Drone extends Entity {
     }
 
     private boolean checkCollisionWithPlayer() {
-        Rectangle droneHitbox = new Rectangle(getX() + 5, getY() + 15, getWidth() - 10, getHeight() - 15);
+        Rectangle droneHitbox = new Rectangle(getX() + 10, getY() + 25, getWidth() - 20, getHeight() - 25);
         Rectangle playerHitbox = new Rectangle(player.getX() + 10, player.getY() + 3, player.getWidth() - 20, player.getHeight());
         return droneHitbox.intersects(playerHitbox);
     }
