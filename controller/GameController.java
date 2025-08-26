@@ -62,17 +62,6 @@ public class GameController implements Runnable {
         System.out.println("current game state:" + currentState);
     }
 
-    public void stopGameThread() {
-        running = false;
-        currentState = GameState.GAME_OVER;
-
-        if (Thread.currentThread() != gameThread) {
-            if(gameThread != null && gameThread.isAlive()) {
-                gameThread.interrupt();
-            }
-        }
-    }
-
 
     //GAME LOOP
     //coordinates the model and the view.

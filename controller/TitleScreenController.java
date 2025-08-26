@@ -5,48 +5,81 @@ import model.ScreenSettings;
 import model.entities.Player;
 import model.levels.LevelManager;
 import model.tiles.TileManager;
+import view.AudioManager;
 import view.gamePanelViews.*;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashSet;
+import java.util.Observable;
+import java.util.Set;
 
-public class TitleScreenController implements KeyListener {
+public class TitleScreenController extends Observable implements KeyListener {
 
     private final JFrame window;
     private final TitleScreenView titleScreenView;
 
+    private boolean notificationSent = false;
+
+    private Set<Integer> pressedKeys;       //have to use this because otherwise when the user preses a key, multiple notifications
+                                            //get sent to the observer (audiomanager), so it causes heavy performance dips, even in the title screen
+
     public TitleScreenController(JFrame window, TitleScreenView titleScreenView) {
         this.window = window;
         this.titleScreenView = titleScreenView;
+        this.pressedKeys = new HashSet<>();
+
+        AudioManager audioManager = AudioManager.getInstance(); //beautiful.
+        this.addObserver(audioManager);
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
-        switch (keyCode) {
-            case KeyEvent.VK_UP:
-                titleScreenView.selectPreviousOption();
-                titleScreenView.repaint();
-                break;
-            case KeyEvent.VK_DOWN:
-                titleScreenView.selectNextOption();
-                titleScreenView.repaint();
-                break;
-            case KeyEvent.VK_ENTER:
-                handleEnterInput();
-                break;
+        if(pressedKeys.add(keyCode)){       //it returns true if a key is added to the set
+            switch (keyCode) {
+                case KeyEvent.VK_UP:
+                    titleScreenView.selectPreviousOption();
+                    titleScreenView.repaint();
 
-        }
+                    if (!notificationSent) {
+                        setChanged();
+                        notifyObservers("menu up");
+                        clearChanged();
+                    }
+
+                    break;
+                case KeyEvent.VK_DOWN:
+                    titleScreenView.selectNextOption();
+                    titleScreenView.repaint();
+
+                    setChanged();
+                    notifyObservers("menu down");
+                    clearChanged();
+
+                    break;
+                case KeyEvent.VK_ENTER:
+                    handleEnterInput();
+
+                    setChanged();
+                    notifyObservers("menu enter");
+                    clearChanged();
+
+                    break;
+
+            }
+         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        int code = e.getKeyCode();
+        pressedKeys.remove(code);   //remove from set when key is released
 
     }
 
@@ -83,6 +116,7 @@ public class TitleScreenController implements KeyListener {
         //load game view components
         GameView gameView = new GameView(player, tileManager, levelManager, window);
         PauseMenuView pauseMenuView = new PauseMenuView();
+
 
 
 //        WhatsYourNameView whatsYourNameView = new WhatsYourNameView();
@@ -150,6 +184,9 @@ public class TitleScreenController implements KeyListener {
         levelManager.loadCurrentRoom();
 
         System.out.println("[TitleScreenController][startMainGame()] window focus owner: " + window.getFocusOwner());
+
+
+
         gameController.startGameThread();
     }
 

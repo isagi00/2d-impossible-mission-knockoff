@@ -2,6 +2,7 @@ package main;
 
 
 import controller.TitleScreenController;
+import view.AudioManager;
 import view.gamePanelViews.TitleScreenView;
 import javax.swing.*;
 
@@ -28,6 +29,10 @@ public class Main {
         titleScreenView.addKeyListener(titleScreenController);
         titleScreenView.setFocusable(true);
         titleScreenView.requestFocus();
+
+
+        //load the audio when launching(?)
+        AudioManager audioManager = AudioManager.getInstance();
 
 
         //leaderboard works
