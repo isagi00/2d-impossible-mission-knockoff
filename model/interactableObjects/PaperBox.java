@@ -33,7 +33,7 @@ public class PaperBox extends InteractableObject {
     }
 
     @Override
-    public void interact(Player player) {
+    public void open(Player player) {
         if(!isOpened){
             isOpened = true;
 
@@ -52,7 +52,7 @@ public class PaperBox extends InteractableObject {
                     clearChanged();
                 }
 
-                System.out.println("paperbox : interact() -> added new pokercard to inventory -> " + pokerCard);
+                System.out.println("paperbox : open() -> added new pokercard to inventory -> " + pokerCard);
             }
 
 

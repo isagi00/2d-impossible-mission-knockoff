@@ -11,8 +11,6 @@ import model.levels.Room;
 import view.AudioManager;
 
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -301,7 +299,7 @@ public class Player extends Entity {
             if (showingInteractionPrompt && currentInteractable != null) {
                 currentInteractable.startInteraction(ePressed);     //start the interaction
                 if (currentInteractable.isInteractionCompleted()) {
-                    interact();                                     //actually interact with the object
+                    interact();                                     //actually open with the object
                 }
                 else{
                     interactionCompleted = false;
@@ -438,13 +436,13 @@ public class Player extends Entity {
             ComputerCard card = inventory.getComputerCard();
             inventory.removeComputerCard(card);
         }
-        //interact with the object
+        //open with the object
         if( currentInteractable != null ) {
-            currentInteractable.interact(this); //player INITIATES THE INTERACTION, object interacts with player
+            currentInteractable.open(this); //player INITIATES THE INTERACTION, object interacts with player
             //COMMAND PATTERN
             /**
-             * the player calls interact on the object
-             * the objects executes its own interact logic
+             * the player calls open on the object
+             * the objects executes its own open logic
              */
             if(currentInteractable.isInteractionCompleted() && !interactionCompleted) {
                 interactionCompleted = true;

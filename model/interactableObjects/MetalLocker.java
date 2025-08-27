@@ -15,14 +15,14 @@ public class MetalLocker extends InteractableObject {
     }
 
     @Override
-    public void interact(Player player) {
+    public void open(Player player) {
         if (!isOpened) {
             isOpened = true;
 
             if (!player.getInventory().isInventoryFull()){
                 PokerCard pokerCard = PokerCard.getBoostedFacePokerCard();      //boosted rates to get a facecard
                 player.getInventory().addItem(pokerCard);
-                System.out.println("metallocker : interact() -> added new pokercard to inventory -> " + pokerCard);
+                System.out.println("metallocker : open() -> added new pokercard to inventory -> " + pokerCard);
 
                 if (pokerCard.getValue() > 10){
                     setChanged();

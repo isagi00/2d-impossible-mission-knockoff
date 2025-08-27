@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * model, contains an inner enum {@link RoomType}. contain utility methods, primarily a class that allows working on enemies
+ * model, contains an inner enum {@link RoomType},s contain utility methods, primarily a class that allows working on enemies
  * in the room.
  */
 public class Room {

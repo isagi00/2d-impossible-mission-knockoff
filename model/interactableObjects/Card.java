@@ -17,23 +17,23 @@ public class Card extends InteractableObject {
 
 
     @Override
-    public void interact(Player player) {
+    public void open(Player player) {
         //safety checks
         if(player == null) {
-            System.out.println("Card interact(): player is null || card is taken");
+            System.out.println("Card open(): player is null || card is taken");
             return;
         }
 
         Inventory inventory = player.getInventory();
         if(inventory == null) {
-            System.out.println("Card interact(): inventory is null");
+            System.out.println("Card open(): inventory is null");
             return;
         }
 
         if (!inventory.isInventoryFull()){
             inventory.addItem(new ComputerCard());
             isTaken = true;
-            System.out.println("Card interact(): added computer card to inventory");
+            System.out.println("Card open(): added computer card to inventory");
         }
     }
 

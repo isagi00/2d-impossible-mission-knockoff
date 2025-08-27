@@ -25,7 +25,7 @@ public abstract class InteractableObject extends Observable {
         this.height = height;
     }
 
-    public abstract void interact (Player player);
+    public abstract void open(Player player);
 
 
     public void startInteraction(boolean ePressed){

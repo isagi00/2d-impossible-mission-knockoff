@@ -22,8 +22,8 @@ public class Computer extends InteractableObject{
 
 
     @Override
-    public void interact(Player player) {
-//       System.out.println("[Computer][interact(player)] : player accessing computer ");
+    public void open(Player player) {
+//       System.out.println("[Computer][open(player)] : player accessing computer ");
        isBeingAccessed = true;
        isMenuVisible = true;
        selectedMenuOption = 0;

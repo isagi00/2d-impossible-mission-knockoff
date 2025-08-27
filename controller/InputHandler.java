@@ -17,7 +17,7 @@ public class InputHandler implements KeyListener {
     public boolean downPressed;
     public boolean spacePressed;
     //player interaction
-    public boolean ePressed;    //interact with object
+    public boolean ePressed;    //open with object
     //player menu navigation
     public boolean enterPressed;
     public boolean upArrowPressed;

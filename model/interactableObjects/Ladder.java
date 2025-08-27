@@ -16,7 +16,7 @@ public class Ladder extends InteractableObject {
 
 
     @Override
-    public void interact(Player player) {
+    public void open(Player player) {
         //dont have a one time interaction like other objects
     }
 
