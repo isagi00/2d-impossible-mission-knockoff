@@ -2,6 +2,7 @@ package model.entities;
 
 import model.ScreenSettings;
 import model.levels.LevelManager;
+import view.AudioManager;
 
 import java.awt.*;
 
@@ -30,6 +31,11 @@ public class Drone extends Entity {
     private boolean wallInFront = false;
     private boolean groundAhead = false;
 
+    //required for sound
+    private boolean wasMoving = false;
+    private long lastFootStepTime = 0;
+    private long FOOTSTEP_SOUND_INTERVAL = 230; //230ms between footsteps
+
     //----------------------------------------------------------------------------------------//
     // CONSTRUCTOR
     //----------------------------------------------------------------------------------------//
@@ -41,6 +47,8 @@ public class Drone extends Entity {
         this.player = player;
         this.levelManager = levelManager;
         setDirection("right");
+
+        this.addObserver(AudioManager.getInstance());
     }
 
     //----------------------------------------------------------------------------------------//
@@ -84,6 +92,25 @@ public class Drone extends Entity {
                 isChasing = false;
                 patrol();
             }
+
+            //sound logic: same as the player
+            if ((isChasing || isMoving) && !isIdle) {
+                long currentTime = System.currentTimeMillis();
+                if (!wasMoving){        //play sound once if started moving
+                    setChanged();
+                    notifyObservers("drone moving");
+                    clearChanged();
+                    lastFootStepTime = currentTime;
+                }
+                else if(currentTime - lastFootStepTime >= FOOTSTEP_SOUND_INTERVAL){     //play sound at interval if keeps moving
+                    setChanged();
+                    notifyObservers("drone moving");
+                    clearChanged();
+                    lastFootStepTime = currentTime;
+                }
+            }
+            wasMoving = isMoving;
+
         }
 
 

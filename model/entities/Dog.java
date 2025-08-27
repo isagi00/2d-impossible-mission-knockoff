@@ -77,20 +77,6 @@ public class Dog extends Entity {
             //check the player is within in front of the dog
             boolean playerWithinChaseRange = false;
             if (sameLevel){
-//                if (getDirection().equals("right") && player.getX() > getX()){
-//                    int distance = player.getX() - getX();
-//                    if (distance <= CHASE_RANGE){
-//                        playerWithinChaseRange = true;
-//                        isChasing = true;
-//                    }
-//                }
-//                else if (getDirection().equals("left") && player.getX() < getX()){
-//                    int distance = getX()- player.getX();
-//                    if (distance <= CHASE_RANGE){
-//                        playerWithinChaseRange = true;
-//                        isChasing = true;
-//                    }
-//                }
                 int distance = Math.abs(player.getX() - getX());
                 if (distance < CHASE_RANGE && !player.getGameOver()){
                     playerWithinChaseRange = true;
@@ -112,6 +98,8 @@ public class Dog extends Entity {
                 patrol();
             }
 
+
+            //sound logic: it is the same as the player's
             if ((isChasing || isMoving) && !isWaiting){
                 long currentTime = System.currentTimeMillis();
 

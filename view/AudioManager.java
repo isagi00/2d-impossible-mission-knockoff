@@ -3,6 +3,7 @@ package view;
 import controller.*;
 import model.Leaderboard;
 import model.entities.Dog;
+import model.entities.Drone;
 import model.entities.Player;
 import model.interactableObjects.InteractableObject;
 import view.gamePanelViews.LeaderboardView;
@@ -148,6 +149,14 @@ public class AudioManager implements Observer {
                 case "dog moving":
                     playSound("dog step");
                     System.out.println("[AudioManager] played dog moving sound effect");
+                    break;
+            }
+        }
+        else if(o instanceof Drone){
+            switch((String)(arg)){
+                case "drone moving":
+                    playSound("drone step");
+                    System.out.println("[AudioManager] played drone moving sound effect");
                     break;
             }
         }
