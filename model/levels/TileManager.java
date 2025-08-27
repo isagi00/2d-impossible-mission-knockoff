@@ -19,7 +19,7 @@ import java.io.*;
 import static java.util.Objects.requireNonNull;
 
 /**
- * model.
+ * model, initializes all the various tiles information in the {@link #tiles}  array.
  */
 public class TileManager {
     /**

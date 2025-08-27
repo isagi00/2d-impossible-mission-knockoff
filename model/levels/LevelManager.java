@@ -12,15 +12,8 @@ import java.io.InputStreamReader;
 import java.util.Observable;
 
 /**
- * model.
- * should store level state / data
- * implements level rules *
- * provide this level's data accessors / accessors in general
- *
- * should not know about view or input
- *
- * the class initializes the game world / tutorial layout in the {@link #worldLayout} matrix.
- * loads room data, and handles room transitions.
+ * model, the class initializes the game world / tutorial layout in the {@link #worldLayout} matrix.
+ * loads room data, and handles room transitions, and helps preserve room state.
  */
 public class LevelManager extends Observable {      // -> observers: interactableObjectsView
     //----------------------------------------------------------------------------------------------------------------//
