@@ -227,6 +227,10 @@ public class LevelManager extends Observable {      // -> observers: interactabl
         catch(Exception e){    //
             e.printStackTrace();
         }
+
+        setChanged();
+        notifyObservers("level changed");
+        clearChanged();
     }
 
     private void processLine(String line, int row) {

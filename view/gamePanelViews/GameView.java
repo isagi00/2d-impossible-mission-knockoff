@@ -6,6 +6,7 @@ import model.interactableObjects.InteractableObject;
 import model.levels.Room;
 import model.tiles.TileManager;
 import model.ScreenSettings;
+import view.LevelView;
 import view.entityViews.EnemyView;
 import view.entityViews.PlayerView;
 import view.interactableObjectsViews.InteractableObjectsView;
@@ -42,8 +43,8 @@ public class GameView extends JPanel {
     InteractableObjectsView interactableObjectsView;
     InventoryView inventoryView;
     EnemyView enemyView;
-
     ResultScreenView resultScreenView;
+    LevelView levelView;
     //game window
     private JFrame window;
 
@@ -77,6 +78,7 @@ public class GameView extends JPanel {
         this.inventoryView = new InventoryView(player.getInventory());
         this.interactableObjectsView = new InteractableObjectsView(levelManager);
         this.enemyView = new EnemyView(levelManager);
+        this.levelView = new LevelView(levelManager, tileManager);
 
 
 
@@ -123,8 +125,8 @@ public class GameView extends JPanel {
         //load background first
         drawBackground(g2d);
 
-        //draw tiles, get the current room data from level manager
-        tileManager.draw(g2d, levelManager.getCurrentRoomData());
+        //draw the tiles in the level
+        levelView.draw(g2d);
 
         //draw the room's interactive objects
         interactableObjectsView.drawInteractableObjects(g2d);
