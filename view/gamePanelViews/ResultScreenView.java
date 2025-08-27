@@ -148,31 +148,31 @@ public class ResultScreenView extends JPanel  {
 
         //straight set
         String straight = "STRAIGHT: ";
-        g2d.setColor(scoreTracker.getIsStraight(cardValues) ? Color.YELLOW : Color.GRAY);
+        g2d.setColor(scoreTracker.checkIsStraight(cardValues) ? Color.YELLOW : Color.GRAY);
         g2d.drawString(straight, padding, titleMetrics.getHeight() + padding * 8);
         g2d.drawString("pts x 5" , totalPointsX, titleMetrics.getHeight() + padding * 8);
 
         //all face cards set
         String allfacecards = "ALL FACE CARDS: ";
-        g2d.setColor(scoreTracker.getIsAllFaceCards(cardValues) ? Color.YELLOW : Color.GRAY);
+        g2d.setColor(scoreTracker.checkIsAllFaceCards(cardValues) ? Color.YELLOW : Color.GRAY);
         g2d.drawString(allfacecards, padding, titleMetrics.getHeight() + padding * 9);
         g2d.drawString("pts x 4", totalPointsX, titleMetrics.getHeight() + padding * 9);
 
         //four of a kind set
         String fourofakind = "FOUR OF A KIND: ";
-        g2d.setColor(scoreTracker.getIsFourOfAKind(cardValues) ? Color.YELLOW : Color.GRAY);
+        g2d.setColor(scoreTracker.checkIsFourOfAKind(cardValues) ? Color.YELLOW : Color.GRAY);
         g2d.drawString(fourofakind, padding, titleMetrics.getHeight() + padding * 10);
         g2d.drawString("pts x 4 " , totalPointsX, titleMetrics.getHeight() + padding * 10);
 
         //three of a kind set
         String threeofakind = "THREE OF A KIND: ";
-        g2d.setColor(scoreTracker.getIsThreeOfAKind(cardValues) ? Color.YELLOW : Color.GRAY);
+        g2d.setColor(scoreTracker.checkIsThreeOfAKind(cardValues) ? Color.YELLOW : Color.GRAY);
         g2d.drawString(threeofakind, padding, titleMetrics.getHeight() + padding * 11);
         g2d.drawString("pts x 3", totalPointsX, titleMetrics.getHeight() + padding * 11);
 
         //two pair set
         String twopair = "TWO PAIR: ";
-        g2d.setColor(scoreTracker.getIsTwoPair(cardValues) ? Color.YELLOW : Color.GRAY);
+        g2d.setColor(scoreTracker.checkIsTwopair(cardValues) ? Color.YELLOW : Color.GRAY);
         g2d.drawString(twopair, padding, titleMetrics.getHeight() + padding * 12);
         g2d.drawString("pts x 2  " , totalPointsX, titleMetrics.getHeight() + padding * 12);
 

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**model,
- *  represents the 'leaderboard' object. it contains an inner class, a {@link LeaderboardEntry} class.
+ *  represents the 'leaderboard' object. it contains an inner class, a {@code LeaderboardEntry} class.
  * the leaderboard is used to track the top 10 leading scores with name, and points.
  * it follows the singleton pattern, so only a single instance of the leaderboard is created.
  * get the leaderboard instance via {@link #getInstance()}.
