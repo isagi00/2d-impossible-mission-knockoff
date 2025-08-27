@@ -109,9 +109,10 @@ public class PokerCard extends Item{
 
     //boosted rates to get an ace
     public static PokerCard getBoostedAcePokerCard(){
-        if (Math.random() < 0.3){       //30% to get an ace
+        if (Math.random() < 0.6){       //60% to get an ace
             PokerCard[] aces = {aceclub, acespade, acediamond, aceheart};
-            return aces[ (int) Math.random() * aces.length];
+            int whichAce = (int)(Math.random() * aces.length);
+            return aces[whichAce];
         }
         else{   //otherwise return a random card with the same rates
             return getRandomPokerCard();
@@ -121,12 +122,14 @@ public class PokerCard extends Item{
 
     //boosted rates to get a face card
     public static PokerCard getBoostedFacePokerCard(){
-        if (Math.random() < 0.5){
+        if (Math.random() < 0.6){   //60 % for getting a face card
             PokerCard[] faceCards = {jclub, qclub, kclub,
                                     jspade, qspade, kspade,
                                     jdiamond, qdiamond, kdiamond,
                                     jheart, qheart, kheart,};
-            return faceCards[ (int) Math.random() * faceCards.length];
+
+            int whichFace = (int)(Math.random() * faceCards.length);
+            return faceCards[whichFace];
         }
         else{
             return getRandomPokerCard();
@@ -135,9 +138,10 @@ public class PokerCard extends Item{
 
     //boosted rates to get a 10 card
     public static PokerCard getBoosted10Card(){
-        if (Math.random() < 0.7){
+        if (Math.random() < 0.7){      //70% to get a 10 card
             PokerCard[] tencards = {tenclub, tenspade, tendiamond, tenheart};
-            return tencards[ (int) Math.random() * tencards.length];
+            int whichTen = (int)(Math.random() * tencards.length);
+            return tencards[whichTen];
         }
         else{
             return getRandomPokerCard();
