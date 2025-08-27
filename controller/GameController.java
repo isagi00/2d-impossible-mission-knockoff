@@ -7,14 +7,11 @@ import model.inventoryrelated.Inventory;
 import model.levels.LevelManager;
 import view.gamePanelViews.GameView;
 
-/** what it should do:
- * -process input
- * -updates model based on input
- * -coordinate model and view
+/**
+ * this class implements the controller component in the MVC architecture.
+ * coordinates the game models (player, enemies, level manager...) and views (game view,
  *
- * what it should NOT do:
- * should not render anything
- * should not store persistent game state
+ *
  */
 public class GameController implements Runnable {
     //models
@@ -24,7 +21,7 @@ public class GameController implements Runnable {
     //view
     GameView gameView;
 
-    //controller, handles inputs
+    //handles inputs
     InputHandler inputHandler;
 
     //game loop
@@ -32,11 +29,12 @@ public class GameController implements Runnable {
     private final int FPS = 60;
     private boolean running = true;
 
-    //game states
+    //game state
     public enum GameState {
         PLAYING, PAUSED, GAME_OVER, MAIN_MENU, RESULT
     }
     private GameState currentState = GameState.PLAYING;
+
 
 
     public GameController(Player player, InputHandler inputHandler, GameView gameView, LevelManager levelManager) {
@@ -64,7 +62,6 @@ public class GameController implements Runnable {
 
 
     //GAME LOOP
-    //coordinates the model and the view.
     @Override
     public void run() {
         double drawInterval = 1_000_000_000 / FPS;

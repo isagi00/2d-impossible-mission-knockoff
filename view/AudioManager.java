@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AudioManager implements Observer {
     private static AudioManager instance;       //single instance of the audio manager (singleton ptrn)
     private Map<String, List<Clip>> soundEffects;     //is gonna have like : name - list of sound effect (all sound effects get loaded here)
-                                                   //allows multiple clips to play simultaneously (max 3 clips under the same name)
+    private int CopiesPerSound = 5;                                               //allows multiple clips to play simultaneously (max 3 clips under the same name)
 
 
     private AudioManager() {        //load all sound fx when creating this audio manager instance
@@ -35,7 +35,7 @@ public class AudioManager implements Observer {
 
 
     @Override
-    public void update(Observable o, Object arg) {      //perfect use for observer: whenever model changes something, audio plays
+    public void update(Observable o, Object arg) {      //whenever model changes something, audio plays
         if (o instanceof TitleScreenController) {
             switch((String)(arg)){      //cast that to into a string :)
                 case "menu up":
@@ -197,7 +197,7 @@ public class AudioManager implements Observer {
             }
             AudioInputStream ais = AudioSystem.getAudioInputStream(soundurl);   //this creates audio stream from the url does the heavy lifting hell yea
             ais.mark(Integer.MAX_VALUE);        // mark the start of the audio...
-            List<Clip> audioClips = new ArrayList<>(5);         //MAX 5 INSTANCES OF THE SAME AUDIO CLIP
+            List<Clip> audioClips = new ArrayList<>(CopiesPerSound);         //MAX 5 INSTANCES OF THE SAME AUDIO CLIP
 
             for (int i = 0; i < 5; i ++){       //pre-load multiple instances of the same clip under the same name, so that if player spams a key audio still gets reproduced
                 ais.reset();            //... and reset back to it
