@@ -3,6 +3,7 @@ package view;
 import controller.*;
 import model.Leaderboard;
 import model.entities.Player;
+import model.interactableObjects.InteractableObject;
 import view.gamePanelViews.LeaderboardView;
 
 import javax.sound.sampled.AudioInputStream;
@@ -129,6 +130,18 @@ public class AudioManager implements Observer {
                     break;
             }
         }
+        else if (o instanceof InteractableObject){
+            switch((String)(arg)){
+                case "rare card found":
+                    playSound("rare card found");
+                    System.out.println("[AudioManager] played rare card found sound effect");
+                    break;
+                case "common card found":
+                    playSound("common card found");
+                    System.out.println("[AudioManager] played common card found sound effect");
+                    break;
+            }
+        }
 
     }
 
@@ -146,6 +159,9 @@ public class AudioManager implements Observer {
         loadSound("player death", "sounds/playerdeath.wav");
         loadSound("player step", "sounds/playerstep.wav");
         loadSound("player extracted", "sounds/playerextracted.wav");
+        //rare card and common card found
+        loadSound("rare card found", "sounds/rarecardcollected.wav");
+        loadSound("common card found", "sounds/commoncardcollected.wav");
     }
 
 

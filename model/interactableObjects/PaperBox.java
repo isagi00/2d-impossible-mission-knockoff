@@ -6,6 +6,7 @@ import model.entities.Player;
 import model.inventoryrelated.BoBo;
 import model.inventoryrelated.Item;
 import model.inventoryrelated.PokerCard;
+import view.AudioManager;
 
 import java.awt.image.BufferedImage;
 
@@ -28,6 +29,7 @@ public class PaperBox extends InteractableObject {
         super(x,y, ScreenSettings.TILE_SIZE,ScreenSettings.TILE_SIZE);   //it is 48x48
         this.isOpened = false;
 
+        this.addObserver(AudioManager.getInstance());
     }
 
     @Override
@@ -35,16 +37,22 @@ public class PaperBox extends InteractableObject {
         if(!isOpened){
             isOpened = true;
 
-//            if ( !player.getInventory().isInventoryFull()){
-//                player.getInventory().addItem(new BoBo());
-//            }
-
             if (!player.getInventory().isInventoryFull()){
                 PokerCard pokerCard = PokerCard.getRandomPokerCard();
                 player.getInventory().addItem(pokerCard);
 
+                if (pokerCard.getValue() > 10){
+                    setChanged();
+                    notifyObservers("rare card found");
+                    clearChanged();
+                }
+                else{
+                    setChanged();
+                    notifyObservers("common card found");
+                    clearChanged();
+                }
 
-                System.out.println("paperbor : interact() -> added new pokercard to inventory -> " + pokerCard);
+                System.out.println("paperbox : interact() -> added new pokercard to inventory -> " + pokerCard);
             }
 
 
