@@ -1,4 +1,4 @@
-package model.tiles;
+package model.levels;
 
 import model.ScreenSettings;
 
@@ -7,7 +7,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Observable;
 
 /**
  * model.

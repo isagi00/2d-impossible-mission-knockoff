@@ -1,4 +1,4 @@
-package model.tiles;
+package model.levels;
 
 import java.awt.image.BufferedImage;
 

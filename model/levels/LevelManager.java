@@ -5,16 +5,10 @@ import model.entities.Dog;
 import model.entities.Drone;
 import model.entities.Player;
 import model.interactableObjects.*;
-import model.tiles.Tile;
-import model.tiles.TileManager;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 
 /**
@@ -26,34 +20,60 @@ import java.util.Observable;
  * should not know about view or input
  */
 public class LevelManager extends Observable {      // -> observers: interactableObjectsView
-
     //----------------------------------------------------------------------------------------------------------------//
     // FIELDS
     //----------------------------------------------------------------------------------------------------------------//
     //other models
+    /**
+     * tile manager instance
+     */
     private TileManager tileManager;
+    /**
+     * player instance
+     */
     private Player player;
 
+    /**
+     * world layout. the game world is represented as a matrix. each slot in the matrix contains a room.
+     */
     //data
     private Room[][] worldLayout;       //general game world layout
-    private int currentRow;
-    private int currentCol;
+    /**
+     * current world layout row
+     */
+    private int currentWorldRow;
+    /**
+     * current world layout col
+     */
+    private int currentWorldCol;
+    /**
+     * contain current room data. it is an integer matrix, each integer represent which tile it is at that location.
+     */
     private int[][] currentRoomData;    //room data: .txt files that defines the levels
     //----------------------------------------------------------------------------------------------------------------//
     // CONSTRUCTOR
     //----------------------------------------------------------------------------------------------------------------//
 
+    /**the LevelManager constructor initializes:
+     * -the current world row and col to 0,
+     * -the {@link #worldLayout} Room matrix,
+     * -the {@link #currentRoomData} integer matrix,
+     * -the first Room {@link #worldLayout} as a Room: this was done to solve a null pointer issue.
+     * and adds the players as its observer
+     * @param tileManager tile manager instance
+     * @param player player instance
+     */
     public LevelManager(TileManager tileManager, Player player) {
         this.tileManager = tileManager;
         this.player = player;
-        this.currentRow = 0;
-        this.currentCol = 0;
+        this.currentWorldRow = 0;
+        this.currentWorldCol = 0;
         worldLayout = new Room[5][8];   //world size
         //currentRoomData = new int[GameView.MAX_SCREEN_ROW][GameView.MAX_SCREEN_COL];   //a room is at most 32x16 tiles
         currentRoomData = new int[50][50];   //a room is at most 32x16 tiles
         this.addObserver(player);
 
-        worldLayout[0][0] = new Room(Room.RoomType.GROUND, 0, true);     //init a default room when initialiazing, otherwise it gives a null room (for some reason)
+        worldLayout[0][0] = new Room(Room.RoomType.GROUND, 0, true);     //init a default room when initializing, otherwise it gives a null room (for some reason)
 
     }
     //----------------------------------------------------------------------------------------------------------------//
@@ -147,8 +167,8 @@ public class LevelManager extends Observable {      // -> observers: interactabl
     //@todo: MAKE IT THAT ONCE A ROOM IS VIISTED ( LEVEL ) YOU CANT GO BACK IN. NO BACKTRACKING! ONLY MAKE IT POSSIBLE IF THE RIGHT ROOM IS ELEVATOR
     public void moveToLeftRoom(){
         Room currentRoom = getCurrentRoom();
-        if (currentCol > 0 && worldLayout[currentRow][currentCol - 1] != null) {
-            currentCol--;
+        if (currentWorldCol > 0 && worldLayout[currentWorldRow][currentWorldCol - 1] != null) {
+            currentWorldCol--;
             System.out.println(" moveToLeftRoom(): moving to left room, marking as visited");
             currentRoom.isVisited = true;
             loadCurrentRoom();
@@ -158,8 +178,8 @@ public class LevelManager extends Observable {      // -> observers: interactabl
 
     public void moveToRightRoom(){
         Room currentRoom = getCurrentRoom();
-        if (currentCol < 7  && worldLayout[currentRow][currentCol + 1] != null ) {
-            currentCol++;
+        if (currentWorldCol < 7  && worldLayout[currentWorldRow][currentWorldCol + 1] != null ) {
+            currentWorldCol++;
             System.out.println(" moveToRightRoom(): moving to right room, marking as visited");
             currentRoom.isVisited = true;
             loadCurrentRoom();
@@ -169,8 +189,8 @@ public class LevelManager extends Observable {      // -> observers: interactabl
 
     public void moveToUpRoom(){
         Room currentRoom = getCurrentRoom();
-        if (currentRow > 0  && worldLayout[currentRow - 1][currentCol] != null ) {
-            currentRow--;
+        if (currentWorldRow > 0  && worldLayout[currentWorldRow - 1][currentWorldCol] != null ) {
+            currentWorldRow--;
 
             currentRoom.isVisited = true;
             loadCurrentRoom();
@@ -180,8 +200,8 @@ public class LevelManager extends Observable {      // -> observers: interactabl
 
     public void moveToDownRoom(){
         Room currentRoom = getCurrentRoom();
-        if (currentRow < 4  && worldLayout[currentRow + 1][currentCol] != null ) {
-            currentRow++;
+        if (currentWorldRow < 4  && worldLayout[currentWorldRow + 1][currentWorldCol] != null ) {
+            currentWorldRow++;
 
             currentRoom.isVisited = true;
             loadCurrentRoom();
@@ -329,17 +349,18 @@ public class LevelManager extends Observable {      // -> observers: interactabl
             StringBuilder line = new StringBuilder("Row " + row + ": ");
             for (int col = 0; col < 8; col++) {
                 if (worldLayout[row][col] == null) {
-                    line.append(" .  ");
+                    line.append(" . ");
                     continue;
                 }
 
-                // use room tostring method
+                // use room to string method
                 String symbol = worldLayout[row][col].toString();
 
                 // highlight the current position
-                if (row == currentRow && col == currentCol) {
+                if (row == currentWorldRow && col == currentWorldCol) {
                     line.append("[").append(symbol).append("] ");
-                } else {
+                }
+                else {
                     line.append(" ").append(symbol).append("  ");
                 }
             }
@@ -383,90 +404,113 @@ public class LevelManager extends Observable {      // -> observers: interactabl
                 }
     }
 
-
-
-    //----------------------------------------------------------------------------------------------------------------//
-    // HANDLES ROOM TRANSITION
-    //----------------------------------------------------------------------------------------------------------------//
-
+    /**
+     * handles the level transition, wherever the {@link Player} is going
+     */
     public void handleLevelTransition() {
         //check if player is near right edge and moving right to transition to the next level
         if (player.getX() >= ScreenSettings.SCREEN_WIDTH - player.getWidth() - 5 && player.getDirection().equals("right")) {
             moveToRightRoom();
 
             player.setX(0); //reset player to the left side of the room
-            printWorld();
+//            printWorld();
         }
         //check if player is near left edge and moving to the left, transition to next level
         if (player.getX() <= 5 && player.getDirection().equals("left")) {
             moveToLeftRoom();
 
             player.setX(ScreenSettings.SCREEN_WIDTH - player.getWidth() - 10); //reset player to the right side of the room
-            printWorld();
+//            printWorld();
         }
 
         if(player.getY() >= ScreenSettings.SCREEN_HEIGHT - player.getHeight() - 5 && player.getDirection().equals("down")) {
             moveToDownRoom();
 
             player.setY(player.height - 5);
-            printWorld();
+//            printWorld();
         }
 
         if (player.getY() <= 5 && player.getDirection().equals("up")) {
             moveToUpRoom();
             player.setY(ScreenSettings.SCREEN_HEIGHT - player.getHeight() - 5);
-            printWorld();
+//            printWorld();
         }
     }
-
-    //----------------------------------------------------------------------------------------------------------------//
-    // BACKGROUND IMAGE LOADER
-    //----------------------------------------------------------------------------------------------------------------//
-
-
     //----------------------------------------------------------------------------------------------------------------//
     // ENEMY RELATED
     //----------------------------------------------------------------------------------------------------------------//
-
+    /**
+     * @param currentRoom current room where {@link Player} is
+     * @param x x coordinate to place the {@link Drone}
+     * @param y y coordinate to place the {@link Drone}
+     */
     private void placeDrone(Room currentRoom, int x, int y) {
         Drone drone = new Drone(x, y, player, this);
         currentRoom.addDrone(drone);
-        System.out.println("[LevelManager][placeDrone()] :  placed drone");
+//        System.out.println("[LevelManager][placeDrone()] :  placed drone");
     }
 
+    /**
+     * @param currentRoom current room where {@link Player} is
+     * @param x x coordinate to place the {@link Dog}
+     * @param y y coordinate to place the {@link Dog}
+     */
     private void placeDog(Room currentRoom, int x, int y) {
         Dog dog = new Dog(x, y, player, this);
         currentRoom.addDog(dog);
-        System.out.println("[LevelManager][placeDog()] :  placed dog");
+//        System.out.println("[LevelManager][placeDog()] :  placed dog");
     }
 
 
-
-
-
-
-
+    /**
+     * @return the current which the {@link Player} is in
+     */
     public Room getCurrentRoom() {
-        if (worldLayout[currentRow][currentCol] == null) {
-            System.out.println("levelmanager -> getCurrentRoom() : [ERROR] room is null ar row=" + currentRow + " col=" + currentCol);
+        if (worldLayout[currentWorldRow][currentWorldCol] == null) {
+//            System.out.println("[LevelManager]getCurrentRoom() : room is null ar row: " + currentWorldRow + " col: " + currentWorldCol);
         };
-        return worldLayout[currentRow][currentCol];
+        return worldLayout[currentWorldRow][currentWorldCol];
     }
+
+    /**
+     * @return this instance of the LevelManager
+     */
     public LevelManager getLevelManager() {
         return this;
     }
+
+    /**
+     * @return {@link #currentWorldRow} the row, which is basically the depth in the game world
+     */
     public int getCurrentDepth(){
-        return currentRow;
+        return currentWorldRow;
     }
-    public int getCurrentCol(){
-        return currentCol;
+
+    /**
+     * @return {@link #currentWorldCol}
+     */
+    public int getCurrentWorldCol(){
+        return currentWorldCol;
     }
+
+    /**
+     * @return {@link #currentRoomData}
+     */
     public int[][] getCurrentRoomData() {
         return currentRoomData;
     }
+
+    /**
+     * @param tileNum tile number
+     * @return {@link Tile} object that has that tile number
+     */
     public Tile getTile(int tileNum){
         return tileManager.getTile(tileNum);
     }
+
+    /**
+     * @return current {@link #worldLayout}
+     */
     public Room[][] getWorldLayout() {
         return worldLayout;
     }

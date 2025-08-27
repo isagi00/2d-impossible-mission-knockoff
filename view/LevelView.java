@@ -2,8 +2,8 @@ package view;
 
 import model.ScreenSettings;
 import model.levels.LevelManager;
-import model.tiles.Tile;
-import model.tiles.TileManager;
+import model.levels.Tile;
+import model.levels.TileManager;
 
 import java.awt.*;
 import java.util.Observable;

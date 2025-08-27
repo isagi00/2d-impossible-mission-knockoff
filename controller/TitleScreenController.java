@@ -4,7 +4,7 @@ import model.Leaderboard;
 import model.ScreenSettings;
 import model.entities.Player;
 import model.levels.LevelManager;
-import model.tiles.TileManager;
+import model.levels.TileManager;
 import view.AudioManager;
 import view.gamePanelViews.*;
 
