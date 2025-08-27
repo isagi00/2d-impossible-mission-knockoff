@@ -9,9 +9,9 @@ import model.inventoryrelated.PokerCard;
 import java.util.*;
 
 /**
- * 'observer' of the 'Player' model.
- *
- *
+ * 'observer' of the '{@link Player} model, tracks the number of {@link model.interactableObjects.InteractableObject} opened, provides card sequence checkers and has various
+ * computing utility methods to get the total points.
+ * used in {@link view.gamePanelViews.ResultScreenView}, so that the view layer doesn't have to compute stuff.
  */
 public class ScoreTracker implements Observer {
 

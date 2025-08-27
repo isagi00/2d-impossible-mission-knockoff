@@ -1,5 +1,8 @@
 package model;
 
+/**
+ *
+ */
 public class ScreenSettings {
 
     public static final int ORIGINAL_TILE_SIZE = 16;   //16x16 pixels
