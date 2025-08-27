@@ -42,6 +42,8 @@ public class PaperBox extends InteractableObject {
             if (!player.getInventory().isInventoryFull()){
                 PokerCard pokerCard = PokerCard.getRandomPokerCard();
                 player.getInventory().addItem(pokerCard);
+
+
                 System.out.println("paperbor : interact() -> added new pokercard to inventory -> " + pokerCard);
             }
 

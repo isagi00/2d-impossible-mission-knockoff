@@ -8,6 +8,7 @@ import model.inventoryrelated.Inventory;
 import model.inventoryrelated.Item;
 import model.levels.LevelManager;
 import model.levels.Room;
+import view.AudioManager;
 
 import java.util.List;
 import java.util.Observable;
@@ -66,6 +67,11 @@ public class Player extends Entity implements Observer {
     //score tracker
     private ScoreTracker scoreTracker;
 
+    //sound related
+    private boolean wasGameOver = false; //otherwise the audio replays multiple times
+    private boolean wasMoving = false;
+    private long lastFootStepTime = 0;
+    private long FOOTSTEP_SOUND_INTERVAL = 250; //250 ms between footsteps
 
 
     //----------------------------------------------------------------------------------------------------------------//
@@ -78,6 +84,7 @@ public class Player extends Entity implements Observer {
         this.scoreTracker = new ScoreTracker();
 
         this.addObserver(scoreTracker);
+        this.addObserver(AudioManager.getInstance());
     }
 
     //called in Player() constructor
@@ -151,11 +158,13 @@ public class Player extends Entity implements Observer {
                 if (verticalSpeed > 0){     //vertical speed increasing means falling down
                     isOnGround = false;
                     isFalling = true;
+                    isMoving = false;
                     setDirection("down");
                 }
                 else if (verticalSpeed < 0){    //only way to increase vertical speed is to jump
                     isOnGround = false;
                     isJumping = true;
+                    isMoving = false;
                     setDirection("up");
                 }
             }
@@ -163,30 +172,19 @@ public class Player extends Entity implements Observer {
                 if(verticalSpeed > 0){          //vertical speed is positive, so if player was falling
                     isOnGround = true;          //then hit the ground
                     isJumping = false;
+                    isMoving = false;
                     verticalSpeed = 0;          //reset the vertical speed
                     setY(playerY);
                     setDirection(lastDirection);
                 }
                 else if (verticalSpeed < 0){    //if the vertical speed was negative then the player was going up and hit a ceiling
                     verticalSpeed = 0;
+                    isMoving = false;
                     setY(getY() + 1);       //bring the player slightly under the tile
                     setDirection(lastDirection);
                 }
             }
 
-
-            //horizontal movement
-            isMoving = false;
-            if (leftPressed && !checkCollisionWithTile(playerX - speed, playerY)) {         //left is pressed and there is no tile on the left
-                setX(playerX - speed);
-                setDirection("left");
-                isMoving = true;
-            }
-            else if (rightPressed && !checkCollisionWithTile(playerX + speed, playerY)) {   //right is pressed and there is no tile on the right
-                setX(playerX + speed);
-                setDirection("right");
-                isMoving = true;
-            }
 
             //ladder movement
             isClimbing = false;
@@ -209,28 +207,91 @@ public class Player extends Entity implements Observer {
                     isClimbing = true;
                     isOnGround = false;
                     isJumping = false;
-                    isMoving = true;
+                    isMoving = false;
                     verticalSpeed = 0;          //dont apply any kind of vertical speed when climbing, otherwise it shoots the player to the ground
+                    if(upPressed && checkCollisionWithTile(playerX, playerY - climbSpeed ) && (leftPressed || rightPressed)) {
+                        isClimbing = true;
+                        isMoving = false;
+                    }
                 }
-                else if (downPressed && canMoveDown && !checkCollisionWithTile(playerX, playerY)) {
+                else if (downPressed && canMoveDown && !checkCollisionWithTile(playerX, playerY + climbSpeed)) {
                     setY(playerY + climbSpeed);
                     setDirection("down");
                     isClimbing = true;
                     isOnGround = false;
                     isJumping = false;
-                    isMoving = true;
+                    isMoving = false;
                     verticalSpeed = 0;
                 }
-                else{                  //if the player is neither climbing up or down, then reset the flag.
+                else if (upPressed && checkCollisionWithTile(playerX, playerY - climbSpeed)) {
+                    //edge case: if player is trying to climb a ladder but theres is tile on top of him, just reset his position back to the original one
+                    //and keep the 'is climbing' state. this prevents funky visuals (was toggling between is moving and is climbing states really fast)
+                    setY(playerY);
+                    setDirection("up");
+                    isClimbing = true;
+                    isMoving = false;
+                    verticalSpeed = 0;  //very important, otherwise the gravity keeps stacking on the vertical speed, and teleports the player to the ground otherwise.
+                }
+
+                else {                  //if the player is neither climbing up or down, then reset the flag.
                     isClimbing = false;
                 }
             }
+
+
+            //horizontal movement
+            isMoving = false;
+            if (leftPressed && !checkCollisionWithTile(playerX - speed, playerY)) {         //left is pressed and there is no tile on the left
+                setX(playerX - speed);
+                setDirection("left");
+                if (isJumping || isClimbing) {
+                    isMoving = false;
+                }
+                else{
+                    isMoving = true;
+                }
+            }
+            else if (rightPressed && !checkCollisionWithTile(playerX + speed, playerY)) {   //right is pressed and there is no tile on the right
+                setX(playerX + speed);
+                setDirection("right");
+                if (isJumping || isClimbing) {
+                    isMoving = false;
+                }
+                else{
+                    isMoving = true;
+                }
+            }
+            //horizontal movement sound logic
+            if(isMoving && !gameOver) {
+                long currentTime = System.currentTimeMillis();
+
+                if (!wasMoving){    //if player just started moving then play the sound right away
+                    setChanged();
+                    notifyObservers("player moved");
+                    clearChanged();
+                    lastFootStepTime = currentTime;
+                }
+                else if (currentTime - lastFootStepTime >= FOOTSTEP_SOUND_INTERVAL){    //if the player has been moving for a while, then play the sound every 200 ms
+                    setChanged();
+                    notifyObservers("player moved");
+                    clearChanged();
+                    lastFootStepTime = currentTime;
+                }
+            }
+            wasMoving = isMoving;
+
+
 
             //player jump
             if(spacePressed && isOnGround) {
                 isJumping = true;
                 isOnGround = false;
+                isMoving = false;
                 verticalSpeed = MAX_JUMP_SPEED;
+
+                setChanged();
+                notifyObservers("player jumped");
+                clearChanged();
             }
 
             //interactable object handling (player interaction)
@@ -248,7 +309,11 @@ public class Player extends Entity implements Observer {
         }
 
         //player reset handling
-        if(gameOver) {      //if player dies, then reset to last checkpoint after waiting 2 seconds
+        if(gameOver && !wasGameOver) {      //if player dies, then reset to last checkpoint after waiting 2 seconds
+            setChanged();
+            notifyObservers("player died");
+            clearChanged();
+
             isMoving = false;
             isOnGround = false;
             isJumping = false;
@@ -259,7 +324,13 @@ public class Player extends Entity implements Observer {
                 scheduler.shutdown();
             }, 2, TimeUnit.SECONDS);
         }
+        wasGameOver = gameOver;
 
+        if(extracted){
+            setChanged();
+            notifyObservers("player extracted");
+            clearChanged();
+        }
     }
 
 //----------------------------------------------------------------------------------------------------------------//
@@ -673,9 +744,4 @@ public class Player extends Entity implements Observer {
         }
     }
 
-
-
-    //aint no way bro i am typing this shit from neovim
-    //lmao this shit is so cool.
-    
 }

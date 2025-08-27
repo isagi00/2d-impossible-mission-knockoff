@@ -2,6 +2,7 @@ package view;
 
 import controller.*;
 import model.Leaderboard;
+import model.entities.Player;
 import view.gamePanelViews.LeaderboardView;
 
 import javax.sound.sampled.AudioInputStream;
@@ -90,6 +91,16 @@ public class AudioManager implements Observer {
                     break;
             }
         }
+
+        else if(o instanceof ResultScreenController){
+            switch((String)(arg)){
+                case "enter pressed":
+                    playSound("menu enter");
+                    System.out.println("[AudioManager] played menu enter sound effect");
+                    break;
+            }
+        }
+
         else if (o instanceof GameKeyListener){
             switch((String)(arg)){
                 case "esc pressed":
@@ -98,19 +109,43 @@ public class AudioManager implements Observer {
                     break;
             }
         }
+        else if (o instanceof Player){
+            switch((String)(arg)){
+                case "player jumped":
+                    playSound("player jump");
+                    System.out.println("[AudioManager] played player jump sound effect");
+                    break;
+                case "player died":
+                    playSound("player death");
+                    System.out.println("[AudioManager] played player death sound effect");
+                    break;
+                case "player moved":
+                    playSound("player step");
+                    System.out.println("[AudioManager] played player step sound effect");
+                    break;
+                case "player extracted":
+                    playSound("player extracted");
+                    System.out.println("[AudioManager] played player extracted sound effect");
+                    break;
+            }
+        }
 
     }
 
 
     private void loadSoundEffects() {   //load all sound once at startup
-        //title screen navigation
+        //title screen  / pause menu / result screen / leaderboard navigation sounds
         loadSound("menu up", "sounds/menuup.wav");
         loadSound("menu down", "sounds/menudown.wav");
         loadSound("menu enter", "sounds/menuenter.wav");
-        //enter name sounds
+        //enter name sounds (used in what's your name controller)
         loadSound("entered char", "sounds/enteredchar.wav");
         loadSound("deleted char", "sounds/deletedchar.wav");
-
+        //player sounds
+        loadSound("player jump", "sounds/playerjump.wav");
+        loadSound("player death", "sounds/playerdeath.wav");
+        loadSound("player step", "sounds/playerstep.wav");
+        loadSound("player extracted", "sounds/playerextracted.wav");
     }
 
 
