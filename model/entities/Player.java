@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * should not:
  * should not know about the views or input
  */
-public class Player extends Entity implements Observer {
+public class Player extends Entity {
     //----------------------------------------------------------------------------------------------------------------//
     // FIELDS
     //----------------------------------------------------------------------------------------------------------------//
@@ -40,7 +40,6 @@ public class Player extends Entity implements Observer {
     private boolean isMoving = false;
     private boolean isOnGround = false;
     private boolean isJumping = false;
-    private boolean isFalling = false;          //@todo refactor with is falling
     //interaction related
     private boolean interactionCompleted = false;
     private int interactionHoldTime = 0;
@@ -116,6 +115,10 @@ public class Player extends Entity implements Observer {
                        boolean spacePressed, boolean ePressed,
                        boolean upArrowPressed, boolean downArrowPressed, boolean enterPressed) {
 
+        if (this.currentRoom != levelManager.getCurrentRoom()) {    //if the current player's current room doesnt match the level manager's current room
+            this.currentRoom = levelManager.getCurrentRoom();   //then get the current room from level manager
+        }
+
         int playerX = getX();
         int playerY = getY();
         int speed = getSpeed();
@@ -157,7 +160,6 @@ public class Player extends Entity implements Observer {
                 setY(playerY + verticalSpeed);
                 if (verticalSpeed > 0){     //vertical speed increasing means falling down
                     isOnGround = false;
-                    isFalling = true;
                     isMoving = false;
                     setDirection("down");
                 }
@@ -740,12 +742,5 @@ public class Player extends Entity implements Observer {
         this.gameOver = gameOver;
     }
 
-
-    @Override
-    public void update(Observable o, Object arg) {
-        if (arg instanceof Room newroom){
-            this.currentRoom = newroom;         //when the player enters a new room, level manager notifies the player of the new room
-        }
-    }
 
 }

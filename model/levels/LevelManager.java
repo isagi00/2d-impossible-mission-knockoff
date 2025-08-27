@@ -18,6 +18,9 @@ import java.util.Observable;
  * provide this level's data accessors / accessors in general
  *
  * should not know about view or input
+ *
+ * the class initializes the game world / tutorial layout in the {@link #worldLayout} matrix.
+ * loads room data, and handles room transitions.
  */
 public class LevelManager extends Observable {      // -> observers: interactableObjectsView
     //----------------------------------------------------------------------------------------------------------------//
@@ -69,17 +72,16 @@ public class LevelManager extends Observable {      // -> observers: interactabl
         this.currentWorldRow = 0;
         this.currentWorldCol = 0;
         worldLayout = new Room[5][8];   //world size
-        //currentRoomData = new int[GameView.MAX_SCREEN_ROW][GameView.MAX_SCREEN_COL];   //a room is at most 32x16 tiles
-        currentRoomData = new int[50][50];   //a room is at most 32x16 tiles
-        this.addObserver(player);
+        currentRoomData = new int[50][50];   //a room is at most 32x16 tiles. however,  i am generating the matrix to be slightly bigger because there could be
+        //some unhandled edge cases when player changes room. did this to prevent index out of bounds errors...
 
         worldLayout[0][0] = new Room(Room.RoomType.GROUND, 0, true);     //init a default room when initializing, otherwise it gives a null room (for some reason)
-
     }
-    //----------------------------------------------------------------------------------------------------------------//
-    // WORLD LAYOUT
-    //----------------------------------------------------------------------------------------------------------------//
 
+    /**
+     * initializes the game world in the {@link #worldLayout}.
+     * unimplemented mechanic: generate random rooms for different slots
+     */
     public void initializeWorldLayout() {
         //row 0: surface
         worldLayout[0][0] = new Room(Room.RoomType.GROUND, 0, true);
@@ -129,11 +131,11 @@ public class LevelManager extends Observable {      // -> observers: interactabl
         worldLayout[4][5] = null;
         worldLayout[4][6] = null;
         worldLayout[4][7] = null;
-
-
-        //@todo add random levels, select from 8 different levels, shuffle them throughtout the map
     }
 
+    /**
+     * initializes the {@link #worldLayout} matrix with the tutorial levels.
+     */
     public void initializeTutorialLayout(){
         //row 0: surface
         worldLayout[0][0] = new Room(Room.RoomType.TUTORIAL, 0, true);
@@ -164,7 +166,6 @@ public class LevelManager extends Observable {      // -> observers: interactabl
     // MOVE TO LEFT / RIGHT / TOP / BOTTOM ROOM
     //----------------------------------------------------------------------------------------------------------------//
 
-    //@todo: MAKE IT THAT ONCE A ROOM IS VIISTED ( LEVEL ) YOU CANT GO BACK IN. NO BACKTRACKING! ONLY MAKE IT POSSIBLE IF THE RIGHT ROOM IS ELEVATOR
     public void moveToLeftRoom(){
         Room currentRoom = getCurrentRoom();
         if (currentWorldCol > 0 && worldLayout[currentWorldRow][currentWorldCol - 1] != null) {
@@ -210,41 +211,125 @@ public class LevelManager extends Observable {      // -> observers: interactabl
     }
 
 
+    /**
+     * loads the current room data. heavy work is done by {@link #loadRoomData(String)}, which loads tiles, objects and enemies of the room.
+     */
     //----------------------------------------------------------------------------------------------------------------//
     // ROOM LOADER
     //----------------------------------------------------------------------------------------------------------------//
     public void loadCurrentRoom() {
         Room currentRoom = getCurrentRoom();
         String roomPath = currentRoom.getRoomPath();
-
-//        loadBackground(currentRoom); //load the background
-        loadRoomData(roomPath); //load room data
-
-
-        setChanged();
-        notifyObservers(getCurrentRoom());
+        loadRoomData(roomPath); //load room data, also notifies observers
     }
 
-    //----------------------------------------------------------------------------------------------------------------//
-    // ROOM DATA LOADER
-    //----------------------------------------------------------------------------------------------------------------//
+    /**loads the room data: reads the text file contents, and based on the marker, it places the interactable object, enemies or tiles,
+     * only if that specific instance of the room has not been initialized: allows persistent room state tracking, so that
+     * does not reload opened interactable objects / disabled enemies
+     * @param roomPath path of the room .txt file
+     */
     private void loadRoomData(String roomPath) {
-        try{
-            //clear enemies and interactable objects, then load, to avoid reloading more enemies/interactable objects.
-            getCurrentRoom().clearDrones();
-            getCurrentRoom().clearDogs();
-            getCurrentRoom().clearInteractableObjects();
+        try {
+            //clear everything in the room
+            Room currentRoom = getCurrentRoom();
+            if (!currentRoom.isInitialized){    //if not been initialized then start from a clean slate
+                currentRoom.clearAllObjects();
+            }
+            //read the file
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(roomPath);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(roomPath);        //import the text file
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));     //reads the text file content
-            for (int row = 0; row < ScreenSettings.MAX_SCREEN_ROW; row++) {
-                String line = bufferedReader.readLine();
-                if (line == null) { break; }
-                else {processLine(line, row);}  //this is where the magic happens jesus fucking christ
+            for (int row = 0; row < ScreenSettings.MAX_SCREEN_ROW; row++) { //for text file each row
+                String line = bufferedReader.readLine();    //.txt line
+                if (line == null) break;
+
+                String[] numbers = line.split(" "); //text file line numbers
+                for (int col = 0; col < numbers.length && col < ScreenSettings.MAX_SCREEN_COL; col++) { //text file cols
+                    String number = numbers[col];   //single number
+                    if (number.isEmpty()) continue;
+                    //calculate where the starting x and y of each time
+                    int tileX = col * ScreenSettings.TILE_SIZE;
+                    int tileY = row * ScreenSettings.TILE_SIZE;
+
+                    char marker = number.charAt(0); //get the first char of the string: if the string is an integer, then just falls down to the default case and just load the tile number
+                    switch (marker) {
+                        //load the interactable objects
+                        case 'b':
+                            if (!currentRoom.isInitialized) {   //if it has not been previously initialized, then creaate the new object, otherwise no need to create new instances
+                                currentRoom.addInteractableObject(new PaperBox(tileX, tileY));
+                                currentRoomData[row][col] = 0;
+                                break;
+                            }
+                        case 'R':
+                            if (!currentRoom.isInitialized) {
+                                currentRoom.addInteractableObject(new RedBox(tileX, tileY));
+                                currentRoomData[row][col] = 0;
+                                break;
+                            }
+                        case 'M':
+                            if (!currentRoom.isInitialized) {
+                                currentRoom.addInteractableObject(new MetalLocker(tileX, tileY));
+                                currentRoomData[row][col] = 0;
+                                break;
+                            }
+                        case 'W':
+                            if (!currentRoom.isInitialized) {
+                                currentRoom.addInteractableObject(new WoodLocker(tileX, tileY));
+                                currentRoomData[row][col] = 0;
+                                break;
+                            }
+                        case 'c':
+                            if (!currentRoom.isInitialized) {
+                                currentRoom.addInteractableObject(new Card(tileX, tileY));
+                                currentRoomData[row][col] = 0;
+                                break;
+                            }
+                        case 'L':
+                            if (!currentRoom.isInitialized) {
+                                currentRoom.addInteractableObject(new Ladder(tileX, tileY));
+                                currentRoomData[row][col] = 0;
+                                break;
+                            }
+                        case 'C':
+                            if (!currentRoom.isInitialized) {
+                                currentRoom.addInteractableObject(new Computer(tileX, tileY));
+                                currentRoomData[row][col] = 0;
+                                break;
+                            }
+
+                        //load the enemies
+                        case 'D':
+                            if (!currentRoom.isInitialized) {
+                                currentRoom.addDrone(new Drone(tileX, tileY, player, this));
+                                currentRoomData[row][col] = 0;
+                                break;
+                            }
+                        case 'd':
+                            if (!currentRoom.isInitialized) {
+                                currentRoom.addDog(new Dog(tileX, tileY, player, this));
+                                currentRoomData[row][col] = 0;
+                                break;
+                            }
+                        //load the tiles
+                        default:
+                            try {
+                                //load the tiles regardless if the room has been initialized or not
+                                int tileNum = Integer.parseInt(number);
+                                currentRoomData[row][col] = tileNum;
+                            }
+                            catch (NumberFormatException e) {
+                                currentRoomData[row][col] = 0;
+                            }
+                            break;
+                    }
+                }
             }
             bufferedReader.close();
-        }
-        catch(Exception e){    //
+
+            if (!currentRoom.isInitialized) {   //mark the room as initialized after first visit
+                currentRoom.isInitialized = true;
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -252,92 +337,6 @@ public class LevelManager extends Observable {      // -> observers: interactabl
         notifyObservers("level changed");
         clearChanged();
     }
-
-    private void processLine(String line, int row) {
-        int col = 0;
-
-        String[] numbers = line.split(" ");
-        for (String number : numbers) {
-            if (col >= ScreenSettings.MAX_SCREEN_COL) {break;}
-
-            try{
-                int num = Integer.parseInt(number);
-                int tileX = col * ScreenSettings.TILE_SIZE;
-                int tileY = row * ScreenSettings.TILE_SIZE;
-                if (InteractableObjectID.isInteractableObject(num)) {
-                    placeObject(getCurrentRoom(), num, tileX, tileY);
-                    //set tile to be an empty space
-                    currentRoomData[row][col] = 0;
-
-                }
-                else {//if the num is > 0, then it is a regular tile
-                    currentRoomData[row][col] = num;
-                }
-
-                //SECOND PART: PLACE THE OBJECTS/TILES BASED ON THE MARKER.
-            } catch (NumberFormatException e) {
-                //check for markers based objects (interactable objects)
-                char marker = number.charAt(0);
-                int tileX = col * ScreenSettings.TILE_SIZE;
-                int tileY = row * ScreenSettings.TILE_SIZE;
-
-                Room currentRoom = getCurrentRoom();
-                switch (marker) {
-                    //----------------------------------------------------------------------------------------------------------------//
-                    // ADDING INTERACTABLE OBJECTS 1.
-                    //----------------------------------------------------------------------------------------------------------------//
-                    case 'b':
-                        placeObject(currentRoom, InteractableObjectID.OBJECT_BOX,tileX, tileY);
-                        currentRoomData[row][col] = 0;
-                        break;
-                    case 'R':
-                        placeObject(currentRoom, InteractableObjectID.OBJECT_REDBOX,tileX, tileY);
-                        currentRoomData[row][col] = 0;
-                        break;
-                    case 'M':
-                        placeObject(currentRoom, InteractableObjectID.OBJECT_METALLOCKER,tileX, tileY);
-                        currentRoomData[row][col] = 0;
-                        break;
-                    case 'W':
-                        placeObject(currentRoom, InteractableObjectID.OBJECT_WOODLOCKER, tileX, tileY);
-                        currentRoomData[row][col] = 0;
-                        break;
-                    case 'c':
-                        placeObject(currentRoom, InteractableObjectID.OBJECT_CARD,tileX, tileY);
-                        currentRoomData[row][col] = 0;
-                        break;
-                    case 'L':
-                        placeObject(currentRoom, InteractableObjectID.OBJECT_LADDER,tileX, tileY);
-                        currentRoomData[row][col] = 0;
-                        break;
-                    case 'C':
-                        placeObject(currentRoom, InteractableObjectID.OBJECT_COMPUTER,tileX, tileY);
-                        currentRoomData[row][col] = 0;
-                        break;
-
-
-                        //ENEMIES
-
-                    case 'D':
-                        placeDrone(currentRoom, tileX, tileY);
-                        currentRoomData[row][col] = 0;
-                        break;
-                    case 'd':
-                        placeDog(currentRoom, tileX, tileY);
-                        currentRoomData[row][col] = 0;
-                        break;
-
-
-                    default:
-                        // if not a recognized object marker treat as empty space
-                        currentRoomData[row][col] = 0;
-                        break;
-                    }
-                }
-            col++;
-        }
-    }
-
 
     //----------------------------------------------------------------------------------------------------------------//
     // PRINT WORLD LAYOUT TO CONSOLE
@@ -368,41 +367,6 @@ public class LevelManager extends Observable {      // -> observers: interactabl
         }
     }
 
-    //----------------------------------------------------------------------------------------------------------------//
-    // ADDING INTERACTABLE OBJECTS 2.  INSTANTIATE THE NEW OBJECTS
-    //----------------------------------------------------------------------------------------------------------------//
-    private void placeObject(Room currentRoom, int objectType, int x, int y){
-            switch (objectType) {
-                case InteractableObjectID.OBJECT_BOX:
-                    PaperBox box = new PaperBox(x, y);
-                    currentRoom.addInteractableObject(box);
-                    break;
-                case InteractableObjectID.OBJECT_REDBOX:
-                    RedBox redBox = new RedBox(x, y);
-                    currentRoom.addInteractableObject(redBox);
-                    break;
-                case InteractableObjectID.OBJECT_METALLOCKER:
-                    MetalLocker metalLocker = new MetalLocker(x, y);
-                    currentRoom.addInteractableObject(metalLocker);
-                    break;
-                case InteractableObjectID.OBJECT_WOODLOCKER:
-                    WoodLocker woodLocker = new WoodLocker(x, y);
-                    currentRoom.addInteractableObject(woodLocker);
-                    break;
-                case InteractableObjectID.OBJECT_CARD:
-                    Card card = new Card(x, y);
-                    currentRoom.addInteractableObject(card);
-                    break;
-                case InteractableObjectID.OBJECT_LADDER:
-                    Ladder ladder = new Ladder(x, y);
-                    currentRoom.addInteractableObject(ladder);
-                    break;
-                case InteractableObjectID.OBJECT_COMPUTER:
-                    Computer computer = new Computer(x, y);
-                    currentRoom.addInteractableObject(computer);
-                    break;
-                }
-    }
 
     /**
      * handles the level transition, wherever the {@link Player} is going

@@ -23,22 +23,30 @@ public class Room {
     }
 
     /**
-     * this instance of room's room type. provides access to the room type
+     * this instance of room's room type.
      */
-    public RoomType roomType;
+    private final RoomType roomType;
+
     /**
      * index of the current room
      */
-    //room specific flags
     private int levelIndex;  //identifies the current room index
     /**
      * room is open or not boolean flag
      */
-    public boolean isOpen;
+    protected boolean isOpen;
+
     /**
      * room is visited or not boolean flag
      */
-    public boolean isVisited;
+    protected boolean isVisited;
+
+
+    /**
+     * flag that checks whether this specific instance of the room has been initialized or not
+     */
+    protected boolean isInitialized;
+
     /**
      * list of {@link InteractableObject}s in the room
      */
@@ -71,6 +79,7 @@ public class Room {
         this.levelIndex = levelIndex;
         this.isOpen = isOpen;
         this.isVisited = false;     //default false
+        this.isInitialized = false;
 
         this.interactableObjects = new ArrayList<>();
         this.drones = new ArrayList<>();
@@ -254,6 +263,10 @@ public class Room {
      */
     public void setTutorialText(String tutorialText){this.tutorialText = tutorialText;}
 
-
+    public void clearAllObjects() {
+        interactableObjects.clear();
+        drones.clear();
+        dogs.clear();
+    }
 
 }

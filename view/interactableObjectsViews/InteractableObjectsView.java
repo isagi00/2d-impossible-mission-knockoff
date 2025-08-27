@@ -35,9 +35,9 @@ public class InteractableObjectsView implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (o instanceof LevelManager levelManager){
-            if (arg instanceof Room newRoom){           //when changin rooms, in level manager notifies observers with getCurrentRoom()
-                this.currentRoom = newRoom;             //update the current room
+        if (o instanceof LevelManager){
+            if (arg == "level changed"){           //when changin rooms, in level manager notifies observers with getCurrentRoom()
+                this.currentRoom = levelManager.getCurrentRoom();             //update the current room
                 refreshViews();
             }
         }

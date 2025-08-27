@@ -5,7 +5,6 @@ model.entities
 model.interactableObjects
 model.inventoryrelated
 model.levels
-model.tiles
 view
 view.entityViews
 view.gamePanelViews
