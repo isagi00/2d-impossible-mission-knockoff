@@ -159,11 +159,11 @@ public class DroneView implements Observer {
             image = switchIdleSprite(drone.getDirection());
         }
 
-        if (drone.getIsMoving()){
+        else if (drone.getIsMoving()){
             image = switchMovingSprite(drone.getDirection());
         }
 
-        if (drone.getIsDisabled()){
+        else if (drone.getIsDisabled()){
             image = switchDisabledSprites(drone.getDirection());
         }
 

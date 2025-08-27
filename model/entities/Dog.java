@@ -42,9 +42,10 @@ public class Dog extends Entity {
     }
 
     public void update(){
-
+        //if the dog sees that there is no ground ahead or these is a wall, it will wait a bit then change direction
         if(isWaiting){
             waitCounter--;
+            isIdle = true;
             if(waitCounter <= 0){   //if finished waiting
                 isWaiting = false;
                 isIdle = false;     //resume movement after waiting
@@ -52,6 +53,7 @@ public class Dog extends Entity {
             return;         //pause the update method here when the dog is waiting
         }
 
+        //collision check with player
         if (!player.getGameOver()) {
             if (checkCollisionWithPlayer()) {
                 System.out.println("[Dog][update()]setting game over to true on player. checkCollisionWithPlayer()");
@@ -59,36 +61,46 @@ public class Dog extends Entity {
             }
         }
 
-        if (!isDisabled){
-            boolean sameLevel = Math.abs(player.getY() - getY()) <= MAX_VERTICAL_DISTANCE;
-            boolean playerWithinChaseRange = false;
 
+        if (!isDisabled){
+            //check the dog and the player are on the same platform
+            boolean sameLevel = Math.abs(player.getY() - getY()) <= MAX_VERTICAL_DISTANCE * 2;
+            //check the player is within in front of the dog
+            boolean playerWithinChaseRange = false;
             if (sameLevel){
-                if (getDirection().equals("right") && player.getX() > getX()){
-                    int distance = player.getX() - getX();
-                    if (distance <= CHASE_RANGE){
-                        playerWithinChaseRange = true;
-                    }
+//                if (getDirection().equals("right") && player.getX() > getX()){
+//                    int distance = player.getX() - getX();
+//                    if (distance <= CHASE_RANGE){
+//                        playerWithinChaseRange = true;
+//                        isChasing = true;
+//                    }
+//                }
+//                else if (getDirection().equals("left") && player.getX() < getX()){
+//                    int distance = getX()- player.getX();
+//                    if (distance <= CHASE_RANGE){
+//                        playerWithinChaseRange = true;
+//                        isChasing = true;
+//                    }
+//                }
+                int distance = Math.abs(player.getX() - getX());
+                if (distance < CHASE_RANGE && !player.getGameOver()){
+                    playerWithinChaseRange = true;
+                    isChasing = true;
                 }
-                else if (getDirection().equals("left") && player.getX() < getX()){
-                    int distance = getX()- player.getX();
-                    if (distance <= CHASE_RANGE){
-                        playerWithinChaseRange = true;
-                    }
+                else if (player.getGameOver()){
+                    startWaiting();
+                    isMoving = false;
+                    isChasing = false;
+                    isIdle = true;      //???
                 }
             }
 
-            if (playerWithinChaseRange){
+            if (isChasing && playerWithinChaseRange){
                 chasePlayer();
-                setChanged();
-                notifyObservers("chasing player");
             }
             else{
                 isChasing = false;
-
                 patrol();
-                setChanged();
-                notifyObservers("patrolling");
             }
         }
     }
@@ -105,10 +117,17 @@ public class Dog extends Entity {
     private void chasePlayer(){
         int chaseSpeed = (int) (SPEED * 1.7);
 
+        if ((player.getX() > getX() && getDirection().equals("left")) || (player.getX() < getX() && getDirection().equals("right"))) {
+            setDirection(player.getX() > getX() ? "right" : "left");
+            movingRight = player.getX() > getX();
+        }
+
         if (getDirection().equals("right")){
             movingRight = true;
 
             int newX = getX() + chaseSpeed;
+
+            //ground ahead check
             int groundCheckX = newX + getWidth() - 5;
             int groundCheckY = getY() + getHeight() + 1;
             groundAhead = isPointOnSolidTile(groundCheckX, groundCheckY);
@@ -128,7 +147,7 @@ public class Dog extends Entity {
                 isIdle = false;
                 currentPatrolPosition ++;
             }
-            else{
+            else if (wallInFront || newX > ScreenSettings.SCREEN_WIDTH - getWidth() || !groundAhead ) {
                 startWaiting();     //when changin direction, wait for a little bit before turning
                 setDirection("left");
                 isChasing = false;
@@ -140,7 +159,7 @@ public class Dog extends Entity {
         }
         else{  //moving left
             int newX = getX() - chaseSpeed;
-
+            //check if there's gound ahead of the dog
             int groundCheckX = newX + 5;
             int groundCheckY = getY() + getHeight() + 1;
             groundAhead = isPointOnSolidTile(groundCheckX, groundCheckY);
@@ -301,5 +320,9 @@ public class Dog extends Entity {
 
     public void deactivate(){
         this.isDisabled = true;
+    }
+
+    public int getWaitCounter(){
+        return waitCounter;
     }
 }

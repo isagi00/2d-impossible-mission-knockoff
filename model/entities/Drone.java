@@ -48,7 +48,7 @@ public class Drone extends Entity {
     //----------------------------------------------------------------------------------------//
 
     public void update() {
-        // if drone is disabled and player touches him make him cry anyways muhahaha
+        // if drone is disabled and player touches him still kills the player
         if (!player.getGameOver()) {     //if player is not dead
             if (checkCollisionWithPlayer()) {           //check collision with him
                 System.out.println("[Drone][update()]setting game over to true on player. checkCollisionWithPlayer()");
@@ -76,17 +76,17 @@ public class Drone extends Entity {
                     }
                 }
             }
+
             if (playerWithinChaseRange) {        //if the player is within range chase
                 chasePlayer();
-                setChanged();
-                notifyObservers("chasing player");
-            } else {                    //if not just patrol normally
+            }
+            else {                    //if not just patrol normally
                 isChasing = false;
                 patrol();
-                setChanged();
-                notifyObservers("patrolling");
             }
         }
+
+
     }
 
     //----------------------------------------------------------------------------------------//
@@ -152,7 +152,7 @@ public class Drone extends Entity {
     }
 
     private void chasePlayer() {
-        int chaseSpeed = (int) (SPEED * 1.5);
+        int chaseSpeed = (int) (SPEED * 1.8);
 
         if (getDirection().equals("right")) {
             movingRight = true;
@@ -168,16 +168,13 @@ public class Drone extends Entity {
             int wallCheckX = wallCheckCol * ScreenSettings.TILE_SIZE;
             wallInFront = isPointOnSolidTile(wallCheckX, getY() + getHeight()/2);
 
-            if (!wallInFront &&
-                    newX < ScreenSettings.SCREEN_WIDTH - getWidth() &&
-                    groundAhead) {
-
+            if (!wallInFront && newX < ScreenSettings.SCREEN_WIDTH - getWidth() && groundAhead) {   //no wall, gorund ahead and is on the left of the screen bounds
                 setX(newX);
                 isChasing = true;
                 isMoving = true;
                 isIdle = false;
                 currentPatrolPosition++;
-            } else {
+            } else {        //hit a wall or some other condition turned false
                 setDirection("left");
                 isChasing = false;
                 isMoving = true;
@@ -186,8 +183,7 @@ public class Drone extends Entity {
                 currentPatrolPosition--;
             }
         }
-
-        if (!movingRight) { // direction is "left"
+        else { // direction is "left"
             int newX = getX() - chaseSpeed;
 
             // check ground ahead of new position

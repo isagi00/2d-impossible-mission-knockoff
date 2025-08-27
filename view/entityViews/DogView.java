@@ -142,14 +142,17 @@ public class DogView implements Observer {
 
         if(dog.getIsIdle()){
             image = switchIdleSprite(dog.getDirection());
+//            System.out.println("[DogView] idle dog sprite");
         }
 
-        if(dog.getIsMoving()){
+        else if(dog.getIsMoving()){
             image = switchMovingSprite(dog.getDirection());
+//            System.out.println("[DogView] moving dog sprite");
         }
 
-        if(dog.getIsDisabled()){
+        else if(dog.getIsDisabled()){
             image = switchDisabledSprites(dog.getDirection());
+//            System.out.println("[DogView] idle dog sprite");
         }
 
         g2d.drawImage(image, dog.getX(), dog.getY(), dog.getWidth(), dog.getHeight(), null);
@@ -174,7 +177,7 @@ public class DogView implements Observer {
         g2d.drawOval(dog.getX(), dog.getY(), 3, 3);
         g2d.drawString("dog width, height: " + dog.getWidth() + " " + dog.getHeight(), dog.getX(), dog.getY() - 60);
         g2d.drawString("[ground ahead] " + dog.getGroundAhead(), dog.getX(), dog.getY() - 70);
-        g2d.drawString("[idle time]" + dog.getWaitTime(), dog.getX(), dog.getY() - 80);
+        g2d.drawString("[WAIT COUNTER]" + dog.getWaitCounter(), dog.getX(), dog.getY() - 80);
         g2d.drawOval(dog.getX() + dog.getWidth(), dog.getY() + dog.getHeight(), 5, 5); //bottom right corner of the dog
         g2d.drawOval(dog.getX(), dog.getY() + dog.getHeight(), 5, 5); //bottom left corner of the dog
 

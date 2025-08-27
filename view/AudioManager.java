@@ -187,6 +187,7 @@ public class AudioManager implements Observer {
             soundEffects.put(soundName, audioClips);  //put the name - list of sound clips in the map
 
             System.out.println("[AudioManager] loaded sound,  " + soundName + " from " + filePath);
+            ais.close();
         }
         catch (Exception e){
             System.out.println("[AudioManager] uanble to load sound,  " + soundName +" from " + filePath);
@@ -206,6 +207,7 @@ public class AudioManager implements Observer {
             for (Clip audioClip : audioClips){
                 if (!audioClip.isRunning()){    //if a clip instance is not currently running then set it as the availableClip clip
                     availableClip = audioClip;
+//                    System.out.println("[AudioManager] played " + soundName + " sound effect from clip: " + availableClip);   //ok sure that there are 5 different clips of the same audio clip
                     break;  //end the loop when found the availableClip clip
                 }
             }

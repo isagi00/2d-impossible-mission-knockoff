@@ -387,8 +387,8 @@ public class Player extends Entity implements Observer {
      * @return true if isWithinDistance returns true and sets the currentInteractable, false if isWithinDistance returns false, and sets the currentInteractable to false
      */
     private boolean updateCurrentInteractable() {
-        if (inventory.isInventoryFull()){
-            return false;       //dont make the interaction prompt appear if the invenotry is full
+        if (inventory.isInventoryFull() && !checkPlayerHasCard()){  //if the inventory is actually full from cards, dont display the interaction prompt
+            return false;
         }
 
         List<InteractableObject> objects = currentRoom.getInteractiveObjects();
@@ -419,13 +419,13 @@ public class Player extends Entity implements Observer {
                 }
                 continue;
             }
-            //check if the object is within distance
-            if (isWithinDistance(obj)) {
+            //check if the object is within distance the inventory is not full
+            if (isWithinDistance(obj) && (!inventory.isInventoryFull() || (inventory.isInventoryFull() && checkPlayerHasCard()) ) ) {
+                //return true if: object is within distance and if the inventory is not full OR it is full but there is a card (dont consider it full)
                 currentInteractable = obj;
                 return true;
             }
         }
-
         currentInteractable = null;
         return false;
     }
