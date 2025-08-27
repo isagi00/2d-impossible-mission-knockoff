@@ -2,6 +2,7 @@ package model.entities;
 
 import model.ScreenSettings;
 import model.levels.LevelManager;
+import view.AudioManager;
 
 import java.awt.*;
 
@@ -29,6 +30,11 @@ public class Dog extends Entity {
     private boolean groundAhead;
     private boolean isWaiting = false;
 
+    //required for sound
+    private boolean wasMoving = false;
+    private long lastFootStepTime = 0;
+    private long FOOTSTEP_SOUND_INTERVAL = 200; //200ms between footsteps
+
 
     public Dog(int x, int y, Player player, LevelManager levelManager) {
         super (x, y, ScreenSettings.TILE_SIZE * 2, ScreenSettings.TILE_SIZE * 2, levelManager);
@@ -37,8 +43,10 @@ public class Dog extends Entity {
         this.levelManager = levelManager;
         //dog constants
         this.PATROL_RANGE = ScreenSettings.TILE_SIZE * 10;
-
         setDirection("right");
+
+
+        this.addObserver(AudioManager.getInstance());
     }
 
     public void update(){
@@ -52,6 +60,7 @@ public class Dog extends Entity {
             }
             return;         //pause the update method here when the dog is waiting
         }
+
 
         //collision check with player
         if (!player.getGameOver()) {
@@ -102,6 +111,25 @@ public class Dog extends Entity {
                 isChasing = false;
                 patrol();
             }
+
+            if ((isChasing || isMoving) && !isWaiting){
+                long currentTime = System.currentTimeMillis();
+
+                if (!wasMoving){        //play sound immediately if dog is moving
+                    setChanged();
+                    notifyObservers("dog moving");
+                    clearChanged();
+                    lastFootStepTime = currentTime;
+                }
+                else if (currentTime - lastFootStepTime >= FOOTSTEP_SOUND_INTERVAL){    //if dog moving for a while play sound at intervals
+                    setChanged();
+                    notifyObservers("dog moving");
+                    clearChanged();
+                    lastFootStepTime = currentTime;
+                }
+            }
+            wasMoving = isMoving;
+
         }
     }
 

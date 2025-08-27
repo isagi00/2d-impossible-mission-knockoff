@@ -2,6 +2,7 @@ package view;
 
 import controller.*;
 import model.Leaderboard;
+import model.entities.Dog;
 import model.entities.Player;
 import model.interactableObjects.InteractableObject;
 import view.gamePanelViews.LeaderboardView;
@@ -142,6 +143,14 @@ public class AudioManager implements Observer {
                     break;
             }
         }
+        else if (o instanceof Dog){
+            switch((String)(arg)){
+                case "dog moving":
+                    playSound("dog step");
+                    System.out.println("[AudioManager] played dog moving sound effect");
+                    break;
+            }
+        }
 
     }
 
@@ -162,6 +171,10 @@ public class AudioManager implements Observer {
         //rare card and common card found
         loadSound("rare card found", "sounds/rarecardcollected.wav");
         loadSound("common card found", "sounds/commoncardcollected.wav");
+        //dog sounds
+        loadSound("dog step", "sounds/dogstep.wav");
+        //drone sounds
+        loadSound("drone step", "sounds/dronestep.wav");
     }
 
 

@@ -9,11 +9,5 @@ public class ComputerCard extends Item{
     }
 
 
-    @Override
-    public void use(Player player){
-
-
-    }
-
 
 }
