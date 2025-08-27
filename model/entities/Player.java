@@ -387,6 +387,10 @@ public class Player extends Entity implements Observer {
      * @return true if isWithinDistance returns true and sets the currentInteractable, false if isWithinDistance returns false, and sets the currentInteractable to false
      */
     private boolean updateCurrentInteractable() {
+        if (inventory.isInventoryFull()){
+            return false;       //dont make the interaction prompt appear if the invenotry is full
+        }
+
         List<InteractableObject> objects = currentRoom.getInteractiveObjects();
         // if there's an active computer menu, keep it as current interactable
         for (InteractableObject obj : objects) {
