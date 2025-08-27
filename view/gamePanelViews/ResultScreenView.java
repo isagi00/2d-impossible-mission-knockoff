@@ -67,11 +67,11 @@ public class ResultScreenView extends JPanel  {
         g2d.fillRect(0, 0, ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT);
 
 
+        g2d.setFont(titleFont);
+        g2d.setColor(Color.GREEN);
         String title = "EXTRACTION COMPLETED!";
         FontMetrics titleMetrics = g2d.getFontMetrics();
-        g2d.setColor(Color.GREEN);
-        g2d.setFont(titleFont);
-        g2d.drawString(title, (ScreenSettings.SCREEN_WIDTH / 2) - (titleMetrics.stringWidth(title) / 2) - 50 , padding);
+        g2d.drawString(title, (ScreenSettings.SCREEN_WIDTH / 2) - (titleMetrics.stringWidth(title) / 2) , padding);
 
         String pts = "pts";
         int ptsX = padding * 24;
@@ -105,7 +105,7 @@ public class ResultScreenView extends JPanel  {
         g2d.drawString(metallockersopened, padding * 13, titleMetrics.getHeight() + padding * 3);
         g2d.drawString("x 500", xX, titleMetrics.getHeight() + padding * 3);
         g2d.drawString("=  " + scoreTracker.getMetalLockersTotalPoints(), totalPointsX, titleMetrics.getHeight() + padding * 3);
-        g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 4);
+        g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 3);
 
         //wood lockers opened score
         String woodlockers = "wooden lockers opened: ";
@@ -186,7 +186,7 @@ public class ResultScreenView extends JPanel  {
         //to the main menu text
         g2d.setFont(resultFont);
         g2d.setColor(Color.WHITE);
-        g2d.drawString("press enter to go to the main menu", padding, titleMetrics.getHeight() + padding * 14);
+        g2d.drawString("press enter to go to the main menu", padding, titleMetrics.getHeight() + padding * 14 - 15);
     }
 
 

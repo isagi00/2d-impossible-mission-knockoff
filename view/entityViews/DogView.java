@@ -140,8 +140,8 @@ public class DogView implements Observer {
         BufferedImage image = null;
         updateFrameCounter();
 
-        if(dog.getIsIdle()){
-            image = switchIdleSprite(dog.getDirection());
+        if(dog.getIsDisabled()){
+            image = switchDisabledSprites(dog.getDirection());
 //            System.out.println("[DogView] idle dog sprite");
         }
 
@@ -150,10 +150,11 @@ public class DogView implements Observer {
 //            System.out.println("[DogView] moving dog sprite");
         }
 
-        else if(dog.getIsDisabled()){
-            image = switchDisabledSprites(dog.getDirection());
+        else if(dog.getIsIdle()){
+            image = switchIdleSprite(dog.getDirection());
 //            System.out.println("[DogView] idle dog sprite");
         }
+
 
         g2d.drawImage(image, dog.getX(), dog.getY(), dog.getWidth(), dog.getHeight(), null);
         g2d.drawImage(dog.getIsChasing() ? chasing : notchasing, dog.getX() + 30, dog.getY() + 20, null);

@@ -1,6 +1,5 @@
 package main;
 
-
 import controller.TitleScreenController;
 import view.AudioManager;
 import view.gamePanelViews.TitleScreenView;
@@ -11,7 +10,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        System.setProperty("sun.java2d.opengl", "true");        //helps with the fps, enables (me on macbook) to have swing have the game run at 60+ fps instead of 30.
+        System.setProperty("sun.java2d.opengl", "true");        //helps with the fps, enables (me on macbook) to have swing have the game run at 60+ fps instead of 30
         //main window
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -30,16 +29,8 @@ public class Main {
         titleScreenView.setFocusable(true);
         titleScreenView.requestFocus();
 
-
-        //load the audio when launching(?)
+        //load audio files on startup
         AudioManager audioManager = AudioManager.getInstance();
-
-
-        //leaderboard works
-//        Leaderboard leaderboard = new Leaderboard();
-//        List<Integer> leaderboardScores = leaderboard.getLeaderboard();
-//        System.out.println("[Main] leaderboard scores: " + leaderboardScores);
-//        leaderboard.addScore(300);
     }
 
 }

@@ -155,7 +155,11 @@ public class DroneView implements Observer {
         BufferedImage image = null;
         updateFrameCounter();
 
-        if (drone.getIsIdle()){
+        if (drone.getIsDisabled()){
+            image = switchDisabledSprites(drone.getDirection());
+        }
+
+        else if (drone.getIsIdle()){
             image = switchIdleSprite(drone.getDirection());
         }
 
@@ -163,9 +167,6 @@ public class DroneView implements Observer {
             image = switchMovingSprite(drone.getDirection());
         }
 
-        else if (drone.getIsDisabled()){
-            image = switchDisabledSprites(drone.getDirection());
-        }
 
 
         g2d.drawImage(image, drone.getX(), drone.getY(), drone.getWidth(), drone.getHeight(), null);

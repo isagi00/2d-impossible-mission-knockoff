@@ -8,7 +8,7 @@ public class ScreenSettings {
 
     public static final int MAX_SCREEN_COL = 32;    //64a tiles wide
     public static final int MAX_SCREEN_ROW = 16;     //16 tiles high
-    public static final int SCREEN_WIDTH = MAX_SCREEN_COL * TILE_SIZE;      //32 * 48 =
-    public static final int SCREEN_HEIGHT = MAX_SCREEN_ROW * TILE_SIZE;
+    public static final int SCREEN_WIDTH = MAX_SCREEN_COL * TILE_SIZE;  //1536
+    public static final int SCREEN_HEIGHT = MAX_SCREEN_ROW * TILE_SIZE; //768
 
 }
