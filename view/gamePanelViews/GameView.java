@@ -17,6 +17,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.Observable;
+import java.util.Observer;
 
 
 /** MAIN RENDERING, TAKES ALL THE VIEWS AND RENDERS
@@ -87,12 +89,6 @@ public class GameView extends JPanel {
         setOpaque(true);
         //loading background image
         loadBackgroundImage();
-
-        //registering observer/observers
-        player.getInventory().addObserver((obs,obj) -> {
-            inventoryView.updateItemViews();
-            player.getInventory().clearDirtyState();});
-            repaint();  //request repaint when inventory changes
     }
 
     /**where the game actually renders:

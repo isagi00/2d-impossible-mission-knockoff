@@ -128,5 +128,19 @@ public class InventoryView implements Observer {
         if (o == inventory) {
             updateItemViews();
         }
+        if (o instanceof Inventory) {
+            switch((String) arg){
+                case "item added to inventory":
+                    updateItemViews();
+                    break;
+                case "removed item from inventory":
+                    updateItemViews();
+                    break;
+                case "removed computer card from inventory":
+                    updateItemViews();
+                    break;
+
+            }
+        }
     }
 }
