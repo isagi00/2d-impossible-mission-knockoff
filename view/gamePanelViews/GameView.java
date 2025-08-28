@@ -57,9 +57,9 @@ public class GameView extends JPanel {
     private double fps;
 
     // fonts
-    private final Font fpsFont = loadCustomFont("fonts/ThaleahFat.ttf", 25);
-    public  final Font gameFont = loadCustomFont("fonts/ThaleahFat.ttf", 50);
-    private final Font tutorialTextFont = loadCustomFont("fonts/ThaleahFat.ttf", 40);
+    private final Font fpsFont = loadFont("fonts/ThaleahFat.ttf", 25);
+    public  final Font gameFont = loadFont("fonts/ThaleahFat.ttf", 50);
+    private final Font tutorialTextFont = loadFont("fonts/ThaleahFat.ttf", 40);
 
 
     //----------------------------------------------------------------------------------------------------------------//
@@ -80,8 +80,6 @@ public class GameView extends JPanel {
         this.enemyView = new EnemyView(levelManager);
         this.levelView = new LevelView(levelManager, tileManager);
 
-
-
         //other
         setPreferredSize(new Dimension(ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT));
         setBackground(Color.BLACK);
@@ -97,6 +95,11 @@ public class GameView extends JPanel {
             repaint();  //request repaint when inventory changes
     }
 
+    /**where the game actually renders:
+     * calls every single view component to draw.
+     * tracks the fps and makes the {@link ResultScreenView} visible when the {@link Player} extracts.
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     public void paintComponent(Graphics g) {
         //paintComponent is defined in the JComponent, the parent class of JPanel.
@@ -105,12 +108,9 @@ public class GameView extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
 
         //enable text rendering
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-                RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
-                RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
          //fps tracking
         frameCount++;
@@ -156,36 +156,43 @@ public class GameView extends JPanel {
             resultScreenView.requestFocusInWindow();
         }
 
-
-
-
-
         g2d.dispose();
     }
 
 
-    public Font loadCustomFont(String fontPath, float size) {
+    /**
+     * @param fontPath path of the ttf file
+     * @param size font size
+     * @return font
+     */
+    public Font loadFont(String fontPath, float size) {
         try{
             InputStream stream = getClass().getClassLoader().getResourceAsStream(fontPath);
             if(stream == null) {    //if the font path provided is not available
-                System.out.println("Couldn't find font " + fontPath);
-                return new Font("Arial", Font.BOLD, (int) size);
+                System.out.println("[GameView]couldn't find font at " + fontPath);
+                return null;
             }
 
-            Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(size);
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(font);
-            System.out.println("Loaded font " + fontPath);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(size);   //create font
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment(); //gets the ge
+            ge.registerFont(font);  //registers the font of the current ge
+            System.out.println("[GameView] loaded font " + fontPath);
             return font;
 
         }catch(Exception e) {
-            System.err.println("Couldn't load font " + fontPath);
-            return new Font("Arial", Font.BOLD, (int) size);
+            System.err.println("[GameView]couldn't load font at " + fontPath);
+            return null;
         }
     }
 
+    /**draws the game text.
+     * top right: world info
+     * top left: fps
+     * player interaction prompt when near an interactable object
+     * @param g2d swing's graphics 2d instance that allows rendering
+     */
     private void drawGameText(Graphics2D g2d) {
-        //TOP RIGHT: DEPTH - LEVEL - LEVEL TYPE
+        //top right, world info: depth, level index, leveltype
         g2d.setFont(gameFont);
         g2d.setColor(Color.WHITE);
         int depth = levelManager.getCurrentDepth();
@@ -202,7 +209,7 @@ public class GameView extends JPanel {
         g2d.setColor(Color.WHITE);
         g2d.drawString(fpsText, 20,30);
 
-        //DRAW INTERACTION BUTTONS WHEN NEAR AND PROGRESS BAR IF INTERACTING
+        //DRAW INTERACTION BUTTON WHEN NEAR an interactable object AND PROGRESS BAR IF INTERACTING
         g2d.setFont(gameFont);
         if (player.getIsShowingInteractionPrompt() && player.getCurrentInteractable() != null){
             InteractableObject obj = player.getCurrentInteractable();
@@ -226,6 +233,9 @@ public class GameView extends JPanel {
     }
 
 
+    /**
+     * loads the background image, drawn in {@link #drawBackground(Graphics2D)}.
+     */
     private void loadBackgroundImage(){
         try{
             this.background = ImageIO.read(getClass().getClassLoader().getResourceAsStream("backgrounds/background.png"));
@@ -237,6 +247,12 @@ public class GameView extends JPanel {
     }
 
 
+    /**
+     * draws the game's background.
+     * it will display a background image if the player is on the first layer of {@link LevelManager} world layout,
+     * and a solid color when deeper into the world
+     * @param g2d swing's graphics 2d instance that allows rendering
+     */
     private void drawBackground(Graphics2D g2d) {
         Room currentRoom = levelManager.getCurrentRoom();
         Room[][] world = levelManager.getWorldLayout();

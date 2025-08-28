@@ -12,6 +12,11 @@ import javax.sound.sampled.Clip;
 import java.net.URL;
 import java.util.*;
 
+/**
+ * manages all the audio of the game.
+ * it follows the singleton and observer pattern: only a single instance of the audio manager can exist,
+ * and plays a certain sound effect whenever it gets notified from an observable model via {@link #update(Observable, Object)}.
+ */
 public class AudioManager implements Observer {
     /**
      * instance of AudioManager
