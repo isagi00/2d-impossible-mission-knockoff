@@ -14,17 +14,18 @@ import java.awt.image.BufferedImage;
 
 
 /**
- * model.
- * should contain box data/state
- * implements box state
- * provides box accessors
- *
- * should not know about view or input
+ * paper box interactable object model.
  */
-
 public class PaperBox extends InteractableObject {
+    /**
+     * indicates if this instance of paper box is open or not
+     */
     private boolean isOpened;
 
+    /**
+     * @param x x coordinate of the paper box  (top left)
+     * @param y y coordinate of the paper box (top left)
+     */
     public PaperBox(int x, int y) {
         super(x,y, ScreenSettings.TILE_SIZE,ScreenSettings.TILE_SIZE);   //it is 48x48
         this.isOpened = false;
@@ -32,6 +33,10 @@ public class PaperBox extends InteractableObject {
         this.addObserver(AudioManager.getInstance());
     }
 
+    /**once the paper box is opened, the player gets a random poker card with no boosted rates.
+     * it notifies the {@link AudioManager} to play a sound.
+     * @param player current instance of the player that is trying to interact with the object
+     */
     @Override
     public void open(Player player) {
         if(!isOpened){
@@ -54,14 +59,13 @@ public class PaperBox extends InteractableObject {
 
                 System.out.println("paperbox : open() -> added new pokercard to inventory -> " + pokerCard);
             }
-
-
-
-
             System.out.println("paperbox -> paperbox opened!");
         }
     }
 
+    /**
+     * @return boolean flag {@link #isOpened}
+     */
     public boolean getIsOpened() {
         return isOpened;
     }
