@@ -10,29 +10,77 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+/** view , every single interactable object views is collected in here.
+ * it is created once in {@link view.gamePanelViews.GameView}, and changes the room via the observer pattern.
+ * it is the observer of {@link LevelManager}, so when it gets notified of the room change, it will reload the interactable object views
+ * via {@link #refreshViews()}
+ */
 public class InteractableObjectsView implements Observer {
-    LevelManager levelManager;
+    /**
+     * {@link LevelManager} model instance
+     */
+    private static LevelManager levelManager;
+    /**
+     * list of {@link PaperBoxView}s
+     */
+    private List<PaperBoxView> paperBoxViews;
+    /**
+     * list of {@link CardView}s
+     */
+    private List<CardView> cardViews;   // array
+    /**
+     * list of {@link ComputerView}s
+     */
+    private List<ComputerView> computerViews;
+    /**
+     * list of {@link LadderView}s
+     */
+    private List<LadderView> ladderViews;
+    /**
+     * list of {@link MetalLockerView}s
+     */
+    private List<MetalLockerView> metalLockerViews;
+    /**
+     * list of {@link RedBoxView}s
+     */
+    private List<RedBoxView> redBoxViews;
+    /**
+     * list of {@link WoodLockerView}s
+     */
+    private List<WoodLockerView> woodLockerViews;
 
-
-    private List<PaperBoxView> paperBoxViews = new ArrayList<>();
-    private List<CardView> cardViews = new ArrayList<>();   // array
-    private List<ComputerView> computerViews = new ArrayList<>();
-    private List<LadderView> ladderViews = new ArrayList<>();
-    private List<MetalLockerView> metalLockerViews = new ArrayList<>();
-    private List<RedBoxView> redBoxViews = new ArrayList<>();
-    private List<WoodLockerView> woodLockerViews = new ArrayList<>();
-
-
+    /**
+     * the current room the player is in.
+     * updated via observe: {@link #update(Observable, Object)}
+     */
     private Room currentRoom;
 
+    /**created once in the {@link view.gamePanelViews.GameView}. it is a collection of each
+     * {@link InteractableObject} in the {@link #currentRoom}.
+     * @param levelManager {@link LevelManager} model
+     */
     public InteractableObjectsView(LevelManager levelManager) {
         this.levelManager = levelManager;
         this.currentRoom = levelManager.getCurrentRoom();
+
+        this.paperBoxViews = new ArrayList<>();
+        this.cardViews = new ArrayList<>();
+        this.computerViews = new ArrayList<>();
+        this.ladderViews = new ArrayList<>();
+        this.metalLockerViews = new ArrayList<>();
+        this.redBoxViews = new ArrayList<>();
+        this.woodLockerViews = new ArrayList<>();
 
         levelManager.addObserver(this);
         initializeViews();
     }
 
+    /**updates the {@link #currentRoom} via the observer pattern, whenever the player enters a new room and
+     * changes {@link LevelManager}.
+     * @param o   the observable object.
+     * @param arg an argument passed to the {@code notifyObservers}
+     *            method.
+     */
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof LevelManager){
@@ -41,13 +89,14 @@ public class InteractableObjectsView implements Observer {
                 refreshViews();
             }
         }
-
     }
 
 
-
-
+    /**
+     * scans the {@link #currentRoom}'s interactive objects, and creates each view.
+     */
     private void initializeViews() {
+        //clear everything
         paperBoxViews.clear();
         cardViews.clear();
         computerViews.clear();
@@ -56,9 +105,9 @@ public class InteractableObjectsView implements Observer {
         redBoxViews.clear();
         woodLockerViews.clear();
 
-
-        for( InteractableObject obj : levelManager.getCurrentRoom().getInteractiveObjects()) {
-
+        //for each interactable object in the room
+        for( InteractableObject obj : currentRoom.getInteractiveObjects()) {
+            //create its 'view'
             if (obj instanceof PaperBox paperBox) {
                 paperBoxViews.add(new PaperBoxView(paperBox));
             }
@@ -80,12 +129,15 @@ public class InteractableObjectsView implements Observer {
             else if (obj instanceof WoodLocker woodLocker){
                 woodLockerViews.add(new WoodLockerView(woodLocker));
             }
-
         }
-        System.out.println("InteractiveObjectsView -> initializeViews(): initializing views");
+        System.out.println("[InteractiveObjectsView] -> initializeViews(): initializing views");
     }
 
-    //refresh the object views if the room changes
+    /**
+     * refreshes the interactable object views.
+     * clears the object view lists ex.{@link #paperBoxViews}
+     * and re-initializes them via {@link #initializeViews()}
+     */
     private void refreshViews() {
         paperBoxViews.clear();
         cardViews.clear();
@@ -96,43 +148,44 @@ public class InteractableObjectsView implements Observer {
 
 
         initializeViews();
-        System.out.println("InteractiveObjectsView -> refreshViews(): refreshing views");
+        System.out.println("[InteractiveObjectsView] -> refreshViews(): refreshing views");
     }
 
-    //get the list of the objects in the current room
+    /**draws every single interactable object view
+     * @param g2d swing's graphics 2d instance that allows rendering
+     */
     public void drawInteractableObjects(Graphics2D g2d) {
+        //pp box
         for (PaperBoxView paperBoxView : paperBoxViews){
             paperBoxView.draw(g2d);
         }
-
+        //computer card
         for (CardView cardView : cardViews){
             cardView.draw(g2d);
             cardView.update();
         }
-
+        //ladders
         for (LadderView ladderView : ladderViews){
             ladderView.draw(g2d);
         }
-
+        //metal lockers
         for (MetalLockerView metalLockerView : metalLockerViews){
             metalLockerView.draw(g2d);
         }
-
+        //red boxes
         for (RedBoxView redBoxView : redBoxViews){
             redBoxView.draw(g2d);
             redBoxView.update();
         }
-
+        //wood lockers
         for (WoodLockerView woodLockerView : woodLockerViews){
             woodLockerView.draw(g2d);
         }
-
+        //computers
         for (ComputerView computerView : computerViews){
             computerView.draw(g2d);
             computerView.update();
         }
-
-
     }
 
 }

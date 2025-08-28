@@ -7,19 +7,43 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * view of the {@link RedBox} model
+ */
 public class RedBoxView {
 
-    private BufferedImage redBox1, redBox2, redBox3, redBox4, redBox5, redBox6, redBox7, redBox8;
-
-
+    /**
+     * red box sprites
+     */
+    private static BufferedImage redBox1, redBox2, redBox3, redBox4, redBox5, redBox6, redBox7, redBox8;
+    /**
+     * tracks if it is displaying the red box is displaying the opening sprites.
+     * the red box after being opened, if will display an animation after being opened
+     */
     private boolean isOpening = false;
+    /**
+     * times the box opening frames. gets incremented once every frame
+     */
     private int spriteCounter = 0;
+    /**
+     * current displayed sprite number
+     */
     private int spriteNum = 1;
-    private static final int ANIMATION_SPEED = 5;
+    /**
+     * animation speed of the red box opening animation
+     */
+    private final int ANIMATION_SPEED = 5;
 
-    private RedBox redBox;
+    /**
+     * {@link RedBox} model instance
+     */
+    private final RedBox redBox;
 
 
+    /**
+     * view of the {@link RedBox} model
+     * @param redBox {@link RedBox} model instance
+     */
     public RedBoxView(RedBox redBox) {
         this.redBox = redBox;
 
@@ -27,7 +51,10 @@ public class RedBoxView {
     }
 
 
-    public void loadSprites() {
+    /**
+     * loadds the red box sprites ex: {@link #redBox1}
+     */
+    private void loadSprites() {
         try{
             redBox1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("interactableObjects/boxes/redBox1.png"));
             redBox2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("interactableObjects/boxes/redBox2.png"));
@@ -45,7 +72,9 @@ public class RedBoxView {
     }
 
 
-
+    /**
+     * increments the {@link #spriteCounter} once per frame if the red box {@link #isOpening}.
+     */
     public void update() {
         // if the box is opened then start opening it
         if (redBox.getIsOpened() && !isOpening) {
@@ -68,6 +97,9 @@ public class RedBoxView {
         }
     }
 
+    /**draws the red box sprites at the  {@link RedBox} specified location
+     * @param g2d swing's graphics 2d instance that allows rendering
+     */
     public void draw(Graphics2D g2d) {
         BufferedImage image = null;
         if(isOpening){
@@ -83,16 +115,12 @@ public class RedBoxView {
                 default : image = redBox1; break;
                 }
             }
-        else{
+        else{       //if it is not opening then display the first frame (closed image)
             image = redBox1;
         }
 
         if (image != null) {
             g2d.drawImage(image, redBox.getX(), redBox.getY(), redBox.getWidth(), redBox.getHeight(), null);
-            }
-        else{//red rectangle if doesnt load
-            g2d.setColor(Color.RED);
-            g2d.fillRect(redBox.getX(), redBox.getY(), redBox.getWidth(), redBox.getHeight());
             }
     }
 

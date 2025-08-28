@@ -8,40 +8,82 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
+/**
+ * view of the {@link Computer} interactable object
+ */
 public class ComputerView {
-    BufferedImage computer1, computer2, computer3, computer4;
-    int ANIMATION_SPEED = 10;
-    int spriteCounter = 0;
-    int spriteNum = 1;
-    Computer computer;
 
+    /**
+     * computer sprites, static so they are shared between all computer view instances
+     */
+    private static BufferedImage computer1, computer2, computer3, computer4;
+
+    /**
+     * animation speed of the computer
+     */
+    private final int ANIMATION_SPEED = 5;
+
+    /**
+     * used to time the animation. it is incremented once per frame in the {@link #update()}, so if framerate is 60fps, then it will be incremented 60 times per second.
+     */
+    private int spriteCounter = 0;
+
+    /**
+     * number of the sprite currently active
+     */
+    private int spriteNum = 1;
+
+    /**
+     * {@link Computer} instance
+     */
+    private Computer computer;
+
+    /**
+     * width of the computer menu
+     */
     private int MENU_WIDTH = 300;
+
+    /**
+     * height of the computer menu
+     */
     private int MENU_HEIGHT = 90;
 
+    /**
+     * font used to display the menu text
+     */
     private Font menuFont;
 
 
+    /**view of the {@link Computer} model, loads sprite when called via {@link #loadSprites()}
+     * @param computer {@link Computer} model instance
+     */
     public ComputerView(Computer computer) {
         this.computer = computer;
 
         loadSprites();
-        this.menuFont = loadMenuFont("fonts/ThaleahFat.ttf", 30f);
+        this.menuFont = loadFont("fonts/ThaleahFat.ttf", 30f);
     }
 
-    public void loadSprites(){
+    /**
+     * loads the computer sprites
+     */
+    private void loadSprites(){
         try{
             computer1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("interactableObjects/computer/computer1.png"));
             computer2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("interactableObjects/computer/computer2.png"));
             computer3 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("interactableObjects/computer/computer2.png"));
             computer4 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("interactableObjects/computer/computer2.png"));
-            System.out.println("computer sprites loaded");
+            System.out.println("[ComputerView]computer sprites loaded");
         }catch(Exception e){
-            System.out.println("error in loading computer sprites : ");
+            System.out.println("[ComputerView]error in loading computer sprites ");
             e.printStackTrace();
         }
     }
 
 
+    /**
+     * updates the sprite counter. increments the {@link #spriteCounter} once per call.
+     */
     public void update() {
         spriteCounter++;
         if (spriteCounter >= ANIMATION_SPEED){
@@ -54,9 +96,14 @@ public class ComputerView {
     }
 
 
+    /**
+     * draw the computer sprite at the {@link Computer} x and y coordinates
+     * @param g2d swing's graphics 2d instance that allows rendering
+     */
     public void draw(Graphics2D g2d) {
         BufferedImage image = null;
 
+        //switch the sprite nummber to draw the appropriate image. the sprite number gets updated in the update() method
         switch(spriteNum){
             case 1: image = computer1; break;
             case 2: image = computer2; break;
@@ -74,8 +121,11 @@ public class ComputerView {
     }
 
 
+    /**draw the {@link Computer}'s menu when it is visible
+     * @param g2d swing's graphics 2d instance that allows rendering
+     */
     private void drawMenu(Graphics2D g2d) {
-        Font originalFont = g2d.getFont();
+        Font originalFont = g2d.getFont();      //save the original font
 
         int menuX = computer.getX() + computer.getWidth() + 20;
         int menuY = computer.getY() - computer.getHeight() - 40;
@@ -91,12 +141,12 @@ public class ComputerView {
 
         //menu options
         String[] options = computer.getMenuOptions();
-        String deactivateEnemies = options[0];
-        String other = options[1];
-
+        String option1 = options[0];
+        String option2 = options[1];
         g2d.setFont(menuFont);
-        g2d.drawString(deactivateEnemies, menuX + 45 , menuY + 45);
-        g2d.drawString(other, menuX + 45 , menuY + 65);
+        g2d.drawString(option1, menuX + 45 , menuY + 45);
+        g2d.drawString(option2, menuX + 45 , menuY + 65);
+
         //currently selected option
         if(computer.getSelectedMenuOption() == 0){
             g2d.drawString(">>", menuX + 15 , menuY + 45);
@@ -105,31 +155,36 @@ public class ComputerView {
             g2d.drawString(">>", menuX + 15 , menuY + 65);
         }
 
-        g2d.setFont(originalFont);
-
-
+        g2d.setFont(originalFont);  //had some issues that when the computer menu appears, the other fonts would get resized
     }
 
 
-    private Font loadMenuFont(String fontPath, float size){
-        try{
+    /**
+     * loads the font
+     * @param fontPath path of the .ttf file
+     * @param size font size
+     * @return font if font path is correct, null otherwise
+     */
+    private Font loadFont(String fontPath, float size) {
+        try {
             InputStream stream = getClass().getClassLoader().getResourceAsStream(fontPath);
-            if(stream == null) {    //if the font path provided is not available
-                System.out.println("Couldn't find font " + fontPath);
-                return new Font("Arial", Font.BOLD, (int) size);
+            if (stream == null) {    //if the font path provided is not available
+                System.out.println("[ComputerView] couldn't find font " + fontPath);
+                return null;
             }
+            //create the Font object and set it to the current Graphics Environment
+            Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(size);   //ttf stands for true type font
+            //note: Font object in java are immutable, derive font here just changes the size of the font.
 
-            Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(size);
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment(); //register the font with java graphics system
             ge.registerFont(font);
-            System.out.println("Loaded font " + fontPath);
+            System.out.println("[ComputerView]loaded font " + fontPath);
             return font;
 
-        }catch(Exception e) {
-            System.err.println("Couldn't load font " + fontPath);
-            return new Font("Arial", Font.BOLD, (int) size);
+        } catch (Exception e) {
+            System.err.println("[ComputerView]couldn't load font " + fontPath);
+            return null;    //return null if the font path is not correct / available
         }
-
     }
 
 
