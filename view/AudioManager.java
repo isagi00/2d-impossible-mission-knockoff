@@ -1,31 +1,45 @@
 package view;
 
 import controller.*;
-import model.Leaderboard;
 import model.entities.Dog;
 import model.entities.Drone;
 import model.entities.Player;
 import model.interactableObjects.InteractableObject;
-import view.gamePanelViews.LeaderboardView;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class AudioManager implements Observer {
+    /**
+     * instance of AudioManager
+     */
     private static AudioManager instance;       //single instance of the audio manager (singleton ptrn)
-    private Map<String, List<Clip>> soundEffects;     //is gonna have like : name - list of sound effect (all sound effects get loaded here)
-    private int CopiesPerSound = 5;                                               //allows multiple clips to play simultaneously (max 3 clips under the same name)
+    /**
+     * a Map of sound effects. each sound name is represented as a String (key), and each sound/name has 5 ({@link #CopiesPerSound}) copies per sound.
+     * this allows multiple sound clips to play simultaneously
+     */
+    private static Map<String, List<Clip>> soundEffects;     //is gonna have like : name - list of sound effect (all sound effects get loaded here)
+    /**
+     * number of copies per sound
+     */
+    private static final int CopiesPerSound = 5;    //having multiple copies of each sound allows multiple clips to play simultaneously
 
 
+    /**
+     * manages the audio of the game. it follows the singleton pattern, so only a single instance of SoundManager
+     * is allowed. it initializes the {@link #soundEffects} via {@link #loadSoundEffects()}.
+     */
     private AudioManager() {        //load all sound fx when creating this audio manager instance
         soundEffects = new HashMap<>();
         loadSoundEffects();
     }
 
+    /**creates the AudioManager instance if there isnt one, returns AudioManager if already created.
+     * @return {@link #instance} of AudioManager
+     */
     public static AudioManager getInstance() {
         if (instance == null) {
             instance = new AudioManager();
@@ -34,6 +48,11 @@ public class AudioManager implements Observer {
     }
 
 
+    /** plays a sound via {@link #playSound(String)} whenever an observable object sends a specific notification
+     * @param o   the observable object.
+     * @param arg an argument passed to the {@code notifyObservers}
+     *            method.
+     */
     @Override
     public void update(Observable o, Object arg) {      //whenever model changes something, audio plays
         if (o instanceof TitleScreenController) {
@@ -164,6 +183,9 @@ public class AudioManager implements Observer {
     }
 
 
+    /**
+     * loads all the sound effects from the 'res' directory
+     */
     private void loadSoundEffects() {   //load all sound once at startup
         //title screen  / pause menu / result screen / leaderboard navigation sounds
         loadSound("menu up", "sounds/menuup.wav");
@@ -187,7 +209,10 @@ public class AudioManager implements Observer {
     }
 
 
-    //loads a 5 same sound clips given the sound effect filepath
+    /**populates {@link #soundEffects} map by loading 5 same sound clips given the sound effect filepath.
+     * @param soundName name of the sound
+     * @param filePath path to the .wav sound in the 'res' folder
+     */
     private void loadSound(String soundName, String filePath){
         try{
             URL soundurl = getClass().getClassLoader().getResource(filePath);  //get url to the audio sample
@@ -217,6 +242,12 @@ public class AudioManager implements Observer {
         }
     }
 
+    /**creates a new thread that plays the sound's name.
+     * this was done because otherwise, whenever a sound plays, it would freeze the game thread
+     * for 100 ish milliseconds.
+     * searches an available sound clip in the {@link #soundEffects} map that is not currently playing
+     * @param soundName name of the sound to play
+     */
     private void playSound(String soundName) {
 
         new Thread(() -> {

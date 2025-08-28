@@ -9,13 +9,34 @@ import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * view, handles the rendering of the level's tiles.
+ * observer of level manager, so it gets updated when the room changes via {@link #update(Observable, Object)}.
+ */
 public class LevelView implements Observer {
-    private LevelManager levelManager;
-    private TileManager tileManager;
+    /**
+     * {@link LevelManager} model instance
+     */
+    private final LevelManager levelManager;
+    /**
+     * {@link TileManager} model instance
+     */
+    private final TileManager tileManager;
 
+    /**
+     * room data: matrix where each integer represents what tile it is.
+     * {@link LevelManager} extracts the current room information.
+     */
     private int[][] roomData;
+    /**
+     * list of the tiles initialized in {@link TileManager}.
+     */
     private Tile[] tiles;
 
+    /**handles the rendering of the room tiles.
+     * @param levelManager {@link LevelManager} model
+     * @param tileManager {@link TileManager} model
+     */
     public LevelView(LevelManager levelManager, TileManager tileManager) {
         this.levelManager = levelManager;
         this.tileManager = tileManager;
@@ -24,8 +45,10 @@ public class LevelView implements Observer {
     }
 
 
-
-
+    /**
+     * draws the tiles of the room from {@link #roomData} and {@link #tiles}.
+     * @param g2d swing's graphics 2d instance that allows rendering
+     */
     public void draw(Graphics2D g2d) {
         int x = 0;
         int y = 0;
@@ -43,6 +66,11 @@ public class LevelView implements Observer {
     }
 
 
+    /**updates the {@link #roomData}
+     * @param o   the observable object.
+     * @param arg an argument passed to the {@code notifyObservers}
+     *            method.
+     */
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof LevelManager) {
