@@ -1,10 +1,16 @@
 package model.inventoryrelated;
 
+/**
+ * model of a single 'poker card' item.
+ * all the poker cards are created in the fields, instead of having a single class per card.
+ * each card has its name, drop rate and value.
+ * {@link #name}, {@link #dropRate}, {@link #value}
+ */
 public class PokerCard extends Item{
 
     public static PokerCard oneclub = new PokerCard("oneclub", 5f, 1);
     public static PokerCard twoclub = new PokerCard("twoclub", 5f,2);
-    public static PokerCard threeclub = new PokerCard("twoclub", 5f,3 );
+    public static PokerCard threeclub = new PokerCard("threeclub", 5f,3 );
     public static PokerCard fourclub = new PokerCard("fourclub", 5f, 4);
     public static PokerCard fiveclub = new PokerCard("fiveclub", 5f, 5);
     public static PokerCard sixclub = new PokerCard("sixclub", 5f, 6);
@@ -19,7 +25,7 @@ public class PokerCard extends Item{
 
     public static PokerCard onespade = new PokerCard("onespade", 5f ,1);
     public static PokerCard twospade = new PokerCard("twospade", 5f , 2);
-    public static PokerCard threespade = new PokerCard("twospade", 5f, 3);
+    public static PokerCard threespade = new PokerCard("threespade", 5f, 3);
     public static PokerCard fourspade = new PokerCard("fourspade", 5f, 4);
     public static PokerCard fivespade = new PokerCard("fivespade", 5f, 5);
     public static PokerCard sixspade = new PokerCard("sixspade", 5f, 6);
@@ -34,7 +40,7 @@ public class PokerCard extends Item{
 
     public static PokerCard oneheart = new PokerCard("oneheart", 5f, 1);
     public static PokerCard twoheart = new PokerCard("twoheart", 5f, 2);
-    public static PokerCard threeheart = new PokerCard("twoheart", 5f, 3);
+    public static PokerCard threeheart = new PokerCard("threeheart", 5f, 3);
     public static PokerCard fourheart = new PokerCard("fourheart", 5f, 4);
     public static PokerCard fiveheart = new PokerCard("fiveheart", 5f, 5);
     public static PokerCard sixheart = new PokerCard("sixheart", 5f, 6);
@@ -49,7 +55,7 @@ public class PokerCard extends Item{
 
     public static PokerCard onediamond = new PokerCard("onediamond", 5f, 1);
     public static PokerCard twodiamond = new PokerCard("twodiamond", 5f, 2);
-    public static PokerCard threediamond = new PokerCard("twodiamond", 5f, 3);
+    public static PokerCard threediamond = new PokerCard("threediamond", 5f, 3);
     public static PokerCard fourdiamond = new PokerCard("fourdiamond", 5f, 4);
     public static PokerCard fivediamond = new PokerCard("fivediamond", 5f, 5);
     public static PokerCard sixdiamond = new PokerCard("sixdiamond", 5f ,6);
@@ -64,6 +70,9 @@ public class PokerCard extends Item{
 
     public static PokerCard joker = new PokerCard("joker", .5f, 100);
 
+    /**
+     * array of all the poker cards
+     */
     private static PokerCard[] pokerCards = {
             oneclub, twoclub, threeclub, fourclub, fiveclub, sixclub, sevenclub, eightclub, nineclub, tenclub, jclub, qclub, kclub, aceclub,
             onespade, twospade, threespade, fourspade, fivespade, sixspade, sevenspade, eightspade, ninespade, tenspade, jspade, qspade, kspade, acespade,
@@ -72,11 +81,25 @@ public class PokerCard extends Item{
             joker
     };
 
+    /**
+     * name of the poker card
+     */
     private final String name;
+    /**
+     * drop rate of the poker card
+     */
     private final float dropRate;
+    /**
+     * value of the poker card
+     */
     private final int value;
 
 
+    /**private constructor. all the poker cards are created in the field, instead of having a single class per poker card.
+     * @param name name of the poker card
+     * @param droprate drop rate of the poker card
+     * @param value value of the poker card
+     */
     private PokerCard(String name, float droprate, int value){
         this.name = name;
         this.dropRate = droprate;
@@ -84,7 +107,9 @@ public class PokerCard extends Item{
     }
 
 
-    //default randomizer
+    /** returns a random poker card
+     * @return a random poker card with base drop rates
+     */
     public static PokerCard getRandomPokerCard(){
         //calculate the total of all drop rates
         //lets say 3 cards with .1, .2, .3, -> total = .6
@@ -107,6 +132,9 @@ public class PokerCard extends Item{
     }
 
 
+    /**return a poker card, with a boosted ace poker card drop rate. (60% chance)
+     * @return a poker card
+     */
     //boosted rates to get an ace
     public static PokerCard getBoostedAcePokerCard(){
         if (Math.random() < 0.6){       //60% to get an ace
@@ -120,6 +148,9 @@ public class PokerCard extends Item{
     }
 
 
+    /**returns a poker card, with a boosted rate to get a face card (60% chance)
+     * @return a poker card
+     */
     //boosted rates to get a face card
     public static PokerCard getBoostedFacePokerCard(){
         if (Math.random() < 0.6){   //60 % for getting a face card
@@ -136,6 +167,9 @@ public class PokerCard extends Item{
         }
     }
 
+    /**returns a poker card, with a boosted drop rate of a poker card of value 10. (70% chance)
+     * @return a poker card
+     */
     //boosted rates to get a 10 card
     public static PokerCard getBoosted10Card(){
         if (Math.random() < 0.7){      //70% to get a 10 card
@@ -149,13 +183,17 @@ public class PokerCard extends Item{
     }
 
 
-
-
+    /**
+     * @return name of the poker card
+     */
     public String getName() {
         return name;
     }
 
 
+    /**
+     * @return the value of the poker card
+     */
     public int getValue() {
         return value;
     }

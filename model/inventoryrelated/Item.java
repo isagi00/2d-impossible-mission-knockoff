@@ -2,36 +2,36 @@ package model.inventoryrelated;
 
 import model.entities.Player;
 
+/**
+ *model, abstract class of an 'Item' that can be collected and put in the {@link Player} 's {@link Inventory}
+ */
 public abstract class Item {
+    /**
+     * name of the item
+     */
     private String name;
-    private String description;
 
+    /**
+     * empty constructor for an 'Item'
+     */
     public Item() {
-
     }
 
-
+    /**
+     * @return the name of the item
+     */
     public String getName() {
         return name;
     }
 
 
-    public String getDescription() {
-        return description;
-    }
-
-
-    public void use(Player player) {
-        //default implementation does nothing, override with specific items
-    }
-
+    /**
+     * @param name sets the item name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
 
 
