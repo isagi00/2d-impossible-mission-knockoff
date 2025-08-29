@@ -15,16 +15,37 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Set;
 
+/**
+ * controller of the {@link TitleScreenView}, game entry point.
+ * handles the keyboard inputs of the user when he is in the title screen, and starts the game via {@link #startMainGame(boolean)}
+ * if the user selects 'new game' or 'play tutorial'. the method handles the initialization of the models, views and controllers of the game.
+ */
 public class TitleScreenController extends Observable implements KeyListener {
 
+    /**
+     * reference to the JFrame created in the {@link main.Main}
+     */
     private final JFrame window;
+    /**
+     * reference to the {@link TitleScreenView} view
+     */
     private final TitleScreenView titleScreenView;
 
-    private boolean notificationSent = false;
-
+    /**
+     * a set containing the currently user pressed keys
+     * had to use this because otherwise when the user presses a key, multiple notifications
+     * get sent to the audio manager, so it caused multiple sounds (too many) if the user held down a key
+     *
+     */
     private Set<Integer> pressedKeys;       //have to use this because otherwise when the user preses a key, multiple notifications
-                                            //get sent to the observer (audiomanager), so it causes heavy performance dips, even in the title screen
+                                            //get sent to the observer audio manager
 
+    /**controller, handles the user keyboard inputs when he is in the title screen.
+     * entry point of the game, so it handles the game startup via {@link #startMainGame(boolean)} or the leaderboard view if the user selects
+     * 'leaderboard' in the title screen.
+     * @param window JFrame window created in {@link main.Main}
+     * @param titleScreenView {@link TitleScreenView} view
+     */
     public TitleScreenController(JFrame window, TitleScreenView titleScreenView) {
         this.window = window;
         this.titleScreenView = titleScreenView;
@@ -38,6 +59,13 @@ public class TitleScreenController extends Observable implements KeyListener {
     public void keyTyped(KeyEvent e) {
     }
 
+    /**handles key pressed when the user is in the title screen.
+     * the user can press the arrow keys to navigate the title screen and enter key to select the option.
+     * notifies {@link AudioManager} to play a sound when a key is pressed.
+     * when the user confirms the selected option with the 'enter' key, {@link #handleEnterInput()} method is called
+     * handle the keypress.
+     * @param e the event to be processed
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
@@ -47,11 +75,10 @@ public class TitleScreenController extends Observable implements KeyListener {
                     titleScreenView.selectPreviousOption();
                     titleScreenView.repaint();
 
-                    if (!notificationSent) {
                         setChanged();
                         notifyObservers("menu up");
                         clearChanged();
-                    }
+
 
                     break;
                 case KeyEvent.VK_DOWN:
@@ -83,6 +110,15 @@ public class TitleScreenController extends Observable implements KeyListener {
 
     }
 
+    /**
+     * handles the enter key press.
+     * if the user selected 'new game', the {@link #startMainGame(boolean)} gets called that connect every single controller / view.
+     * the boolean 'play tutorial' will gets set to false, and {@link LevelManager} will load the default world layout.
+     * if the user selected 'play tutorial' the {@link #startMainGame(boolean)} gets called that connect every single controller / view.
+     * the boolean 'play tutorial' will gets set to true, and {@link LevelManager} will load the tutorial world layout.
+     * if the user selected 'leaderboard', then the {@link LeaderboardView} and {@link LeaderboardViewController} get created to display the leaderboard.
+     * if the user selected 'exit game', exits the game.
+     */
     private void handleEnterInput() {
         String selectedOption = titleScreenView.getSelectedOption();
         switch (selectedOption){
@@ -101,6 +137,15 @@ public class TitleScreenController extends Observable implements KeyListener {
         }
     }
 
+    /**creates and connects the required models, controllers and views of the game.
+     * asks {@link LevelManager} to initialize the tutorial layout if the playTutorial flag is set to true,
+     * asks {@link LevelManager} to initialize the default game world layout if the playTutorial flag is set to false.
+     * note that if the user selects the 'new game' option, he will be brought to the {@link WhatsYourNameView} to enter his name
+     * for the {@link Leaderboard}.
+     * @param playTutorial used to select what world layout will get initialized in the {@link LevelManager}.
+     *                     if true, then the tutorial layout will get initialized.
+     *                     if false, then the default game world layout will get initialized.
+     */
     private void startMainGame(boolean playTutorial) {
         window.remove(titleScreenView);
         window.revalidate();
@@ -191,6 +236,9 @@ public class TitleScreenController extends Observable implements KeyListener {
     }
 
 
+    /**
+     * handles the creation/display of the {@link LeaderboardView} and {@link LeaderboardViewController}.
+     */
     private void displayLeaderboard() {
         window.remove(titleScreenView);
         window.revalidate();

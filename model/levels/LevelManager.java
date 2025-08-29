@@ -72,7 +72,8 @@ public class LevelManager extends Observable {      // -> observers: interactabl
     }
 
     /**
-     * initializes the game world in the {@link #worldLayout}.
+     * initializes the default game world in the {@link #worldLayout}.
+     *
      * unimplemented mechanic: generate random rooms for different slots
      */
     public void initializeWorldLayout() {
@@ -159,28 +160,37 @@ public class LevelManager extends Observable {      // -> observers: interactabl
     // MOVE TO LEFT / RIGHT / TOP / BOTTOM ROOM
     //----------------------------------------------------------------------------------------------------------------//
 
+    /**
+     * changes the current room into the room on the left in the world layout
+     */
     public void moveToLeftRoom(){
         Room currentRoom = getCurrentRoom();
         if (currentWorldCol > 0 && worldLayout[currentWorldRow][currentWorldCol - 1] != null) {
             currentWorldCol--;
-            System.out.println(" moveToLeftRoom(): moving to left room, marking as visited");
+            System.out.println("[LevelManager] moveToLeftRoom(): moving to left room, marking as visited");
             currentRoom.isVisited = true;
             loadCurrentRoom();
 
         }
     }
 
+    /**
+     * changes the current room into the room on the right in the world layout
+     */
     public void moveToRightRoom(){
         Room currentRoom = getCurrentRoom();
         if (currentWorldCol < 7  && worldLayout[currentWorldRow][currentWorldCol + 1] != null ) {
             currentWorldCol++;
-            System.out.println(" moveToRightRoom(): moving to right room, marking as visited");
+            System.out.println("[LevelManager] moveToRightRoom(): moving to right room, marking as visited");
             currentRoom.isVisited = true;
             loadCurrentRoom();
 
         }
     }
 
+    /**
+     * changes the current room into the room on top in the world layout
+     */
     public void moveToUpRoom(){
         Room currentRoom = getCurrentRoom();
         if (currentWorldRow > 0  && worldLayout[currentWorldRow - 1][currentWorldCol] != null ) {
@@ -192,6 +202,9 @@ public class LevelManager extends Observable {      // -> observers: interactabl
         }
     }
 
+    /**
+     * changes the current room into the room at the bottom in the world layout
+     */
     public void moveToDownRoom(){
         Room currentRoom = getCurrentRoom();
         if (currentWorldRow < 4  && worldLayout[currentWorldRow + 1][currentWorldCol] != null ) {

@@ -10,12 +10,34 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Observable;
 
+/**
+ * controller of the pause menu, helps to process the pause menu navigation and coordinates the {@link TitleScreenView} and {@link GameView}.
+ */
 public class PauseMenuController extends Observable implements KeyListener{
+    /**
+     * reference to the JFrame created during startup in {@link main.Main}
+     */
     private final JFrame window;
+    /**
+     * reference to the {@link PauseMenuView}
+     */
     private final PauseMenuView pauseMenuView;
+    /**
+     * reference to the {@link GameView}
+     */
     private final GameView gameView;
+    /**
+     * reference to the {@link GameController}
+     */
     private final GameController gameController;
 
+    /**controller, helps out processing the user keyboard inputs when he is in the pause menu.
+     * {@link PauseMenuView}.
+     * @param window JFrame created in {@link main.Main}
+     * @param pauseMenuView {@link PauseMenuView} view
+     * @param gameView {@link GameView} view
+     * @param gameController {@link GameController} controller
+     */
     public PauseMenuController(JFrame window, PauseMenuView pauseMenuView, GameView gameView, GameController gameController) {
         this.window = window;
         this.pauseMenuView = pauseMenuView;
@@ -34,6 +56,13 @@ public class PauseMenuController extends Observable implements KeyListener{
 
     }
 
+    /**processes the user key presses when in the pause menu.
+     * the user can press the up arrow key to navigate up, down arrow key to navigate down,
+     * and the enter key to select and confirm the selected option.
+     * notifies {@link AudioManager} to play the menu sounds.
+     *
+     * @param e the event to be processed
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         switch(e.getKeyCode()){
@@ -70,6 +99,14 @@ public class PauseMenuController extends Observable implements KeyListener{
 
     }
 
+    /**
+     * handles the currently selected option logic.
+     * 1. if it is 'resume', then the pause menu will be set to not be visible, and game controller state will be set to 'playing',
+     * and all models will resume to update.
+     * {@link GameController}, {@link controller.GameController.GameState}.
+     * 2. if it is 'to the main menu', then the content pane will get cleared and the used will be brought to the title screen.
+     * {@link TitleScreenView}, {@link TitleScreenController}.
+     */
     private void handleEnterInput() {
         String option = pauseMenuView.getSelectedOption();
         switch (option){
