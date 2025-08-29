@@ -166,7 +166,7 @@ public class ResultScreenView extends JPanel  {
                     .map(cardValue -> String.valueOf(cardValue))
                     .collect(Collectors.joining(" + "));
         }
-        g2d.drawString(values, padding * 9, titleMetrics.getHeight() + padding * 5);
+        g2d.drawString(values, padding * 7, titleMetrics.getHeight() + padding * 5);
         g2d.drawString(cards, padding, titleMetrics.getHeight() + padding * 5);
         g2d.drawString("x 1000", xX, titleMetrics.getHeight() + padding * 5);
         g2d.drawString( "=  " + scoreTracker.getPokerCardsTotalPoints(cardValues), totalPointsX, titleMetrics.getHeight() + padding * 5);

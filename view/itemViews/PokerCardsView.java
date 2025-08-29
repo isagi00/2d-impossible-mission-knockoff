@@ -8,22 +8,45 @@ import java.awt.image.BufferedImage;
 
 
 public class PokerCardsView extends ItemView{
-
+    /**
+     * club seed poker cards sprites
+     */
     private static BufferedImage oneclub, twoclub, threeclub, fourclub, fiveclub, sixclub, sevenclub, eightclub, nineclub, tenclub, jclub, qclub, kclub, aceclub;
+    /**
+     * spade seed poker cards sprites
+     */
     private static BufferedImage onespade, twospade, threespade, fourspade, fivespade, sixspade, sevenspade, eightspade, ninespade, tenspade,  jspade, qspade, kspade, acespade;
+    /**
+     * heart seed poker cards sprites
+     */
     private static BufferedImage oneheart, twoheart, threeheart, fourheart, fiveheart, sixheart, sevenheart, eightheart, nineheart, tenheart, jheart, qheart, kheart, aceheart;
+    /**
+     * diamond seed poker cards sprites
+     */
     private static BufferedImage onediamond, twodiamond, threediamond, fourdiamond, fivediamond, sixdiamond, sevendiamond, eightdiamond, ninediamond, tendiamond, jdiamond, qdiamond, kdiamond, acediamond;
 
+    /**
+     * the 'joker' card sprite
+     */
     private BufferedImage joker;
+    /**
+     * current sprite of the {@link PokerCard}
+     */
     private BufferedImage currentSprite;
 
 
+    /**
+     * view of all of the {@link PokerCard}s. when this object is created, it will load
+     * all the poker card sprites via {@link #loadSprites()}.
+     */
     public PokerCardsView() {
         loadSprites();
     }
 
 
-
+    /**
+     * loads all the poker card sprites
+     */
     @Override
     public void loadSprites(){
         try {
@@ -96,8 +119,11 @@ public class PokerCardsView extends ItemView{
     }
 
 
-
-
+    /**sets the {@link #currentSprite} based on the poker card parameter.
+     * example: if the parameter card is a "one of clubs" {@link PokerCard} object, it will set the {@link #currentSprite}
+     * to the 'one of clubs' sprite.
+     * @param card {@link PokerCard} poker card.
+     */
     protected void setCurrentSprite(PokerCard card) {
         String cardName = card.getName();
 
@@ -169,7 +195,9 @@ public class PokerCardsView extends ItemView{
     }
 
 
-
+    /** gets the current poker card sprite
+     * @return the {@link #currentSprite}
+     */
     public BufferedImage getCurrentSprite(){
         return currentSprite;
     }

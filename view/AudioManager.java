@@ -64,15 +64,15 @@ public class AudioManager implements Observer {
             switch((String)(arg)){      //cast that to into a string :)
                 case "menu up":
                     playSound("menu up");
-                    System.out.println("[AudioManager] played menu up sound effect");
+//                    System.out.println("[AudioManager] played menu up sound effect");
                     break;
                 case "menu down":
                      playSound("menu down");
-                    System.out.println("[AudioManager] played menu down sound effect");
+//                    System.out.println("[AudioManager] played menu down sound effect");
                     break;
                 case "menu enter":
                     playSound("menu enter");
-                    System.out.println("[AudioManager] played menu enbter sound effect");
+//                    System.out.println("[AudioManager] played menu enbter sound effect");
                     break;
             }
         }
@@ -80,7 +80,7 @@ public class AudioManager implements Observer {
             switch((String)(arg)){
                 case "menu enter":
                     playSound("menu enter");
-                    System.out.println("[AudioManager] played menu enter sound effect");
+//                    System.out.println("[AudioManager] played menu enter sound effect");
                     break;
             }
         }
@@ -89,15 +89,15 @@ public class AudioManager implements Observer {
             switch((String)(arg)){
                 case "enter pressed":
                     playSound("menu enter");
-                    System.out.println("[AudioManager] played name submitted sound effect");
+//                    System.out.println("[AudioManager] played name submitted sound effect");
                     break;
                 case "key typed":
                     playSound("entered char");
-                    System.out.println("[AudioManager] played key typed sound effect");
+//                    System.out.println("[AudioManager] played key typed sound effect");
                     break;
                 case "backspace pressed":
                     playSound("deleted char");
-                    System.out.println("[AudioManager] played backspace pressed sound effect");
+//                    System.out.println("[AudioManager] played backspace pressed sound effect");
                     break;
             }
         }
@@ -106,15 +106,15 @@ public class AudioManager implements Observer {
             switch((String)(arg)){
                 case "menu up":
                     playSound("menu up");
-                    System.out.println("[AudioManager] played menu up sound effect");
+//                    System.out.println("[AudioManager] played menu up sound effect");
                     break;
                 case "menu down":
                     playSound("menu down");
-                    System.out.println("[AudioManager] played menu down sound effect");
+//                    System.out.println("[AudioManager] played menu down sound effect");
                     break;
                 case "menu enter":
                     playSound("menu enter");
-                    System.out.println("[AudioManager] played menu enter sound effect");
+//                    System.out.println("[AudioManager] played menu enter sound effect");
                     break;
             }
         }
@@ -123,7 +123,7 @@ public class AudioManager implements Observer {
             switch((String)(arg)){
                 case "enter pressed":
                     playSound("menu enter");
-                    System.out.println("[AudioManager] played menu enter sound effect");
+//                    System.out.println("[AudioManager] played menu enter sound effect");
                     break;
             }
         }
@@ -132,7 +132,7 @@ public class AudioManager implements Observer {
             switch((String)(arg)){
                 case "esc pressed":
                     playSound("deleted char");
-                    System.out.println("[AudioManager] played esc pressed sound effect");
+//                    System.out.println("[AudioManager] played esc pressed sound effect");
                     break;
             }
         }
@@ -140,19 +140,19 @@ public class AudioManager implements Observer {
             switch((String)(arg)){
                 case "player jumped":
                     playSound("player jump");
-                    System.out.println("[AudioManager] played player jump sound effect");
+//                    System.out.println("[AudioManager] played player jump sound effect");
                     break;
                 case "player died":
                     playSound("player death");
-                    System.out.println("[AudioManager] played player death sound effect");
+//                    System.out.println("[AudioManager] played player death sound effect");
                     break;
                 case "player moved":
                     playSound("player step");
-                    System.out.println("[AudioManager] played player step sound effect");
+//                    System.out.println("[AudioManager] played player step sound effect");
                     break;
                 case "player extracted":
                     playSound("player extracted");
-                    System.out.println("[AudioManager] played player extracted sound effect");
+//                    System.out.println("[AudioManager] played player extracted sound effect");
                     break;
             }
         }
@@ -160,11 +160,11 @@ public class AudioManager implements Observer {
             switch((String)(arg)){
                 case "rare card found":
                     playSound("rare card found");
-                    System.out.println("[AudioManager] played rare card found sound effect");
+//                    System.out.println("[AudioManager] played rare card found sound effect");
                     break;
                 case "common card found":
                     playSound("common card found");
-                    System.out.println("[AudioManager] played common card found sound effect");
+//                    System.out.println("[AudioManager] played common card found sound effect");
                     break;
             }
         }
@@ -172,7 +172,7 @@ public class AudioManager implements Observer {
             switch((String)(arg)){
                 case "dog moving":
                     playSound("dog step");
-                    System.out.println("[AudioManager] played dog moving sound effect");
+//                    System.out.println("[AudioManager] played dog moving sound effect");
                     break;
             }
         }
@@ -180,7 +180,7 @@ public class AudioManager implements Observer {
             switch((String)(arg)){
                 case "drone moving":
                     playSound("drone step");
-                    System.out.println("[AudioManager] played drone moving sound effect");
+//                    System.out.println("[AudioManager] played drone moving sound effect");
                     break;
             }
         }

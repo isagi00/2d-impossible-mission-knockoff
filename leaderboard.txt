@@ -1,10 +1,10 @@
+finalqm 1080600
 zheng 542850
 zheng 273900
 zheng0 148800
 diddy2 139700
 aa 124600
 null 63100
+da 27900
 zheng0 9100
 diddy2 8100
-diddy 5100
-- 0
