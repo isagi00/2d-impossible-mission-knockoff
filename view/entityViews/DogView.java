@@ -5,83 +5,134 @@ import model.entities.Dog;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Observable;
-import java.util.Observer;
 
-public class DogView implements Observer {
 
-    private Dog dog;
+/**
+ * view counterpart of the {@link Dog} model.
+ * handles the rendering logic of a single dog instance.
+ * all the dog sprites are loaded once in the {@link EnemyView} constructor.
+ */
+public class DogView {
+
+    /**
+     * reference of the {@link Dog} model that this view is rendering.
+     */
+    private final Dog dog;
+
     //6 disabled sprites
-    private BufferedImage disabledR1, disabledR2, disabledR3, disabledR4, disabledR5, disabledR6;
-    private BufferedImage disabledL1, disabledL2, disabledL3, disabledL4, disabledL5, disabledL6;
+    /**
+     *dog's disabling sprites. (right)
+     */
+    private static BufferedImage disabledR1, disabledR2, disabledR3, disabledR4, disabledR5, disabledR6;
+    /**
+     * dog's disabling sprites. (left)
+     */
+    private static BufferedImage disabledL1, disabledL2, disabledL3, disabledL4, disabledL5, disabledL6;
+
 
     //6 running sprites
-    private BufferedImage runR1, runR2, runR3, runR4, runR5, runR6;
-    private BufferedImage runL1, runL2, runL3, runL4, runL5, runL6;
+    /**
+     *dog's moving sprites. (right)
+     */
+    private static BufferedImage runR1, runR2, runR3, runR4, runR5, runR6;
+    /**
+     * dog's moving sprites. (left)
+     */
+    private static BufferedImage runL1, runL2, runL3, runL4, runL5, runL6;
 
     //4 idle sprites
-    private BufferedImage idleR1, idleR2, idleR3, idleR4;
-    private BufferedImage idleL1, idleL2, idleL3, idleL4;
+    /**
+     * dog idle state sprites (right)
+     */
+    private static BufferedImage idleR1, idleR2, idleR3, idleR4;
+    /**
+     * dog idle state sprites (left)
+     */
+    private static BufferedImage idleL1, idleL2, idleL3, idleL4;
 
     //chasing indicators
-    private BufferedImage chasing, notchasing;
+    /**
+     * indicators of the dog sprites, if chasing or not.
+     */
+    private static BufferedImage chasing, notchasing;
 
     //used for cycling the sprites
+    /**
+     * sprite counter. this helps to display the dog animations.
+     * it essentially is a counter tightly coupled with the game frame rate.
+     * for example, if the frame rate it 60fps, then this counter will increment by 60 times per second.
+     * each time this number reaches a certain threshold, the {@link #spriteNum} increments.
+     */
     private int spriteCounter = 0;
+    /**
+     * sprite number. each dog sprite is related to this number.
+     * it increments once the {@link #spriteCounter} reaches a certain threshold.
+     * for example, if the sprite number is '1' when the dog is idle,
+     * it will display the first idle dog sprite.
+     */
     private int spriteNum = 0;
 
-    //display the dog disabled animation from 0
+    /**
+     *helper boolean field that indicates if the dog was disabled or not.
+     * it helps to display the disabled animation from sprite number 1.
+     */
     private boolean wasDisabled = false;
 
+    /** creates a dog view instance, that handles the rendering / visual side of the model.
+     * loads the all sprites via {@link #loadSprites()} when called.
+     * @param dog reference to the {@link Dog} model that his view is rendering
+     */
     public DogView(Dog dog) {
         this.dog = dog;
-        loadSprites();
-
-        this.dog.addObserver(this);
+//        loadSprites();
     }
 
-    private void loadSprites() {
+    /**
+     * loads all the dog sprites from the 'res' folder.
+     * called to load all the sprites in the {@link EnemyView} constructor, so it loads all the sprites once.
+     */
+    public static void loadSprites() {
         try{
-            disabledR1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/disabledR1.png"));
-            disabledR2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/disabledR2.png"));
-            disabledR3 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/disabledR3.png"));
-            disabledR4 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/disabledR4.png"));
-            disabledR5 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/disabledR5.png"));
-            disabledR6 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/disabledR6.png"));
+            disabledR1 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/disabledR1.png"));
+            disabledR2 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/disabledR2.png"));
+            disabledR3 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/disabledR3.png"));
+            disabledR4 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/disabledR4.png"));
+            disabledR5 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/disabledR5.png"));
+            disabledR6 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/disabledR6.png"));
 
-            disabledL1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/disabledL1.png"));
-            disabledL2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/disabledL2.png"));
-            disabledL3 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/disabledL3.png"));
-            disabledL4 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/disabledL4.png"));
-            disabledL5 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/disabledL5.png"));
-            disabledL6 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/disabledL6.png"));
+            disabledL1 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/disabledL1.png"));
+            disabledL2 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/disabledL2.png"));
+            disabledL3 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/disabledL3.png"));
+            disabledL4 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/disabledL4.png"));
+            disabledL5 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/disabledL5.png"));
+            disabledL6 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/disabledL6.png"));
 
-            runR1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/runR1.png"));
-            runR2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/runR2.png"));
-            runR3 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/runR3.png"));
-            runR4 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/runR4.png"));
-            runR5 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/runR5.png"));
-            runR6 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/runR6.png"));
+            runR1 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/runR1.png"));
+            runR2 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/runR2.png"));
+            runR3 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/runR3.png"));
+            runR4 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/runR4.png"));
+            runR5 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/runR5.png"));
+            runR6 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/runR6.png"));
 
-            runL1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/runL1.png"));
-            runL2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/runL2.png"));
-            runL3 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/runL3.png"));
-            runL4 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/runL4.png"));
-            runL5 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/runL5.png"));
-            runL6 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/runL6.png"));
+            runL1 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/runL1.png"));
+            runL2 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/runL2.png"));
+            runL3 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/runL3.png"));
+            runL4 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/runL4.png"));
+            runL5 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/runL5.png"));
+            runL6 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/runL6.png"));
 
-            idleR1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/idleR1.png"));
-            idleR2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/idleR2.png"));
-            idleR3 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/idleR3.png"));
-            idleR4 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/idleR4.png"));
+            idleR1 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/idleR1.png"));
+            idleR2 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/idleR2.png"));
+            idleR3 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/idleR3.png"));
+            idleR4 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/idleR4.png"));
 
-            idleL1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/idleL1.png"));
-            idleL2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/idleL2.png"));
-            idleL3 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/idleL3.png"));
-            idleL4 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/idleL4.png"));
+            idleL1 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/idleL1.png"));
+            idleL2 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/idleL2.png"));
+            idleL3 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/idleL3.png"));
+            idleL4 = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/idleL4.png"));
 
-            chasing = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/chasing.png"));
-            notchasing = ImageIO.read(getClass().getClassLoader().getResourceAsStream("enemies/dog/notchasing.png"));
+            chasing = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/chasing.png"));
+            notchasing = ImageIO.read(DogView.class.getClassLoader().getResourceAsStream("enemies/dog/notchasing.png"));
 
             System.out.println("[DogView] loaded dog sprites");
         }
@@ -92,6 +143,12 @@ public class DogView implements Observer {
 
     }
 
+    /**
+     * updates the {@link #spriteCounter} depending on the dog's current state.
+     * by updating the sprite counter and its sprite number, it creates an animation effect.
+     * called in the {@link #draw(Graphics2D)} method.
+     *
+     */
     private void updateFrameCounter(){
         spriteCounter++;        //increment once per frame
 
@@ -136,6 +193,13 @@ public class DogView implements Observer {
         }
     }
 
+    /** draws the dog based on its current state and position given by the {@link Dog} model.
+     * the sprite counter speed is handled in {@link #updateFrameCounter()}, and the sprite
+     * cycling (to create the animation) is handled by the {@link #switchDisabledSprites(String)},  {@link #switchIdleSprite(String)} and
+     * {@link #switchMovingSprite(String)}.
+     *
+     * @param g2d swing's graphics 2d instance that allows rendering
+     */
     public void draw(Graphics2D g2d){
         BufferedImage image = null;
         updateFrameCounter();
@@ -155,20 +219,20 @@ public class DogView implements Observer {
 //            System.out.println("[DogView] idle dog sprite");
         }
 
-
+        //dog sprite
         g2d.drawImage(image, dog.getX(), dog.getY(), dog.getWidth(), dog.getHeight(), null);
+        //alerted icon
         g2d.drawImage(dog.getIsChasing() ? chasing : notchasing, dog.getX() + 30, dog.getY() + 20, null);
 
+
+        //debug info:
         //sprite size
         g2d.setColor(Color.BLACK);
         g2d.drawRect(dog.getX(), dog.getY(), dog.getWidth(), dog.getHeight());
-
         //actual hitbox size
         g2d.setColor(Color.GREEN);
         g2d.drawRect(dog.getX() + 20, dog.getY() + 65, dog.getWidth() - 40, dog.getHeight() - 65);
-
         g2d.setColor(Color.GREEN);
-        //info
         g2d.drawString("dog direction: " + dog.getDirection(), dog.getX(), dog.getY() - 10);
         g2d.drawString("current patrol position: " + dog.getCurrentPatrolPosition(), dog.getX(), dog.getY() - 20);
         g2d.drawString("wall in front: " + dog.getWallInFront(), dog.getX(), dog.getY() - 30);
@@ -185,7 +249,11 @@ public class DogView implements Observer {
     }
 
 
-
+    /**switches the image based on the {@link #spriteNum} field.
+     * contains the dog's idle state sprites.
+     * @param direction direction of the dog
+     * @return an image, current sprite of the dog.
+     */
     private BufferedImage switchIdleSprite(String direction){
         BufferedImage image = null;
 
@@ -228,7 +296,11 @@ public class DogView implements Observer {
             }
         return image;
     }
-
+    /**switches the image based on the {@link #spriteNum} field.
+     * contains the dog's moving state sprites.
+     * @param direction direction of the dog
+     * @return an image, current sprite of the dog.
+     */
     private BufferedImage switchMovingSprite(String direction){
         BufferedImage image = null;
         if (direction.equals("right")){
@@ -282,6 +354,11 @@ public class DogView implements Observer {
         return image;
     }
 
+    /**switches the image based on the {@link #spriteNum} field.
+     * contains the dog's disabled state sprites.
+     * @param direction direction of the dog
+     * @return an image, current sprite of the dog.
+     */
     private BufferedImage switchDisabledSprites(String direction) {
         BufferedImage image = null;
         if (direction.equals("right")) {
@@ -309,16 +386,4 @@ public class DogView implements Observer {
         return image;
     }
 
-
-
-
-
-
-
-
-
-    @Override
-    public void update(Observable o, Object arg) {
-
-    }
 }

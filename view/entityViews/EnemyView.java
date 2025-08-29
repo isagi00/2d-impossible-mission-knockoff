@@ -26,6 +26,8 @@ public class EnemyView implements Observer {
         this.currentRoom = levelManager.getCurrentRoom();
         initializeViews();
 
+        DogView.loadSprites();
+
         this.levelManager.addObserver(this);
     }
 
