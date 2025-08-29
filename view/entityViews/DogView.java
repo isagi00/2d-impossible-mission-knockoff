@@ -79,7 +79,6 @@ public class DogView {
     private boolean wasDisabled = false;
 
     /** creates a dog view instance, that handles the rendering / visual side of the model.
-     * loads the all sprites via {@link #loadSprites()} when called.
      * @param dog reference to the {@link Dog} model that his view is rendering
      */
     public DogView(Dog dog) {
