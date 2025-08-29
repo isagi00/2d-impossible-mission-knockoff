@@ -299,13 +299,13 @@ public class GameView extends JPanel {
         Room currentRoom = levelManager.getCurrentRoom();
         Room[][] world = levelManager.getWorldLayout();
         if (currentRoom == world[1][0] || currentRoom == world[1][1] || currentRoom == world[1][2]  ) {     //depth 1
-            window.setBackground(new Color(139,171,191));   //lighter light blue
+            this.setBackground(new Color(139,171,191));   //lighter light blue
         }
         else if (currentRoom == world[2][0] || currentRoom == world[2][1] || currentRoom == world[2][2]  ) {     //depth 2
-            window.setBackground(new Color(86,106,137));   //light blue
+            this.setBackground(new Color(86,106,137));   //light blue
         }
         else if (currentRoom == world[3][0] || currentRoom == world[3][1] || currentRoom == world[3][2]  ) {     //depth 3
-            window.setBackground(new Color(55, 68, 110)); //dark blue
+            this.setBackground(new Color(55, 68, 110)); //dark blue
         }
         else{
             g2d.drawImage(backgroundImage, 0,0, ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT, null);

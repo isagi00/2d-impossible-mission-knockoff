@@ -143,8 +143,8 @@ public class TitleScreenController extends Observable implements KeyListener {
      * note that if the user selects the 'new game' option, he will be brought to the {@link WhatsYourNameView} to enter his name
      * for the {@link Leaderboard}.
      * @param playTutorial used to select what world layout will get initialized in the {@link LevelManager}.
-     *                     if true, then the tutorial layout will get initialized.
-     *                     if false, then the default game world layout will get initialized.
+     *if true, then the tutorial layout will get initialized.
+     *if false, then the default game world layout will get initialized.
      */
     private void startMainGame(boolean playTutorial) {
         window.remove(titleScreenView);
@@ -159,20 +159,17 @@ public class TitleScreenController extends Observable implements KeyListener {
         player.setLevelManager(levelManager);
 
         //load game view components
-        GameView gameView = new GameView(player, tileManager, levelManager, window);
-        PauseMenuView pauseMenuView = new PauseMenuView();
-
-
-
-//        WhatsYourNameView whatsYourNameView = new WhatsYourNameView();
-
         //result screen view
         ResultScreenView resultScreenView = new ResultScreenView(player);
         resultScreenView.setBounds(0, 0, window.getWidth(), window.getHeight());
         resultScreenView.setVisible(false);
         resultScreenView.addKeyListener(new ResultScreenController(resultScreenView, window));
-
-
+        GameView gameView = new GameView(player, tileManager, levelManager, window);
+        gameView.setBounds(0,0 , window.getWidth(), window.getHeight());
+        gameView.setResultScreenView(resultScreenView);
+        PauseMenuView pauseMenuView = new PauseMenuView();
+        pauseMenuView.setBounds(0,0 , window.getWidth(), window.getHeight());
+        pauseMenuView.setVisible(false);
 
         //load game controller component
         GameController gameController = new GameController(player, inputHandler, gameView, levelManager);
@@ -184,32 +181,15 @@ public class TitleScreenController extends Observable implements KeyListener {
         window.revalidate();
         window.repaint();
 
-        gameView.setBounds(0,0 , window.getWidth(), window.getHeight());
-        pauseMenuView.setBounds(0,0 , window.getWidth(), window.getHeight());
-//        whatsYourNameView.setBounds(0,0 , window.getWidth(), window.getHeight());
-
-
         layeredPane.add(gameView, JLayeredPane.DEFAULT_LAYER);
         layeredPane.add(pauseMenuView, JLayeredPane.PALETTE_LAYER);
         layeredPane.add(resultScreenView, JLayeredPane.MODAL_LAYER);
-//        layeredPane.add(whatsYourNameView, JLayeredPane.POPUP_LAYER);
-
-
-        pauseMenuView.setVisible(false);
-//        whatsYourNameView.setVisible(true);
-
-
-        gameView.setResultScreenView(resultScreenView);
 
         //attach the pause menu controller
         PauseMenuController pauseMenuController = new PauseMenuController(window, pauseMenuView, gameView, gameController);
         pauseMenuView.addKeyListener(pauseMenuController);
         GameKeyListener gameKeyListener = new GameKeyListener(gameController, inputHandler, gameView,pauseMenuView, window);
         gameView.addKeyListener(gameKeyListener);
-//        WhatsYourNameController whatsYourNameController = new WhatsYourNameController(whatsYourNameView, gameView);
-//        whatsYourNameView.addKeyListener(whatsYourNameController);
-//        whatsYourNameView.requestFocusInWindow();
-//        gameView.requestFocusInWindow();
 
         //load current level
         if(playTutorial) {
@@ -229,8 +209,6 @@ public class TitleScreenController extends Observable implements KeyListener {
         levelManager.loadCurrentRoom();
 
         System.out.println("[TitleScreenController][startMainGame()] window focus owner: " + window.getFocusOwner());
-
-
 
         gameController.startGameThread();
     }
@@ -258,10 +236,6 @@ public class TitleScreenController extends Observable implements KeyListener {
         //connect the controller
         LeaderboardViewController leaderboardViewController = new LeaderboardViewController(window, leaderboardView);
         leaderboardView.addKeyListener(leaderboardViewController);
-
-
-
-
     }
 
 
