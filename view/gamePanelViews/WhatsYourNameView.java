@@ -8,24 +8,19 @@ import java.io.InputStream;
 
 public class WhatsYourNameView extends JPanel {
 
-    private String fontPath = "fonts/ThaleahFat.ttf";
-    private Font whatsYourNameFont;
-    private Font nameTypedInFont;
+    private final String fontPath = "fonts/ThaleahFat.ttf";
+    private Font whatsYourNameFont = loadCustomFont(fontPath, 60f);
+    private Font nameTypedInFont = loadCustomFont(fontPath, 80f);
 
 
-    private int padding;
-    private String displayedName;
+    private final int padding = 50;
+    private String displayedName = "";
 
     public WhatsYourNameView() {
         setPreferredSize(new Dimension(ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT));
         setBackground(Color.BLACK);    //semi transparent
         setOpaque(false);               //allow   transparency
         setFocusable(true);
-
-        this.whatsYourNameFont = loadCustomFont(fontPath, 60f);
-        this.nameTypedInFont = loadCustomFont(fontPath, 80f);
-        this.padding = 50;
-        this.displayedName = "";
     }
 
 
@@ -33,19 +28,19 @@ public class WhatsYourNameView extends JPanel {
         try{
             InputStream stream = getClass().getClassLoader().getResourceAsStream(fontPath);
             if(stream == null) {    //if the font path provided is not available
-                System.out.println("cant find font " + fontPath);
-                return new Font("Arial", Font.BOLD, (int) size);
+                System.out.println("[WhatsYourNameView] cant find font " + fontPath);
+                return null;
             }
 
             Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(size);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
-            System.out.println("Loaded font " + fontPath);
+            System.out.println("[WhatsYourNameView] loaded font " + fontPath);
             return font;
 
         }catch(Exception e) {
-            System.err.println("Couldn't load font " + fontPath);
-            return new Font("Arial", Font.BOLD, (int) size);
+            System.err.println("[WhatsYourNameView] couldn't load font " + fontPath);
+            return null;
         }
     }
 
