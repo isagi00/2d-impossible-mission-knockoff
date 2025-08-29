@@ -8,53 +8,81 @@ import java.awt.*;
 import java.io.InputStream;
 import java.util.List;
 
+/**
+ * view, renders all the leaderboard rankings and points data provided by the {@link Leaderboard} model.
+ */
 public class LeaderboardView extends JPanel {
 
+    /**
+     * path of the font used, in the res folder
+     */
+    private final String fontPath = "fonts/ThaleahFat.ttf";
 
+    /**
+     * reference to the {@link Leaderboard} model, used to get the
+     * data of the leaderboard to render.
+     */
+    private final Leaderboard leaderboard;
 
-    private Leaderboard leaderboard;
+    /**
+     * font used to display the leaderboard title on the top.
+     */
+    private final Font leaderboardTitleFont = loadCustomFont(fontPath, 70f);
+    /**
+     * font used to display the leaderboard contents, such as placing, name and points.
+     */
+    private final Font leaderboardFont = loadCustomFont(fontPath, 60f);
+    /**
+     * font used to the display the exit prompt on the bottom right of the leaderboard screen.
+     */
+    private final Font exitFont = loadCustomFont(fontPath, 30f);
 
-    private Font leaderboardTitleFont;
-    private Font leaderboardFont;
-    private Font exitFont;
+    /**
+     * visual padding integer that helps with the spacing consistency of the leaderboard screen.
+     */
+    private final int padding = 50;
 
-    private String fontPath = "fonts/ThaleahFat.ttf";
-
-    private int padding = 50;
-
+    /**view, renders all the data provided by the {@link Leaderboard} model.
+     * @param leaderboard the {@link Leaderboard} model
+     */
     public LeaderboardView(Leaderboard leaderboard){
         this.leaderboard = leaderboard;
         setPreferredSize(new Dimension(ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT));
         setOpaque(true);
         setFocusable(true);
         setBackground(Color.BLACK);
-
-        this.leaderboardTitleFont = loadCustomFont(fontPath, 70f);
-        this.leaderboardFont = loadCustomFont(fontPath, 60f);
-        this.exitFont = loadCustomFont(fontPath, 30f);
     }
 
+    /**loads the font at the provided font path, with the provided size.
+     * @param fontPath path of the .ttf file in the res folder
+     * @param size size of the font
+     * @return the font if it finds it, null otherwise
+     */
     private Font loadCustomFont(String fontPath, float size) {
         try{
             InputStream stream = getClass().getClassLoader().getResourceAsStream(fontPath);
             if(stream == null) {    //if the font path provided is not available
-                System.out.println("Couldn't find font " + fontPath);
-                return new Font("Arial", Font.BOLD, (int) size);
+                System.out.println("[LeaderboardView]couldn't find font " + fontPath);
+                return null;
             }
 
             Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(size);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
-            System.out.println("Loaded font " + fontPath);
+            System.out.println("[LeaderboardView]loaded font " + fontPath);
             return font;
 
         }catch(Exception e) {
-            System.err.println("Couldn't load font " + fontPath);
-            return new Font("Arial", Font.BOLD, (int) size);
+            System.err.println("[LeaderboardView] couldn't load font " + fontPath);
+            return null;
         }
     }
 
 
+    /**renders the leaderboard, with the data provided by {@link Leaderboard} model.
+     * draws the title, the rankings from 1 to 10 with the names and points.
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -62,16 +90,6 @@ public class LeaderboardView extends JPanel {
 
         // enable antialiasing for smoother text
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-
-//        // draw game paused title
-//        g2d.setFont(pauseMenuTitleFont);
-//        FontMetrics titleMetrics = g2d.getFontMetrics();
-//        String title = "GAME PAUSED";
-//        int titleX = (getWidth() - titleMetrics.stringWidth(title)) / 2;
-//        int titleY = getHeight() / 2;
-//        g2d.setColor(Color.WHITE);
-//        g2d.drawString(title, titleX, titleY);
 
         //draw leaderboard title
         g2d.setFont(leaderboardTitleFont);
@@ -102,26 +120,6 @@ public class LeaderboardView extends JPanel {
         String exit = "< press enter to go back to the main menu";
         g2d.drawString(exit, padding, getHeight() - padding);
 
-
-
-
-//        // draw menu options
-//        g2d.setFont(pauseMenuFont);
-//        FontMetrics optionMetrics = g2d.getFontMetrics();
-//        int startY = titleY + 80;  // space below title
-//        int verticalSpacing = 60;
-//
-//        for (int i = 0; i < OPTIONS.length; i++) {
-//            int optionX = (getWidth() - optionMetrics.stringWidth(OPTIONS[i])) / 2;
-//            int optionY = startY + i * verticalSpacing;
-//
-//            if (i == selectedOption) {
-//                g2d.setColor(new Color(255, 215, 0)); // gold highlight
-//            } else {
-//                g2d.setColor(Color.LIGHT_GRAY);
-//            }
-//            g2d.drawString(OPTIONS[i], optionX, optionY);
-//        }
     }
 
 

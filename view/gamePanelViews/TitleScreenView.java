@@ -8,79 +8,122 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
+/**
+ * view of the title screen, handles the rendering/logic of the title screen.
+ *
+ */
 public class TitleScreenView extends JPanel {
-    BufferedImage title;
-    private final Font menuFont;
-    private final Font selectedFont; //the currently selected option is gonna have a slightly larger font
+    /**
+     * the title image displayed in the title screen.
+     */
+    private static  BufferedImage titleImage;
+    /**
+     * the menu font, of the {@link #options}
+     */
+    private final Font menuFont = loadCustomFont("fonts/ThaleahFat.ttf", 40f);
+    /**
+     * the font of the currently selected font. note that is slightly bigger than the {@link #menuFont},
+     * so that the used has an even better clarity of the current selected option.
+     */
+    private final Font selectedFont = loadCustomFont("fonts/ThaleahFat.ttf", 50f);; //the currently selected option is gonna have a slightly larger font
+    /**
+     * the currently selected option, it can be incremented or decremented via {@link #selectNextOption()} and
+     * {@link #selectPreviousOption()}.
+     */
     private int selectedOption = 0;
 
     //menu options
+    /**
+     * contains the menu option that are displayed in the title screen
+     */
     private final String[] options = {
             "new game",
             "play tutorial",
             "leaderboard",
-            "quit"
+            "exit"
     };
 
 
-
+    /**
+     * view of the title screen. handles the rendering of all the options in the title screen, title image.
+     * the inputs are handled in the {@link controller.TitleScreenController}.
+     */
     public TitleScreenView() {
         setPreferredSize(new Dimension(ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT));
         setBackground(Color.BLACK);
-
-        menuFont = loadCustomFont("fonts/ThaleahFat.ttf", 40f);
-        selectedFont = loadCustomFont("fonts/ThaleahFat.ttf", 50f);
         loadTitleScreenBackgroundImage();
     }
 
-
+    /**loads the font at the provided font path, with the provided size.
+     * @param fontPath path of the .ttf file in the res folder
+     * @param size size of the font
+     * @return the font if it finds it, null otherwise
+     */
     private Font loadCustomFont(String fontPath, float size) {
         try{
             InputStream stream = getClass().getClassLoader().getResourceAsStream(fontPath);
             if(stream == null) {    //if the font path provided is not available
-                System.out.println("cant find font " + fontPath);
-                return new Font("Arial", Font.BOLD, (int) size);
+                System.out.println("[TitleScreenView]cant find font " + fontPath);
+                return null;
             }
 
             Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(size);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
-            System.out.println("Loaded font " + fontPath);
+            System.out.println("[TitleScreenView]loaded font " + fontPath);
             return font;
 
         }catch(Exception e) {
-            System.err.println("Couldn't load font " + fontPath);
-            return new Font("Arial", Font.BOLD, (int) size);
+            System.err.println("[TitleScreenView]couldn't load font " + fontPath);
+            return null;
         }
     }
 
 
+    /**
+     * loads the title screen image from the res folder.
+     */
     private void loadTitleScreenBackgroundImage() {
         try{
-            title = ImageIO.read(getClass().getClassLoader().getResourceAsStream("titlescreen/title.png"));
+            titleImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("titlescreen/title.png"));
             System.out.println("Loaded title ");
         }catch (Exception e) {
             System.err.println("Couldn't load title lul ");
         }
     }
 
+    /**
+     * selects the next option in the {@link #options} field
+     */
     public void selectNextOption() {
         if (selectedOption != options.length - 1) {
             selectedOption = (selectedOption + 1) % options.length;
         }
     }
 
+    /**
+     * selects the previous option in the {@link #options} field
+     */
     public void selectPreviousOption() {
         if (selectedOption != 0) {
             selectedOption = (selectedOption - 1) % options.length;
         }
     }
 
+    /**gets the currently selected option of the used via the 'enter key'.
+     * see {@link controller.TitleScreenController}.
+     * @return the currently selected option
+     */
     public String getSelectedOption() {
         return options[selectedOption];
     }
 
 
+    /**renders the entirety of the title screen: the title image, the various options, such as 'new game', 'play tutorial',
+     * 'leaderboard' and 'exit game', listed in the {@link #options}.
+     *
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -89,7 +132,7 @@ public class TitleScreenView extends JPanel {
         //enable antialiasing
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         //background image
-        g2d.drawImage(title, 0, 0, ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT,  null);
+        g2d.drawImage(titleImage, 0, 0, ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT,  null);
 
         //draw menu options
         int startX = ScreenSettings.SCREEN_WIDTH / 2 - 100;

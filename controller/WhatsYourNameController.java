@@ -55,6 +55,7 @@ public class WhatsYourNameController extends Observable implements KeyListener {
 
 
     /**handles the key typed in when the user is in the what's your name? screen.
+     * it requests the {@link WhatsYourNameView} to update the text and repaint via {@link WhatsYourNameView}'s .updateNameDisplay() method.
      * sends a notification to {@link AudioManager} when a key is typed in
      * @param e the event to be processed
      */

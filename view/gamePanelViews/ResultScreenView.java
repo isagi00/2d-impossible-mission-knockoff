@@ -11,51 +11,89 @@ import javax.swing.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * view of the result screen, renders the result screen based on the {@link Player}'s {@link ScoreTracker}.
+ */
 public class ResultScreenView extends JPanel  {
 
-    private Font titleFont = loadCustomFont("fonts/ThaleahFat.ttf", 70f);
-    private Font resultFont = loadCustomFont("fonts/ThaleahFat.ttf", 40f);
-    private Font totalFont = loadCustomFont("fonts/ThaleahFat.ttf", 65f);
-    private Font multiplierFont = loadCustomFont("fonts/ThaleahFat.ttf", 65f);
-    private Player player;
-    private ScoreTracker scoreTracker;
+    /**
+     * font used to display the 'extraction completed' title on top of the screen.
+     */
+    private final Font titleFont = loadCustomFont("fonts/ThaleahFat.ttf", 70f);
+    /**
+     * default font used to display the results of the player.
+     * the font is used to display the total interactable objects opened, card points, the total points got from the interactable
+     * objects + card points and the multipliers.
+     */
+    private final Font resultFont = loadCustomFont("fonts/ThaleahFat.ttf", 40f);
+    /**
+     * font that is used to display the 'grand total points' at the end.
+     */
+    private final Font grandTotalFont = loadCustomFont("fonts/ThaleahFat.ttf", 65f);
+    /**
+     * font that is used to display the 'multipliers' title before the multipliers.
+     */
+    private final Font multiplierFont = loadCustomFont("fonts/ThaleahFat.ttf", 65f);
+    /**
+     * reference to the {@link Player} model. to get the that player's instance's {@link ScoreTracker} model.
+     *
+     */
+    private final Player player;
+    /**
+     * reference to the {@link ScoreTracker} model. this is where all the score info is taken from to display the
+     * result screen.
+     */
+    private final ScoreTracker scoreTracker;
+
+    /**
+     * visual padding integer that helps with the spacing consistency of the result screen.
+     */
+    private final int padding = 50;
 
 
-
-    private int padding = 50;
-
-
+    /**view, handles the rendering of the result screen, with the data provided by the {@link ScoreTracker} model.
+     * @param player {@link Player} model
+     */
     public ResultScreenView(Player player) {
         setPreferredSize(new Dimension(ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT));
         setOpaque(false);       //allow transparency
-        this.player = player;
-        this.scoreTracker = player.getScoreTracker();
-
         setFocusable(true);
 
+        this.player = player;
+        this.scoreTracker = player.getScoreTracker();
     }
 
+    /**loads the font at the provided font path, with the provided size.
+     * @param fontPath path of the .ttf file in the res folder
+     * @param size size of the font
+     * @return the font if it finds it, null otherwise
+     */
     private Font loadCustomFont(String fontPath, float size) {
         try{
             InputStream stream = getClass().getClassLoader().getResourceAsStream(fontPath);
             if(stream == null) {    //if the font path provided is not available
-                System.out.println("cant find font " + fontPath);
-                return new Font("Arial", Font.BOLD, (int) size);
+                System.out.println("[ResultScreenView]cant find font " + fontPath);
+                return null;
             }
 
             Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(size);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
-            System.out.println("Loaded font " + fontPath);
+            System.out.println(" [ResultScreenView]loaded font " + fontPath);
             return font;
 
         }catch(Exception e) {
-            System.err.println("Couldn't load font " + fontPath);
-            return new Font("Arial", Font.BOLD, (int) size);
+            System.err.println("[ResultScreenView]Couldn't load font " + fontPath);
+            return null;
         }
     }
 
 
+    /**renders the result screen.
+     * renders all the interactable objects opened during gameplay, total points, and the multipliers.
+     * the scores are tracked in the {@link ScoreTracker} model, so the view knows what to display.
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -178,7 +216,7 @@ public class ResultScreenView extends JPanel  {
 
         //grand total (with multipliers)
         g2d.setColor(Color.ORANGE);
-        g2d.setFont(totalFont);
+        g2d.setFont(grandTotalFont);
         String total = "GRAND TOTAL :       " + scoreTracker.getGrandTotalPoints(cardValues);
         g2d.drawString(total, padding, titleMetrics.getHeight() + padding * 13);
         g2d.drawString(pts, ptsX, titleMetrics.getHeight() + padding * 13);

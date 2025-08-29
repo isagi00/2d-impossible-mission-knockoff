@@ -6,58 +6,96 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.InputStream;
 
+/**
+ * view, renders the pause menu.
+ */
 public class PauseMenuView extends JPanel{
 
 
+    /**
+     * the currently selected option in the pause menu.
+     * it is updated via {@link #selectNextOption()} and {@link #selectPreviousOption()}
+     */
     private int selectedOption;
-    private String[] OPTIONS = {"resume", "to the main menu"};
-    private Font pauseMenuFont = loadCustomFont("fonts/ThaleahFat.ttf", 40f);
-    private Font pauseMenuTitleFont = loadCustomFont("fonts/ThaleahFat.ttf", 60f);
+    /**
+     * the available options in the pause menu.
+     * there a 2 currently available: 'resume' and 'to the main menu'
+     */
+    private final String[] options = {"resume", "to the main menu"};
+    /**
+     * font used for the options in the pause menu
+     */
+    private final Font pauseMenuFont = loadCustomFont("fonts/ThaleahFat.ttf", 40f);
+    /**
+     * font used in the title of the pause menu, the 'game paused' section.
+     */
+    private final Font pauseMenuTitleFont = loadCustomFont("fonts/ThaleahFat.ttf", 60f);
 
+    /**
+     * view of the pause menu, renders the pause menu.
+     */
     public PauseMenuView() {
         setPreferredSize(new Dimension(ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT));
         setBackground(Color.BLACK);    //semi transparent
         setOpaque(false);               //allow transparency
         setFocusable(true);
     }
-
+    /**
+     * selects the next option in {@link #options}.
+     * called in {@link controller.PauseMenuController}.
+     */
     public void selectNextOption(){
-        if (selectedOption < OPTIONS.length - 1){
-            selectedOption = (selectedOption + 1) %  OPTIONS.length;
+        if (selectedOption < options.length - 1){
+            selectedOption = (selectedOption + 1) %  options.length;
         }
     }
 
+    /**
+     * selects the previous option in {@link #options}.
+     * called in {@link controller.PauseMenuController}.
+     */
     public void selectPreviousOption(){
         if (selectedOption > 0){
-            selectedOption = (selectedOption - 1) %  OPTIONS.length;
+            selectedOption = (selectedOption - 1) %  options.length;
         }
     }
 
+    /**
+     * @return the currently selected option in the pause menu
+     */
     public String getSelectedOption(){
-        return OPTIONS[selectedOption];
+        return options[selectedOption];
     }
 
+    /**loads the font at the provided font path, with the provided size.
+     * @param fontPath path of the .ttf file in the res folder
+     * @param size size of the font
+     * @return the font if it finds it, null otherwise
+     */
     private Font loadCustomFont(String fontPath, float size) {
         try{
             InputStream stream = getClass().getClassLoader().getResourceAsStream(fontPath);
             if(stream == null) {    //if the font path provided is not available
-                System.out.println("cant find font " + fontPath);
-                return new Font("Arial", Font.BOLD, (int) size);
+                System.out.println("[PauseMenuView]cant find font " + fontPath);
+                return null;
             }
 
             Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(size);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
-            System.out.println("Loaded font " + fontPath);
+            System.out.println("[PauseMenuView]loaded font " + fontPath);
             return font;
 
         }catch(Exception e) {
-            System.err.println("Couldn't load font " + fontPath);
-            return new Font("Arial", Font.BOLD, (int) size);
+            System.err.println("[PauseMenuView]couldn't load font " + fontPath);
+            return null;
         }
     }
 
 
+    /**renders the pause menu screen, with the transparent background and the available options in {@link #options}.
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -85,8 +123,8 @@ public class PauseMenuView extends JPanel{
         int startY = titleY + 80;  // space below title
         int verticalSpacing = 60;
 
-        for (int i = 0; i < OPTIONS.length; i++) {
-            int optionX = (getWidth() - optionMetrics.stringWidth(OPTIONS[i])) / 2;
+        for (int i = 0; i < options.length; i++) {
+            int optionX = (getWidth() - optionMetrics.stringWidth(options[i])) / 2;
             int optionY = startY + i * verticalSpacing;
 
             if (i == selectedOption) {
@@ -94,7 +132,7 @@ public class PauseMenuView extends JPanel{
             } else {
                 g2d.setColor(Color.LIGHT_GRAY);
             }
-            g2d.drawString(OPTIONS[i], optionX, optionY);
+            g2d.drawString(options[i], optionX, optionY);
         }
     }
 

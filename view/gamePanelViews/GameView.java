@@ -17,53 +17,105 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
-import java.util.Observable;
-import java.util.Observer;
 
 
-/** MAIN RENDERING, TAKES ALL THE VIEWS AND RENDERS
- * should:
- * -render current model state  !SHOULD ONLY DEPEND ON MODELs STATE
- * -be notified of model changes
- *
- * should NOT:
- * -modify model state
- * -contain game logic
- * -know about input
+/**
+ *view, this is the components that requests each view's draw() method. it is composed by all the game views, and decides when to
+ * display the result screen. it also helps to draw the appropriate background image, player hud such as the fps and  the
+ * information of the player's current position in the game world layouy defined in {@link LevelManager}.
  */
 public class GameView extends JPanel {
     //----------------------------------------------------------------------------------------------------------------//
     // FIELDS
     //----------------------------------------------------------------------------------------------------------------//
     //MODELS
-    Player player;
-    LevelManager levelManager;
-    TileManager tileManager;
+    /**
+     *reference to the {@link Player} model, used to get the player's extraction status so that the {@link ResultScreenView} can appear
+     * accordingly and the interaction prompt to appear when the player is near an interactable object.
+     */
+    private final Player player;
+    /**
+     * reference to the {@link LevelManager} model, used to get the data of the current depth, level, and room type.
+     */
+    private final LevelManager levelManager;
+
 
     //helpers (subviews)
-    PlayerView playerView;
-    InteractableObjectsView interactableObjectsView;
-    InventoryView inventoryView;
-    EnemyView enemyView;
-    ResultScreenView resultScreenView;
-    LevelView levelView;
+    /**
+     *reference to the {@link PlayerView}, used to render the player
+     */
+    private final PlayerView playerView;
+    /**
+     * reference to the {@link InteractableObjectsView}, use to render all the interactable objects in the room
+     */
+    private final InteractableObjectsView interactableObjectsView;
+    /**
+     * reference to the {@link InventoryView}, used to render the player's inventory
+     */
+    private final InventoryView inventoryView;
+    /**
+     * reference to the {@link EnemyView}, used to render all the enemies in the current room
+     */
+    private final EnemyView enemyView;
+
+    /**
+     * reference to the {@link ResultScreenView}, used to render the result screen
+     * when the player extracts.
+     */
+    private ResultScreenView resultScreenView;
+    /**
+     * reference to the {@link LevelView}, used to render the tiles in the game.
+     */
+    private final LevelView levelView;
     //game window
-    private JFrame window;
+    /**
+     *reference to the JFrame window created in {@link main.Main}
+     */
+    private final JFrame window;
 
     //bg
-    BufferedImage background;
+    /**
+     *background image of the game. it only gets rendered when the player is on the first layer
+     * of the world layout defined in {@link LevelManager}
+     */
+    private static BufferedImage backgroundImage;
 
     //fps tracking vars
+    /**
+     * numbers of frames that have passed.
+     */
     private int frameCount = 0;
+    /**
+     * used to track the fps.
+     */
     private long lastFpsTime = System.nanoTime();
+    /**
+     * the total frames / second text. it is used the {@link #paintComponent(Graphics)} method to track the fps
+     * on the top left corner
+     */
     private double fps;
 
     // fonts
+    /**
+     * font used to display the fps on the top left corner
+     */
     private final Font fpsFont = loadFont("fonts/ThaleahFat.ttf", 25);
+    /**
+     * font used to display the game text, such as the top right's world info and the interaction prompt of the player.
+     */
     public  final Font gameFont = loadFont("fonts/ThaleahFat.ttf", 50);
-    private final Font tutorialTextFont = loadFont("fonts/ThaleahFat.ttf", 40);
 
 
+    /**view of the game. it is composed by all the game models views, such as {@link PlayerView}, {@link EnemyView},
+     * {@link InteractableObjectsView}s, {@link LevelView}, and requests the .draw() method of each component.
+     * note that it also contains the {@link ResultScreenView}, set in the {@link controller.TitleScreenController},
+     * so that it displays when the player successfully extracts.
+     *  it calls each entity's draw method
+     * @param player {@link Player} model
+     * @param tileManager {@link TileManager} model
+     * @param levelManager {@link LevelManager} model
+     * @param window the JFrame created in {@link main.Main}
+     */
     //----------------------------------------------------------------------------------------------------------------//
     // CONSTRUCTOR, ! DEPENDS PURELY ON MODELS !
     //----------------------------------------------------------------------------------------------------------------//
@@ -71,7 +123,6 @@ public class GameView extends JPanel {
         this.window = window;
 
         //models
-        this.tileManager = tileManager;
         this.levelManager = levelManager;
         this.player = player;
 
@@ -83,17 +134,19 @@ public class GameView extends JPanel {
         this.levelView = new LevelView(levelManager, tileManager);
 
         //other
-        setPreferredSize(new Dimension(ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT));
-        setBackground(Color.BLACK);
+        window.setPreferredSize(new Dimension(ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT));
+        window.setBackground(Color.BLACK);
         setDoubleBuffered(true);
         setOpaque(true);
+
         //loading background image
         loadBackgroundImage();
     }
 
-    /**where the game actually renders:
+    /** this is where the game actually renders:
      * calls every single view component to draw.
      * tracks the fps and makes the {@link ResultScreenView} visible when the {@link Player} extracts.
+     * this method is called every time the {@link controller.GameController}'s game loop (the .run() method) requests a repaint().
      * @param g the <code>Graphics</code> object to protect
      */
     @Override
@@ -136,14 +189,6 @@ public class GameView extends JPanel {
         //draw the player's inventory
         inventoryView.draw(g2d);
 
-        //draw the tutorial level texts
-        if(levelManager.getCurrentRoom().getTutorialText() != null){       //load the text only if there is one, prevents null pointer exception
-            String text = levelManager.getCurrentRoom().getTutorialText();
-            g2d.setFont(tutorialTextFont);
-            g2d.setColor(Color.MAGENTA);
-            g2d.drawString(text,  50, 100 );
-        }
-
         //draw the game text
         drawGameText(g2d);
 
@@ -156,7 +201,7 @@ public class GameView extends JPanel {
     }
 
 
-    /**
+    /**loads the font at the provided font path, with the provided size.
      * @param fontPath path of the ttf file
      * @param size font size
      * @return font
@@ -184,7 +229,7 @@ public class GameView extends JPanel {
     /**draws the game text.
      * top right: world info
      * top left: fps
-     * player interaction prompt when near an interactable object
+     * player interaction prompt when near an interactable object.
      * @param g2d swing's graphics 2d instance that allows rendering
      */
     private void drawGameText(Graphics2D g2d) {
@@ -231,10 +276,11 @@ public class GameView extends JPanel {
 
     /**
      * loads the background image, drawn in {@link #drawBackground(Graphics2D)}.
+     * the background is image is only drawn on the first layer of the game world. see {@link LevelManager}
      */
     private void loadBackgroundImage(){
         try{
-            this.background = ImageIO.read(getClass().getClassLoader().getResourceAsStream("backgrounds/background.png"));
+            this.backgroundImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("backgrounds/background.png"));
         }
         catch(Exception e) {
             System.out.println("Couldn't find background");
@@ -246,27 +292,31 @@ public class GameView extends JPanel {
     /**
      * draws the game's background.
      * it will display a background image if the player is on the first layer of {@link LevelManager} world layout,
-     * and a solid color when deeper into the world
+     * and a solid color when deeper into the game world.
      * @param g2d swing's graphics 2d instance that allows rendering
      */
     private void drawBackground(Graphics2D g2d) {
         Room currentRoom = levelManager.getCurrentRoom();
         Room[][] world = levelManager.getWorldLayout();
         if (currentRoom == world[1][0] || currentRoom == world[1][1] || currentRoom == world[1][2]  ) {     //depth 1
-            setBackground(new Color(139,171,191));   //lighter light blue
+            window.setBackground(new Color(139,171,191));   //lighter light blue
         }
         else if (currentRoom == world[2][0] || currentRoom == world[2][1] || currentRoom == world[2][2]  ) {     //depth 2
-            setBackground(new Color(86,106,137));   //light blue
+            window.setBackground(new Color(86,106,137));   //light blue
         }
         else if (currentRoom == world[3][0] || currentRoom == world[3][1] || currentRoom == world[3][2]  ) {     //depth 3
-            setBackground(new Color(55, 68, 110)); //dark blue
+            window.setBackground(new Color(55, 68, 110)); //dark blue
         }
         else{
-            g2d.drawImage(background, 0,0, ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT, null);
+            g2d.drawImage(backgroundImage, 0,0, ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT, null);
         }
     }
 
 
+    /**sets the result screen view. a setter is used because the result screen instance is created in {@link controller.TitleScreenController}'s
+     * .startMainGame() method.
+     * @param resultScreenView {@link ResultScreenView} view.
+     */
     public void setResultScreenView(ResultScreenView resultScreenView) {
         this.resultScreenView = resultScreenView;
     }
