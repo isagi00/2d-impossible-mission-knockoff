@@ -1,6 +1,5 @@
 package view.entityViews;
 
-import model.entities.Dog;
 import model.entities.Drone;
 
 import javax.imageio.ImageIO;

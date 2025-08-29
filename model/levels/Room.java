@@ -2,10 +2,8 @@ package model.levels;
 
 import model.entities.Dog;
 import model.entities.Drone;
-import model.entities.Entity;
 import model.interactableObjects.InteractableObject;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -2,9 +2,6 @@ package model.entities;
 
 import model.ScreenSettings;
 import model.levels.LevelManager;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.Observable;
 
 /**

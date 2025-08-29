@@ -35,6 +35,11 @@ public class EnemyView implements Observer {
      */
     private final LevelManager levelManager;
 
+    /**
+     * view, it contains all the views of all enemies in the {@link model.entities.Player}'s current {@link Room}.
+     * gets updated via the observer pattern by {@link LevelManager} (observable).
+     * loads the {@link DogView} and {@link DroneView} sprites statically to increase efficiency.
+     */
     public EnemyView(LevelManager levelManager) {
         this.levelManager = levelManager;
         this.currentRoom = levelManager.getCurrentRoom();

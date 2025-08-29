@@ -2,7 +2,6 @@ package view;
 
 import model.ScreenSettings;
 import model.levels.LevelManager;
-import model.levels.Room;
 import model.levels.Tile;
 import model.levels.TileManager;
 

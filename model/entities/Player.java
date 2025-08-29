@@ -502,24 +502,20 @@ public class Player extends Entity {
      * check if player is near an interactable object, sets the {@link #currentInteractable} field if it is near.
      * handles some edge cases: if the player's inventory's full, it will return false, so the {@link #showingInteractionPrompt} is set to
      * false in the {@link #update(boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean)} method.
-     * the inventory is not considered 'full' if the player has a {@link ComputerCard}.
+     * the inventory is not considered 'full' if the player has a {@link ComputerCard} and the {@link Computer} can still be accessed.
      * if the computer's menu is visible, then the {@link #currentInteractable} field is set to be the computer.
      * @return true the interactable object is {@link #isWithinDistance(InteractableObject)}.
      */
     private boolean updateCurrentInteractable() {
-        if (inventory.isInventoryFull() && !checkPlayerHasCard()){  //if the inventory is actually full from cards, dont display the interaction prompt
-            return false;
-        }
-
         List<InteractableObject> objects = currentRoom.getInteractiveObjects();
-        // if there's an active computer menu, keep it as current interactable
+        //if there's an active computer menu, keep it as current interactable
         for (InteractableObject obj : objects) {
             if (obj instanceof Computer computer && computer.getIsMenuVisible()) {
                 currentInteractable = computer;
                 return true;
             }
         }
-        // regular proximity check for other objects
+        //proximity check for other objects
         for (InteractableObject obj : objects) {                //iterate over all interactable objects
             //if the computer card is taken, then dont count it as an interactable object anymore
             if (obj instanceof Card card && card.getIsTaken()) {
@@ -539,9 +535,10 @@ public class Player extends Entity {
                 }
                 continue;
             }
-            //check if the object is within distance the inventory is not full
-            if (isWithinDistance(obj) && (!inventory.isInventoryFull() || (inventory.isInventoryFull() && checkPlayerHasCard()) ) ) {
-                //return true if: object is within distance and if the inventory is not full OR it is full but there is a card (dont consider it full)
+
+
+            //for other interactable objects check if the object is within distance and the inventory is not full
+            if (isWithinDistance(obj) && !inventory.isInventoryFull()) {
                 currentInteractable = obj;
                 return true;
             }
@@ -551,16 +548,18 @@ public class Player extends Entity {
     }
 
 
-    /**
+    /**handles the interaction of the current interactable object
      * interacts with the {@link #currentInteractable}, sends an appropriate notification to the respective observers.
      * calls the interactable object's .open() method, the interaction logic is handled in the respective interactable object's
      * open() method.
      */
     private void interact(){
         //if the player has a card in his inventory and interacts with the computer, the remove the card
-        if ( currentInteractable instanceof Computer && checkPlayerHasCard()){
+        if ( currentInteractable instanceof Computer computer && checkPlayerHasCard()){
             ComputerCard card = inventory.getComputerCard();
             inventory.removeComputerCard(card);
+            computer.setInteractionCompleted(false);        //once the computer gets used, reset it to allow the player
+            //to access it again if he has another card in inventory.. edge case if the player collects more computer cards
         }
         //open the object
         if( currentInteractable != null ) {

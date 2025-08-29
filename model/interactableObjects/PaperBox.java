@@ -1,14 +1,12 @@
 package model.interactableObjects;
 
-import model.ScoreTracker;
+
 import model.ScreenSettings;
 import model.entities.Player;
-import model.inventoryrelated.BoBo;
-import model.inventoryrelated.Item;
+
 import model.inventoryrelated.PokerCard;
 import view.AudioManager;
 
-import java.awt.image.BufferedImage;
 
 
 

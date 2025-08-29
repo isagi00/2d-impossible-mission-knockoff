@@ -85,16 +85,44 @@ public abstract class InteractableObject extends Observable {
     }
 
 
-
-
+    /**
+     * @return the x coordinate of this interactable object
+     */
     public int getX() { return x; }
+
+    /**
+     * @return the y coordinate of this interactable object
+     */
     public int getY() { return y; }
+
+    /**
+     * @return the width of this interactable object
+     */
     public int getWidth() { return width; }
+
+    /**
+     * @return the height of this interactable object
+     */
     public int getHeight() { return height; }
+
+    /**
+     * @return the current search / interaction progress
+     */
     public int getInteractionProgress() { return interactionProgress; }
+
+    /**returns the interaction completed flag. indicates if this interactable object search has been completed or not.
+     * @return the {@link #interactionCompleted}
+     */
     public boolean isInteractionCompleted() { return interactionCompleted; }
+
+    /**
+     * @return the time to complete the search of this object {@link #SEARCH_COMPLETE_TIME}
+     */
     public int getSearchCompleteTime() { return SEARCH_COMPLETE_TIME; }
 
+    /**set the field to true of false of this interactable object
+     * @param interactionCompleted sets the current interactable object's {@link #interactionCompleted}
+     */
     public void setInteractionCompleted(boolean interactionCompleted) { this.interactionCompleted = interactionCompleted; }
 
 

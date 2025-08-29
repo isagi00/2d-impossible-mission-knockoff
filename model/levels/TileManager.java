@@ -8,14 +8,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
-/**
- * model.
- * should store averything about tiles data
- * implement tile rules
- * provide tile accessors
- *
- * should not know about view or input
- */
 import static java.util.Objects.requireNonNull;
 
 /**

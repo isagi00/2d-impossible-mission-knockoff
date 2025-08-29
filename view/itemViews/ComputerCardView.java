@@ -5,7 +5,6 @@ import model.inventoryrelated.ComputerCard;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 
 /**
  * view of the {@link ComputerCard} model, displayed in {@link InventoryView}

@@ -2,7 +2,6 @@ package model.inventoryrelated;
 
 import java.util.Arrays;
 import java.util.Observable;
-import static model.inventoryrelated.PokerCard.*;
 
 /**
  * model of player's inventory. it handles the discard process and updates the {@link view.itemViews.InventoryView} accordingly via the

@@ -3,9 +3,6 @@ package model.interactableObjects;
 import model.entities.Player;
 import model.ScreenSettings;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /**
  * ladder model, it is considered an {@link InteractableObject} so that it is easier to implement in the .txt based level editor.
