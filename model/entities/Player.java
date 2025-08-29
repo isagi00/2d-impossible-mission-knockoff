@@ -209,7 +209,7 @@ public class Player extends Entity {
 // UPDATE METHOD
 //----------------------------------------------------------------------------------------------------------------//
 
-    /**core of the player, processes gravity, horizontal movement, jump movement, ladder movement, object interaction, computer menu navigation,
+    /**core of the player logic, processes gravity, horizontal movement, jump movement, ladder movement, object interaction, computer menu navigation,
      * sound logic (notifies the {@link AudioManager}.
      * note: it is very long, and it is not being broken down into smaller methods because it has been WAY easier to debug and
      * implement logic when needed. having little methods scattered into the player class had been a nightmare for me navigate around
@@ -456,8 +456,6 @@ public class Player extends Entity {
      *
      * @return true if the player is near a ladder
      */
-    //called in update()
-    //called to check if player is near ladder
     private boolean isNearLadder() {
         List<InteractableObject> objects = currentRoom.getInteractiveObjects();
         for (InteractableObject obj : objects) {
@@ -680,12 +678,12 @@ public class Player extends Entity {
      * @param collisionPointsForEachEdge number of collision points for this edge
      * @param left player's leftmost point
      * @param right player's rightmost point
-     * @param playerTopRow player's top row in grid coordinates
+     * @param entityTopRow player's top row in grid coordinates
      * @param roomData current room's data
      * @return true if there's a collision with a tile
      */
     @Override
-    protected boolean checkTopEdgeCollision(int collisionPointsForEachEdge, int left, int right, int playerTopRow, int[][] roomData) {
+    protected boolean checkTopEdgeCollision(int collisionPointsForEachEdge, int left, int right, int entityTopRow, int[][] roomData) {
         for( int i = 0; i < collisionPointsForEachEdge; i++ ) {
             int width = right - left;     //width of the player
             int totalIntervals = collisionPointsForEachEdge - 1;    //how many spaces between the points
@@ -702,7 +700,7 @@ public class Player extends Entity {
             //find the current collision point tile grid position
             int playerTopCollisionPointCol = x / ScreenSettings.TILE_SIZE;       //convert pixel coordinate to the collision point's current column
 
-            int tileNum = roomData[playerTopRow][playerTopCollisionPointCol];    //look up what tile type is at that grid position
+            int tileNum = roomData[entityTopRow][playerTopCollisionPointCol];    //look up what tile type is at that grid position
             //death tile
             if (tileNum == 9 && !gameOver) {
                 gameOver = true;        //red tile
@@ -723,14 +721,14 @@ public class Player extends Entity {
      * @param collisionPointsForEachEdge number of collision points for this edge
      * @param left player's leftmost point
      * @param right player's rightmost point
-     * @param playerBottomRow player's bottom row in grid coordinates
+     * @param entityBottomRow player's bottom row in grid coordinates
      * @param roomData current room's data
      * @return true if there's a collision with a tile
      */
     @Override
     //called in checkCollisionWithTile()
     //BOTTOM COLLISION
-    protected boolean checkBottomEdgeCollision(int collisionPointsForEachEdge, int left, int right, int playerBottomRow, int[][] roomData) {
+    protected boolean checkBottomEdgeCollision(int collisionPointsForEachEdge, int left, int right, int entityBottomRow, int[][] roomData) {
         for( int i = 0; i < collisionPointsForEachEdge; i++ ) {
             int width = right - left;     //width of the player
             int totalIntervals = collisionPointsForEachEdge - 1;    //how many spaces between the points
@@ -742,7 +740,7 @@ public class Player extends Entity {
             //find the current collision point tile grid position
             int playerBottomCollisionPointCol = x / ScreenSettings.TILE_SIZE;       //convert pixel coordinate to the collision point's current column
 
-            int tileNum = roomData[playerBottomRow][playerBottomCollisionPointCol];    //look up what tile type is at that grid position
+            int tileNum = roomData[entityBottomRow][playerBottomCollisionPointCol];    //look up what tile type is at that grid position
             //death tile collision
             if (tileNum == 9 && !gameOver) {
                 gameOver = true;        //red tile
@@ -776,8 +774,6 @@ public class Player extends Entity {
      * @return true if there's a collision with a tile
      */
     @Override
-    //called in checkCollisionWithTile()
-    //LEFT COLLISION
     protected boolean checkLeftEdgeCollision(int collisionPointsForEachEdge, int bottom, int top, int playerLeftCol, int[][] roomData) {
         for( int i = 0; i < collisionPointsForEachEdge; i++ ) {
             int height = bottom - top;
@@ -813,8 +809,6 @@ public class Player extends Entity {
      * @return true if there's a collision with a tile
      */
     @Override
-    //called in checkCollisionWithTile()
-    //RIGHT COLLISION
     protected boolean checkRightEdgeCollision(int collisionPointsForEachEdge, int bottom, int top, int playerRightCol, int[][] roomData) {
         for( int i = 0; i < collisionPointsForEachEdge; i++ ) {
             int height = bottom - top;
