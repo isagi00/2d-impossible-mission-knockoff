@@ -284,11 +284,11 @@ public class PlayerView  implements Observer {
 
         // Draw the player
         if (image != null) {
-            g2d.drawImage(image, player.getX(), player.getY(), player.width, player.height, null);
+            g2d.drawImage(image, player.getX(), player.getY(), player.getWidth(), player.getHeight(), null);
         } else {
             // Fallback rectangle
             g2d.setColor(Color.GREEN);
-            g2d.fillRect(player.getX(), player.getY(), player.width, player.height);
+            g2d.fillRect(player.getX(), player.getY(), player.getWidth(), player.getHeight());
         }
 
 
@@ -433,9 +433,9 @@ public class PlayerView  implements Observer {
         // Collision point visualization
         final int collisionPointsForEachEdge = 4;
         int left = player.getX();
-        int right = player.getX() + player.width;
+        int right = player.getX() + player.getWidth();
         int top = player.getY();
-        int bottom = player.getY() + player.height;
+        int bottom = player.getY() + player.getHeight();
 
         // Left edge collision points (BLUE)
         g2d.setColor(Color.BLUE);
@@ -479,9 +479,9 @@ public class PlayerView  implements Observer {
     private void drawPlayerInfo(Graphics2D g2d) {
         //player hitbox
         g2d.setColor(new Color(255,0,0,100));
-        g2d.drawRect(player.getX(), player.getY(), player.width, player.height);
+        g2d.drawRect(player.getX(), player.getY(), player.getWidth(), player.getHeight());
         g2d.setColor(Color.GREEN);
-        g2d.drawRect(player.getX() + 10, player.getY() + 3, player.width - 20, player.height);
+        g2d.drawRect(player.getX() + 10, player.getY() + 3, player.getWidth() - 20, player.getHeight());
 
         // grounded state
         g2d.setColor(player.getIsOnGround() ? Color.GREEN : Color.RED);

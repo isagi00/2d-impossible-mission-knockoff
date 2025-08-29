@@ -383,7 +383,7 @@ public class LevelManager extends Observable {      // -> observers: interactabl
         if(player.getY() >= ScreenSettings.SCREEN_HEIGHT - player.getHeight() - 5 && player.getDirection().equals("down")) {
             moveToDownRoom();
 
-            player.setY(player.height - 5);
+            player.setY(player.getHeight() - 5);
 //            printWorld();
         }
 

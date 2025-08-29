@@ -16,67 +16,164 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * model.
- * should:
- * store player data
- * implement player rules
- * provide data accessors
- *
- * should not:
- * should not know about the views or input
+ * player model, handles everything that a player does: movement, object interaction, computer screen navigation.
+ * provides multiple getter methods to access the player instance's current state.
  */
 public class Player extends Entity {
+
     //----------------------------------------------------------------------------------------------------------------//
     // FIELDS
     //----------------------------------------------------------------------------------------------------------------//
     //other models
+    /**
+     *reference to {@link LevelManager}.
+     */
     private LevelManager levelManager;
+    /**
+     * current room that the player is in. provides various useful methods that allow the player to interact with its current room.
+     * see {@link Room}.
+     */
     private Room currentRoom;
-    public int width = (int)(ScreenSettings.TILE_SIZE * 1);
-    public int height = (int)(ScreenSettings.TILE_SIZE * 1);
+
     //movement status bools
+    /**
+     * flag that tracks if the player is moving or not
+     */
     private boolean isMoving = false;
+    /**
+     * flag that tracks if the player is on a tile or not
+     */
     private boolean isOnGround = false;
+    /**
+     * flag that tracks if the player is jumping or not
+     */
     private boolean isJumping = false;
+
     //interaction related
+    /**
+     *flag that tracks if the player has completed a interactable object search
+     */
     private boolean interactionCompleted = false;
+    /**
+     * time that the player has held down the interaction/search button (e).
+     */
     private int interactionHoldTime = 0;
+    /**
+     * time needed to finish a search. once this time is up, it will trigger the {@link #interact()} method.
+     */
     private final int SEARCH_COMPLETE_TIME = 180;    //3 seconds at 60 fps
+    /**
+     * flag that checks if the interaction prompt should show up or not
+     */
     private boolean showingInteractionPrompt = false;
+    /**
+     * player's current interactable. if the player is near an interactable object, then this will change into that interactable object.
+     */
     private InteractableObject currentInteractable = null;
-    private final int MAX_ALLOWED_OBJECT_DISTANCE = 40; //50 pixels near
+    /**
+     * max allowed distance from the player and an interactable object. the interaction prompt won't show if the player
+     * is outside of this range. this number was chosen because provided to be comfortable, so that the player would not access
+     * interactable objects that are too distant.
+     */
+    private final int MAX_ALLOWED_OBJECT_DISTANCE = 40; //40 pixels near
     //jump related
+    /**
+     * represents the player's vertical speed.
+     */
     private int verticalSpeed = 0;
-    private int GRAVITY = 1;
-    private int MAX_JUMP_SPEED = -17;
+    /**
+     * gravity constant. it is always applied to the player's {@link #verticalSpeed} when the player is jumping or falling down.
+     */
+    private final int GRAVITY = 1;
+    /**
+     * speed of the player jump. when the player presses space, its {@link #verticalSpeed} will spike to
+     * this number, moving the player vertically
+     */
+    private final int MAX_JUMP_SPEED = -17;
+    /**
+     * flag that indicates if the player is climbing or not.
+     */
     //ladder climbing related
     private boolean isClimbing = false;
+    /**
+     * player's closest and climbable ladder.
+     */
     private Ladder currentLadder = null;
+    /**
+     * player's ladder climbing speed.
+     */
     private static final int CLIMB_SPEED = 4;
+
     //inventory
-    public Inventory inventory;
-    //gameover
+    /**
+     * player's {@link Inventory}
+     */
+    private final Inventory inventory;
+    /**
+     * game over flag. if the player dies, then this flag gets set to true and it respawns at the last checkpoint({@link #lastCheckpointX}, {@link #lastCheckpointY}
+     * via {@link #resetToCheckpoint()}.
+     * it does not end the game, it indicates whether the player died or not.
+     */
     private boolean gameOver;
+
+    /**
+     * tracks the last checkpoint's triggered x coordinate
+     */
     private int lastCheckpointX = 0;
+    /**
+     * tracks the last checkpoint's triggered y coordinate
+     */
     private int lastCheckpointY = 0;
+
     //extraction
+    /**
+     * extraction flag. if this flag is set to true, then the {@link view.gamePanelViews.ResultScreenView} (result screen) gets
+     * set to visible, and the game ends.
+     *
+     */
     private boolean extracted = false;
+
     //score tracker
-    private ScoreTracker scoreTracker;
+    /**
+     * reference to the {@link ScoreTracker} instance
+     */
+    private final ScoreTracker scoreTracker;
 
     //sound related
+    /**
+     * flag that tracks if the player died or not.
+     * used to send a single notification, otherwise it would send multiple notifications.
+     */
     private boolean wasGameOver = false; //otherwise the audio replays multiple times
+    /**
+     * flag that tracks if the player was moving or not.
+     * used to send a single notification, otherwise it would send multiple notifications.
+     */
     private boolean wasMoving = false;
+    /**
+     * last footstep time, used to calculate the footstep sound timing in the {@link #update(boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean)}
+     * method.
+     */
     private long lastFootStepTime = 0;
-    private long FOOTSTEP_SOUND_INTERVAL = 250; //250 ms between footsteps
+    /**
+     * interval between footsteps
+     */
+    private final long FOOTSTEP_SOUND_INTERVAL = 250; //250 ms between footsteps
 
 
     //----------------------------------------------------------------------------------------------------------------//
     // PLAYER INITIALIZATION
     //----------------------------------------------------------------------------------------------------------------//
-    //constructor
+    /** player constructor: sets some default values, initializes its {@link #inventory} and {@link #scoreTracker} fields.
+     * sets as observers: {@link ScoreTracker} and {@link AudioManager}.
+     * the score tracker tracks the player's actions, such as opening an interactable object, which gives some points.
+     * the audio manager gets notified of when the player is moving, jumping, if the player died.
+     * note: {@link view.entityViews.PlayerView} is not registered as an observer,  because during the initial part of the game development
+     * the observer pattern was not implemented... and because of that, the player view just gets updated via getters methods.
+     */
     public Player() {
         setDefaultValues();
+
         this.inventory = new Inventory(5);
         this.scoreTracker = new ScoreTracker();
 
@@ -84,12 +181,17 @@ public class Player extends Entity {
         this.addObserver(AudioManager.getInstance());
     }
 
+    /**
+     * sets some of the player default values, to not crown the constructor too much.
+     * sets its starting x position, y position, width, height, speed, initial direction,
+     * {@link #isOnGround} flag, {@link #isJumping} flag, {@link #gameOver} flag.
+     */
     //called in Player() constructor
     //sets player default values
     private void setDefaultValues() {
         //spawn location
         setX(100);
-        setY( height + ScreenSettings.TILE_SIZE);
+        setY( getHeight() + ScreenSettings.TILE_SIZE);
         setWidth(ScreenSettings.TILE_SIZE);
         setHeight(ScreenSettings.TILE_SIZE);
         setSpeed(6);
@@ -107,6 +209,22 @@ public class Player extends Entity {
 // UPDATE METHOD
 //----------------------------------------------------------------------------------------------------------------//
 
+    /**core of the player, processes gravity, horizontal movement, jump movement, ladder movement, object interaction, computer menu navigation,
+     * sound logic (notifies the {@link AudioManager}.
+     * note: it is very long, and it is not being broken down into smaller methods because it has been WAY easier to debug and
+     * implement logic when needed. having little methods scattered into the player class had been a nightmare for me navigate around
+     * and debug.
+     * each section has a inline comment to highlight its function.
+     * @param upPressed w pressed
+     * @param downPressed s pressed
+     * @param leftPressed a pressed
+     * @param rightPressed d pressed
+     * @param spacePressed space pressed
+     * @param ePressed e, interaction button pressed
+     * @param upArrowPressed up arrow pressed, for computer menu navigation
+     * @param downArrowPressed down arrow pressed, for computer menu navigation
+     * @param enterPressed enter pressed, for confirming the current computer option selected
+     */
     // method is called in GameController run() method
     // method is called 60 times per second
     public void update(boolean upPressed, boolean downPressed, boolean leftPressed, boolean rightPressed,
@@ -333,12 +451,11 @@ public class Player extends Entity {
         }
     }
 
-//----------------------------------------------------------------------------------------------------------------//
-// METHODS CALLED IN UPDATE (PLAYER MOVEMENT, GRAVITY, INTERACTION) (LOGIC)
-// ----------------------------------------------------------------------------------------------------------------//
-
-
-
+    /**scans through the interactable objects (because {@link Ladder} is one) in the current room,
+     * and sets the {@link #currentLadder} to the ladder closest to the player.
+     *
+     * @return true if the player is near a ladder
+     */
     //called in update()
     //called to check if player is near ladder
     private boolean isNearLadder() {
@@ -346,12 +463,14 @@ public class Player extends Entity {
         for (InteractableObject obj : objects) {
             if (obj instanceof Ladder ladder) {
 //                System.out.println("ladder : " + ladder);
-                boolean horizontalBounds = getX() + width >= ladder.getX() && getX() <= ladder.getX() + ladder.getWidth();
-
-                int playerBottom = getY() + height;
+                //check if the player is within the ladder's horizontal bounds
+                boolean horizontalBounds = getX() + getWidth() >= ladder.getX() && getX() <= ladder.getX() + ladder.getWidth();
+                //placeholder ladder info
+                int playerBottom = getY() + getHeight();
                 int ladderBottom =ladder.getY() + ladder.getHeight();
+                //check if the player's in the ladder vertical bounds
                 boolean verticalBounds = playerBottom >= ladder.getY() - CLIMB_SPEED - 5 && getY() <= ladderBottom + 5;
-
+                //set the current ladder if the player's is in ladder's both horizontal and vertical bounds
                 if(horizontalBounds && verticalBounds){
                     currentLadder = ladder;
                     return true;
@@ -363,15 +482,15 @@ public class Player extends Entity {
 
 
 
-    /**compute if player is near to an object or not. this is the logic that determines whether the player is near an object.
-     * called in updateCurrentInteractable()
+    /**compute if player is near to an object or not using the pythagorean theorem.
+     * depends on the {@link #MAX_ALLOWED_OBJECT_DISTANCE} field.
      * @param obj   current interactable object
-     * @return true if the player is near enough, false otherwise
+     * @return true if the player is near enough
      */
     private boolean isWithinDistance(InteractableObject obj){
         //get player and object centers
-        int playerCenterX = getX() + width/2;
-        int playerCenterY = getY() + height/2;
+        int playerCenterX = getX() + getWidth()/2;
+        int playerCenterY = getY() + getHeight()/2;
         int objectCenterX = obj.getX() + obj.getWidth()/2;
         int objectCenterY = obj.getY() + obj.getHeight()/2;
         //find the difference in x and y coordinates
@@ -382,9 +501,12 @@ public class Player extends Entity {
     }
 
     /**
-     * check if player is near interactable object, sets the currentInteractable field if it is near.
-     * called in update() method
-     * @return true if isWithinDistance returns true and sets the currentInteractable, false if isWithinDistance returns false, and sets the currentInteractable to false
+     * check if player is near an interactable object, sets the {@link #currentInteractable} field if it is near.
+     * handles some edge cases: if the player's inventory's full, it will return false, so the {@link #showingInteractionPrompt} is set to
+     * false in the {@link #update(boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean)} method.
+     * the inventory is not considered 'full' if the player has a {@link ComputerCard}.
+     * if the computer's menu is visible, then the {@link #currentInteractable} field is set to be the computer.
+     * @return true the interactable object is {@link #isWithinDistance(InteractableObject)}.
      */
     private boolean updateCurrentInteractable() {
         if (inventory.isInventoryFull() && !checkPlayerHasCard()){  //if the inventory is actually full from cards, dont display the interaction prompt
@@ -431,12 +553,18 @@ public class Player extends Entity {
     }
 
 
+    /**
+     * interacts with the {@link #currentInteractable}, sends an appropriate notification to the respective observers.
+     * calls the interactable object's .open() method, the interaction logic is handled in the respective interactable object's
+     * open() method.
+     */
     private void interact(){
+        //if the player has a card in his inventory and interacts with the computer, the remove the card
         if ( currentInteractable instanceof Computer && checkPlayerHasCard()){
             ComputerCard card = inventory.getComputerCard();
             inventory.removeComputerCard(card);
         }
-        //open with the object
+        //open the object
         if( currentInteractable != null ) {
             currentInteractable.open(this); //player INITIATES THE INTERACTION, object interacts with player
             //COMMAND PATTERN
@@ -470,6 +598,9 @@ public class Player extends Entity {
         }
     }
 
+    /**
+     * resets the player to the last checkpoint ({@link model.levels.TileManager} tile number 99)
+     */
     private void resetToCheckpoint(){
         if (lastCheckpointX != 0 && lastCheckpointY != 0 && gameOver) {
             setX(lastCheckpointX);
@@ -478,6 +609,9 @@ public class Player extends Entity {
         gameOver = false;   //reset the flag
     }
 
+    /**checks if the player has a card
+     * @return true if the player has a {@link ComputerCard} in his {@link #inventory}
+     */
     private boolean checkPlayerHasCard(){
         boolean hasCard = false;
         for ( Item item : inventory.getItems() ) {
@@ -488,9 +622,23 @@ public class Player extends Entity {
         return hasCard;
     }
 
+
 //----------------------------------------------------------------------------------------------------------------//
 // COLLISION CHECKER
 //----------------------------------------------------------------------------------------------------------------//
+    /**checks if the player is colliding against some tile.
+     * each player edge has 4 collision points, so it prevents the player from slipping through tiles.
+     * it is divided in 4 other helper methods to check each edge:
+     * {@link #checkTopEdgeCollision(int, int, int, int, int[][])},
+     * {@link #checkBottomEdgeCollision(int, int, int, int, int[][])}
+     * {@link #checkLeftEdgeCollision(int, int, int, int, int[][])}
+     * {@link #checkRightEdgeCollision(int, int, int, int, int[][])}.
+     * it overrides the {@link Entity} check collision system with some minor tweaks: it checks if the current tile is a death tile
+     * or the extraction tile.
+     * @param playerX player's current x coordinate
+     * @param playerY player's current y coordinate
+     * @return true if player is colliding with some tile
+     */
     //called in various methods, to check collision with tiles
     //check player collision with tiles (fuck you, collision logic)
     @Override
@@ -500,9 +648,9 @@ public class Player extends Entity {
 
         // calculate the hit box positions
         int left = playerX + 10;                     //the top left, ex : x = 0
-        int right = playerX + width - 10;
+        int right = playerX + getWidth() - 10;
         int top = playerY + 3;
-        int bottom = playerY + height;
+        int bottom = playerY + getHeight() - 3;
 
         // convert pixel coordinates into grid coordinates
         // allows to check which specific tiles the player is interacting with
@@ -528,9 +676,15 @@ public class Player extends Entity {
 
     }
 
+    /**checks the player's top edge collision points. returns true if there's a collision.
+     * @param collisionPointsForEachEdge number of collision points for this edge
+     * @param left player's leftmost point
+     * @param right player's rightmost point
+     * @param playerTopRow player's top row in grid coordinates
+     * @param roomData current room's data
+     * @return true if there's a collision with a tile
+     */
     @Override
-    //called in checkCollisionWithTile()
-    //TOP COLLISION
     protected boolean checkTopEdgeCollision(int collisionPointsForEachEdge, int left, int right, int playerTopRow, int[][] roomData) {
         for( int i = 0; i < collisionPointsForEachEdge; i++ ) {
             int width = right - left;     //width of the player
@@ -553,20 +707,26 @@ public class Player extends Entity {
             if (tileNum == 9 && !gameOver) {
                 gameOver = true;        //red tile
             }
-
+            //extraction tile
             if (tileNum == 100 && !extracted) {
                 extracted = true;
             }
-
             //tile collision
             if (tileNum > 0 && levelManager.getTile(tileNum).collision) {  //check if that tile collision is true or not
                 return true;
             }
-
         }
         return false;
     }
 
+    /**checks the player's bottom edge collision points. returns true if there's a collision.
+     * @param collisionPointsForEachEdge number of collision points for this edge
+     * @param left player's leftmost point
+     * @param right player's rightmost point
+     * @param playerBottomRow player's bottom row in grid coordinates
+     * @param roomData current room's data
+     * @return true if there's a collision with a tile
+     */
     @Override
     //called in checkCollisionWithTile()
     //BOTTOM COLLISION
@@ -607,6 +767,14 @@ public class Player extends Entity {
         return false;
     }
 
+    /**checks the player's left edge collision points. returns true if there's a collision.
+     * @param collisionPointsForEachEdge number of collision points for this edge
+     * @param bottom player's bottommost point
+     * @param top player's topmost point
+     * @param playerLeftCol player's left col in grid coordinates
+     * @param roomData current room's data
+     * @return true if there's a collision with a tile
+     */
     @Override
     //called in checkCollisionWithTile()
     //LEFT COLLISION
@@ -636,7 +804,14 @@ public class Player extends Entity {
         }
         return false;
     }
-
+    /**checks the player's right edge collision points. returns true if there's a collision.
+     * @param collisionPointsForEachEdge number of collision points for this edge
+     * @param bottom player's bottommost point
+     * @param top player's topmost point
+     * @param playerRightCol player's left col in grid coordinates
+     * @param roomData current room's data
+     * @return true if there's a collision with a tile
+     */
     @Override
     //called in checkCollisionWithTile()
     //RIGHT COLLISION
@@ -671,58 +846,100 @@ public class Player extends Entity {
     //getters
     //----------------------------------------------------------------------------------------------------------------//
 
+    /**
+     * @return the {@link #isMoving} flag
+     */
     public boolean getIsMoving(){
         return isMoving;
     }
 
+    /**
+     * @return the {@link #isJumping} flag
+     */
     public boolean getIsJumping(){
         return isJumping;
     }
 
+    /**
+     * @return the {@link #isClimbing} flag
+     */
     public boolean getIsClimbing(){
         return isClimbing;
     }
 
+    /**
+     * @return the {@link #isOnGround} flag
+     */
     public boolean getIsOnGround(){
         return isOnGround;
     }
 
+    /**
+     * @return the {@link #currentInteractable}
+     */
     public InteractableObject getCurrentInteractable(){
         return currentInteractable;
     }
 
+    /**
+     * @return the {@link #interactionHoldTime}
+     */
     public int getInteractionProgress(){
         return interactionHoldTime;
     }
 
+    /**
+     * @return the {@link #SEARCH_COMPLETE_TIME}
+     */
     public int getTotalInteractionRequiredTime(){
         return SEARCH_COMPLETE_TIME;
     }
 
+    /**
+     * @return the {@link #interactionCompleted}
+     */
     public boolean isInteractionCompleted(){
         return interactionCompleted;
     }
 
+    /**
+     * @return the {@link #inventory} instance
+     */
     public Inventory getInventory(){
         return inventory;
     }
 
+    /**
+     * @return the {@link #showingInteractionPrompt} flag
+     */
     public boolean getIsShowingInteractionPrompt(){
         return showingInteractionPrompt;
     }
 
+    /**
+     * @return the {@link #gameOver} player flag
+     */
     public boolean getGameOver(){
         return gameOver;
     }
 
+    /**
+     * @return the {@link #scoreTracker} instance
+     */
     public LevelManager getLevelManager(){
         return levelManager;
     }
 
+    /**
+     * @return the {@link #extracted} flag
+     */
     public boolean getIsExtracted(){
         return extracted;
     }
 
+    /**
+     * @return the {@link #scoreTracker}
+     */
     public ScoreTracker getScoreTracker(){
         return scoreTracker;
     }
@@ -731,11 +948,17 @@ public class Player extends Entity {
     //setters
     //----------------------------------------------------------------------------------------------------------------//
 
-    //called in ScreenSettings fields, to avoid circular dependencies
+    /**sets the current player'{@link #levelManager}. this was to avoid circular dependencies
+     * @param levelManager {@link LevelManager} model instance
+     */
     public void setLevelManager(LevelManager levelManager) {
         this.levelManager = levelManager;
     }
 
+    /**
+     * sets the player's game over to true or false, depending on the input parameter
+     * @param gameOver player's game over flag
+     */
     public void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
     }
