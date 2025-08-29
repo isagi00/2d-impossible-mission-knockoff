@@ -7,48 +7,108 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
-import java.util.Observable;
-import java.util.Observer;
 
+/**
+ * view of the {@link Player} model.
+ * contains the rendering logic to display the player's animations based on the model's state.
+ */
 //handles player rendering based on its state
-public class PlayerView  implements Observer {
-    private Player player;
-    private boolean wasGameOver;
+public class PlayerView {
+    /**
+     * reference to the {@link Player} model
+     */
+    private final Player player;
 
 
     //animation frames
-    private BufferedImage runningR1, runningR2, runningR3, runningR4, runningR5, runningR6;
-    private BufferedImage runningL1, runningL2, runningL3, runningL4, runningL5, runningL6;
-    private BufferedImage idleR1, idleR2, idleR3, idleR4;
-    private BufferedImage idleL1, idleL2, idleL3, idleL4;
-    private BufferedImage jumpR1, jumpR2, jumpR3, jumpR4, jumpR5, jumpR6, jumpR7, jumpR8;
-    private BufferedImage jumpL1, jumpL2, jumpL3, jumpL4, jumpL5, jumpL6, jumpL7, jumpL8;
-    private BufferedImage searching;
-    private BufferedImage climb1,climb2,climb3,climb4;
+    /**
+     * images that together create the player running animation (right)
+     */
+    private static BufferedImage runningR1, runningR2, runningR3, runningR4, runningR5, runningR6;
+    /**
+     * images that together create the player running animation (left)
+     */
+    private static BufferedImage runningL1, runningL2, runningL3, runningL4, runningL5, runningL6;
+    /**
+     * images that together create the player idle animation (right)
+     */
+    private static BufferedImage idleR1, idleR2, idleR3, idleR4;
+    /**
+     * images that together create the player idle animation (left)
+     */
+    private static BufferedImage idleL1, idleL2, idleL3, idleL4;
+    /**
+     * images that together create the player jumping animation (right)
+     */
+    private static BufferedImage jumpR1, jumpR2, jumpR3, jumpR4, jumpR5, jumpR6, jumpR7, jumpR8;
 
-    private BufferedImage death1, death2, death3, death4, death5, death6, death7, death8, death9;
-    private BufferedImage canJumpIcon;
+    /**
+     * images that together create the player jumping animation (left)
+     */
+    private static BufferedImage jumpL1, jumpL2, jumpL3, jumpL4, jumpL5, jumpL6, jumpL7, jumpL8;
 
+    /**
+     * images that together create the player climbing animation
+     */
+    private static BufferedImage climb1,climb2,climb3,climb4;
+
+    /**
+     * images that together create the player death animation
+     */
+    private static BufferedImage death1, death2, death3, death4, death5, death6, death7, death8, death9;
+
+    /**
+     * image that represents if the player can jump or not
+     */
+    private static BufferedImage canJumpIcon;
+    /**
+     * sprite counter. this helps to display the player animations.
+     * it essentially is a counter tightly coupled with the game frame rate.
+     * for example, if the frame rate it 60fps, then this counter will increment by 60 times per second.
+     * each time this number reaches a certain threshold, the {@link #spriteNum} increments.
+     */
     private int spriteCounter;
+    /**
+     * sprite number. each player sprite is related to this number.
+     * it increments once the {@link #spriteCounter} reaches a certain threshold.
+     * for example, if the sprite number is '1' when the player is idle,
+     * it will display the first idle player sprite.
+     */
     private int spriteNum;
 
+    /**
+     * flag used to help display the jumping animation from the first sprite.
+     * had some issues with the jumping animation because the sprite number / counter were not reset
+     * properly when the player started a jump.
+     */
     private boolean wasJumping;
+    /**
+     * flag used to help display the death animation from the first sprite.
+     * had some issues with the death animation that would start from another frame because the sprite number / sprite counter was not reset
+     * properly when the player died.
+     */
+    private boolean wasGameOver;
 
 
+    /**loads the player sprites and creates the view counterpart of the {@link Player} model.
+     * handles all the rendering logic.
+     * @param player {@link Player} model instance
+     */
     public PlayerView(Player player) {
         this.player = player;
         this.spriteCounter = 0;
         this.spriteNum = 0;
 
         loadPlayerSprites();
-        player.addObserver(this);
     }
 
 
 
-//
-//  MOVES FORWARD THE SPRITES
-//
+    /**
+     * updates the {@link #spriteCounter} depending on the player's current state.
+     * by updating the sprite counter and its sprite number, it creates an animation effect.
+     * called in the {@link #draw(Graphics2D)} method.
+     */
     private void updateFrameCounter() {
         spriteCounter++;
 
@@ -113,6 +173,13 @@ public class PlayerView  implements Observer {
 //----------------------------------------------------------------------------------------------------------------//
 //PLAYER SPRITES LOADER
 //----------------------------------------------------------------------------------------------------------------//
+    /**
+     * loads all the player sprites, via :
+     * {@link #loadPlayerIdleSprites()}, {@link #loadPlayerJumpingSprites()},
+     * {@link #loadPlayerRunningSprites()}, {@link #loadPlayerClimbingSprites()},
+     * {@link #loadPlayerDeathSprites()}, {@link #loadPlayerDeathSprites()}.
+     *
+     */
     private void loadPlayerSprites() {
         try {
             // load idle sprites
@@ -129,14 +196,18 @@ public class PlayerView  implements Observer {
             //load the jump icon
             loadCanJumpSprite();
 
-            System.out.println("all player sprites successfully loaded");
-        }catch (Exception e){
-            System.out.println("player sprites failed to load : ");
+            System.out.println("[PlayerView] all player sprites successfully loaded");
+        }
+        catch (Exception e){
+            System.out.println("[PlayerView]player sprites failed to load : ");
             e.printStackTrace();
         }
     }
 
-    //called in loadPlayerSprites() method
+
+    /**
+     * loads the player's idle state animation sprites
+     */
     private void loadPlayerIdleSprites(){
         try {
             idleR1 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/idleR1.png")));
@@ -155,7 +226,10 @@ public class PlayerView  implements Observer {
         }
     }
 
-    //called in loadPlayerSprites() method
+
+    /**
+     * loads the player's jumping animation sprites
+     */
     private void loadPlayerJumpingSprites(){
         try{
             jumpR1 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/jumpR1.png")));
@@ -183,7 +257,10 @@ public class PlayerView  implements Observer {
 
     }
 
-    //called in loadPlayerSpritesMethod()
+
+    /**
+     * loads the player running animation sprites
+     */
     private void loadPlayerRunningSprites(){
         try {
             runningR1 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/runningR1.png")));
@@ -205,7 +282,10 @@ public class PlayerView  implements Observer {
             e.printStackTrace();
         }
     }
-    //called in loadPlayerSprites() method
+
+    /**
+     * loads the player climbing animation sprites
+     */
     private void loadPlayerClimbingSprites(){
         try{
             climb1 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/climb1.png")));
@@ -219,6 +299,9 @@ public class PlayerView  implements Observer {
         }
     }
 
+    /**
+     * loads the sprites that display the death animation.
+     */
     private void loadPlayerDeathSprites(){
         try{
             death1 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/death1.png")));
@@ -238,6 +321,9 @@ public class PlayerView  implements Observer {
 
     }
 
+    /**
+     * loads the 'canJumpIcon' sprite, used to indicate if the player can jump or not.
+     */
     private void loadCanJumpSprite(){
         try{
             canJumpIcon = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/canjumpicon.png")));
@@ -253,16 +339,24 @@ public class PlayerView  implements Observer {
 //----------------------------------------------------------------------------------------------------------------//
 // MAIN DRAW METHOD
 //----------------------------------------------------------------------------------------------------------------//
+
+
+    /**draws the player based on the {@link Player} model state.
+     *the sprite counter speed is handled in {@link #updateFrameCounter()}.
+     * the sprite cycling are handled in: {@link #drawJumpingAnimation(String)}, {@link #drawDeathAnimation()},
+     * {@link #drawClimbingAnimation()}, {@link #drawRunningAnimation(String), {@link #drawIdleAnimation(String)}}
+     * @param g2d swing's graphics 2d instance that allows rendering
+     */
     //draw player animations
-    // method is called in GameView paintComponent(Graphics g) method
-    // Graphics g turns into Graphics2D g2d through casting inside (itself) paintComponent method.
+    //method is called in GameView paintComponent(Graphics g) method
+    //Graphics g turns into Graphics2D g2d through casting inside (itself) paintComponent method.
     public void draw(Graphics2D g2d) {
 
         updateFrameCounter(); //moves the frames
 
         BufferedImage image = null;
         String direction = player.getDirection();
-        // Jumping animation
+        //jumping animation
         if (player.getIsJumping()) {
             image = drawJumpingAnimation(direction);
         }
@@ -273,25 +367,21 @@ public class PlayerView  implements Observer {
         else if (player.getIsClimbing()) {
             image = drawClimbingAnimation();
         }
-        // Running animation
+        //running animation
         else if (player.getIsMoving()) {
             image = drawRunningAnimation(direction);
         }
-        // idle animation
+        //idle animation
         else if (!player.getIsMoving()) {
             image = drawIdleAnimation(direction);
         }
 
-        // Draw the player
+        //draw the player
         if (image != null) {
             g2d.drawImage(image, player.getX(), player.getY(), player.getWidth(), player.getHeight(), null);
-        } else {
-            // Fallback rectangle
-            g2d.setColor(Color.GREEN);
-            g2d.fillRect(player.getX(), player.getY(), player.getWidth(), player.getHeight());
         }
 
-
+        //draw the can jump indicator
         if(player.getIsOnGround()){
             g2d.drawImage(canJumpIcon, player.getX() + player.getWidth(), player.getY() - 15, null);
         }
@@ -302,13 +392,18 @@ public class PlayerView  implements Observer {
         //player hitbox
         drawPlayerInfo(g2d);
         //draw collision points
-        //drawCollisionPoints(g2d);
+//        drawCollisionPoints(g2d);
 
-//        System.out.println("drawing player...");
+//        System.out.println("[PlayerView]drawing player...");
     }
 //----------------------------------------------------------------------------------------------------------------//
 // SINGLE ANIMATIONS
 //----------------------------------------------------------------------------------------------------------------//
+    /**switches the image based on the {@link #spriteNum} field.
+     * contains the player's jumping (is jumping) state sprites.
+     * @param direction direction of the player
+     * @return an image, current sprite of the player.
+     */
     // called in draw() method when player is jumping
     //the spriteNum gets updated in updateFrameCounter()
     private BufferedImage drawJumpingAnimation(String direction){
@@ -341,6 +436,11 @@ public class PlayerView  implements Observer {
         return image;
     }
 
+    /**switches the image based on the {@link #spriteNum} field.
+     * contains the player's running (is moving) state sprites.
+     * @param direction direction of the player
+     * @return an image, current sprite of the player.
+     */
     //called in draw() method when player is running
     //the spriteNum gets updated in updateFrameCounter()
     private BufferedImage drawRunningAnimation(String direction){
@@ -369,6 +469,12 @@ public class PlayerView  implements Observer {
         return image;
     }
 
+
+    /**switches the image based on the {@link #spriteNum} field.
+     * contains the player's idle state sprites.
+     * @param direction direction of the player
+     * @return an image, current sprite of the player.
+     */
     //called in draw() when player is idle
     //the spriteNum gets updated in updateFrameCounter()
     private BufferedImage drawIdleAnimation(String direction){
@@ -394,6 +500,10 @@ public class PlayerView  implements Observer {
         return image;
     }
 
+    /**switches the image based on the {@link #spriteNum} field.
+     * contains the player's climbing state sprites.
+     * @return an image, current sprite of the player.
+     */
     //called in draw() when player is climbing
     //the spriteNum gets updated in updateFrameCounter()
     private BufferedImage drawClimbingAnimation(){
@@ -408,7 +518,10 @@ public class PlayerView  implements Observer {
 
         return image;
     }
-
+    /**switches the image based on the {@link #spriteNum} field.
+     * contains the player's death state sprites.
+     * @return an image, current sprite of the player.
+     */
     private BufferedImage drawDeathAnimation(){
         BufferedImage image;
         switch (spriteNum){
@@ -427,54 +540,50 @@ public class PlayerView  implements Observer {
     }
 
 
-
+    /** for debug, used when working on the collision detection.
+     * draws 4 points per edge that represent the player collision points with the tiles
+     * @param g2d swing's graphics 2d instance that allows rendering
+     */
     //DEBUG:  called in draw() if enabled
     private void drawCollisionPoints(Graphics2D g2d){
-        // Collision point visualization
         final int collisionPointsForEachEdge = 4;
         int left = player.getX();
         int right = player.getX() + player.getWidth();
         int top = player.getY();
         int bottom = player.getY() + player.getHeight();
 
-        // Left edge collision points (BLUE)
+        //left edge collision points
         g2d.setColor(Color.BLUE);
         for (int i = 0; i < collisionPointsForEachEdge; i++) {
             int y = top + (bottom - top) * i / (collisionPointsForEachEdge - 1);
             g2d.fillOval(left - 3, y - 3, 6, 6);
-            // Add point number for reference
-            g2d.setColor(Color.WHITE);
         }
 
-        // Right edge collision points (MAGENTA)
+        //right edge collision points
         g2d.setColor(Color.MAGENTA);
         for (int i = 0; i < collisionPointsForEachEdge; i++) {
             int y = top + (bottom - top) * i / (collisionPointsForEachEdge - 1);
             g2d.fillOval(right - 3, y - 3, 6, 6);
-            // Add point number for reference
-            g2d.setColor(Color.WHITE);
-
         }
 
-        // Top edge collision points (YELLOW)
+        //top edge collision points
         g2d.setColor(Color.YELLOW);
         for (int i = 0; i < collisionPointsForEachEdge; i++) {
             int x = left + (right - left) * i / (collisionPointsForEachEdge - 1);
             g2d.fillOval(x - 3, top - 3, 6, 6);
-            // Add point number for reference
-            g2d.setColor(Color.WHITE);
         }
-
-        // Bottom edge collision points (CYAN)
+        //bottom edge collision points
         g2d.setColor(Color.CYAN);
         for (int i = 0; i < collisionPointsForEachEdge; i++) {
             int x = left + (right - left) * i / (collisionPointsForEachEdge - 1);
             g2d.fillOval(x - 3, bottom - 3, 6, 6);
-            // Add point number for reference
-            g2d.setColor(Color.WHITE);
         }
     }
 
+    /**for debugging, this draws all the player's states.
+     * see {@link Player}
+     * @param g2d swing's graphics 2d instance that allows rendering
+     */
     //debug: called in draw() if enabled
     private void drawPlayerInfo(Graphics2D g2d) {
         //player hitbox
@@ -513,13 +622,6 @@ public class PlayerView  implements Observer {
 
     }
 
-
-    @Override
-    public void update(Observable o, Object arg) {
-        if (o instanceof Player player ) {
-
-        }
-    }
 
 
 }
