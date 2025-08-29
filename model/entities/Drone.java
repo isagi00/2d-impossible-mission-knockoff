@@ -6,40 +6,122 @@ import view.AudioManager;
 
 import java.awt.*;
 
+/**
+ * model of the 'drone' enemy, extends the {@link Entity} abstract class.
+ * a drone is the base enemy of the game, its hit box is small, chase range is little.
+ * it will chase the player if near enough and in front of the drone, if not it will patrol a fixed
+ * distance, {@link #PATROL_RANGE}.
+ * the player is allowed to jump on top of the drone to avoid it.
+ */
 public class Drone extends Entity {
+
     //----------------------------------------------------------------------------------------//
     // FIELDS
     //----------------------------------------------------------------------------------------//
+    /**
+     *reference to the {@link Player} instance
+     */
     //other models
-    private Player player;
-    private LevelManager levelManager;
+    private final Player player;
+    /**
+     * reference to the {@link LevelManager} instance
+     */
+    private final LevelManager levelManager;
 
+    /**
+     * drone's base (patrol) speed.
+     */
     //drone constants
-    private int SPEED = 2;
-    private int ATTACK_RANGE = ScreenSettings.TILE_SIZE * 2;
-    private int CHASE_RANGE = ScreenSettings.TILE_SIZE * 4;
+    private final int SPEED = 2;
+    /**
+     * the chase range of the drone. if the player is within this distance, then the drone will start chasing.
+     */
+    private final int CHASE_RANGE = ScreenSettings.TILE_SIZE * 4;
+    /**
+     * max vertical distance allowed for the drone to detect the player.
+     * if the player is on the same y range and within chase range of the drone, then the drone will start chasing.
+     * this prevents drones from different level heights to chase the player.
+     * it is being set low, allowing the drone do be jumped over by the player.
+     */
     private final int MAX_VERTICAL_DISTANCE = ScreenSettings.TILE_SIZE; //chase the player only if its on the same platform
-    private int PATROL_RANGE;
+    /**
+     * drone patrol range. it is the maximum distance that the drone can travel to the right before changing direction.
+     */
+    private final int PATROL_RANGE;
+    /**
+     * current patrol position. if it is 0, then the drone will change direction and move right,
+     * if it is equals to the {@link #PATROL_RANGE}, then it will change direction and move left.
+     */
     private int currentPatrolPosition = 0;
-
     //drone states
+    /**
+     * flag that indicates if the drone is idle or not.
+     * note that it is not used a lot, since the drone behaviour is only: move left and right, and chase the player
+     * if it is in front of the drone. it is never idle.
+     */
     private boolean isIdle = true;
+    /**
+     * flag that indicates if the drone is moving or not
+     */
     private boolean isMoving = false;
+    /**
+     * flag that indicates if the drone is chasing the player or not.
+     * it gets reset once the player is not in front of the drone.
+     * this way, the player has a degree of freedom to move around the level.
+     * note that the drone is made to be a base level enemy, so it won't be that dangerous.
+     */
     private boolean isChasing = false;
+    /**
+     * flag that indicates if the drone is disabled or not.
+     * if it's not disabled, then the drone will chase or patrol depending on the situation.
+     * even if disabled, the drone will still have a hit box that can kill the player.
+     */
     private boolean isDisabled = false;
+    /**
+     * flag that indicates if the drone is moving in the right direction
+     * helps with the drone movement logic.
+     */
     private boolean movingRight = true;
+    /**
+     * flag that indicates if the drone has a wall in front.
+     * if the drone has a wall ahead, it will turn around
+     */
     private boolean wallInFront = false;
+    /**
+     * flag that indicates if the drone has a ground tile ahead.
+     * if not, the drone will turn around.
+     */
     private boolean groundAhead = false;
 
+
     //required for sound
+    /**
+     * checks if the drone was moving or not. this is done because otherwise multiple events would fire to the
+     * {@link AudioManager}, instead of notifying it once
+     */
     private boolean wasMoving = false;
+    /**
+     * last foot step time
+     */
     private long lastFootStepTime = 0;
-    private long FOOTSTEP_SOUND_INTERVAL = 230; //230ms between footsteps
+    /**
+     * interval between footsteps to play
+     */
+    private final long FOOTSTEP_SOUND_INTERVAL = 230; //230ms between footsteps
 
     //----------------------------------------------------------------------------------------//
     // CONSTRUCTOR
     //----------------------------------------------------------------------------------------//
 
+    /**drone extends the entity class, so base methods are already defined, such as getX(), get().
+     * it is an observable for the {@link AudioManager}, so it knows what sound to display. the view counterpart of the drone, {@link view.entityViews.DroneView} handles the rendering
+     * via getter methods instead of the observer pattern.
+     * the {@link Entity} default constructor is used here.
+     * @param x x coordinate of the drone
+     * @param y y coordinate of the drone
+     * @param player reference to the {@link Player} instance
+     * @param levelManager reference to the {@link LevelManager} instance
+     */
     public Drone(int x, int y, Player player, LevelManager levelManager) {
         super(x, y, ScreenSettings.TILE_SIZE, ScreenSettings.TILE_SIZE, levelManager);
 
@@ -55,6 +137,11 @@ public class Drone extends Entity {
     // MAIN UPDATE METHOD
     //----------------------------------------------------------------------------------------//
 
+    /**
+     * drone's core logic is contained here. handles the drone collision with the player via {@link #checkCollisionWithPlayer()}.
+     * checks if the player is in front of the drone and on the same level as the drone, and if yes it will chase the player via {@link #chasePlayer()}.
+     * if not the drone will patrol on a fixed range defined in the constructor: {@link #PATROL_RANGE} VIA {@link #patrol()}.
+     */
     public void update() {
         // if drone is disabled and player touches him still kills the player
         if (!player.getGameOver()) {     //if player is not dead
@@ -112,14 +199,19 @@ public class Drone extends Entity {
             wasMoving = isMoving;
 
         }
-
-
     }
 
     //----------------------------------------------------------------------------------------//
     // methods called in the main update method
     //----------------------------------------------------------------------------------------//
 
+    /**
+     * drone's patrolling logic. if the drone is not chasing, then it will execute this behaviour as default.
+     * uses base speed to move around. if the drone hits a wall or if there's no ground below it, it will change direction
+     * it has a fixed patrol range {@link #PATROL_RANGE}, defined in the constructor. the drone won't patrol past this defined range.
+     * uses {@link #movingRight} flag to control the direction in which the drone is moving.
+     *
+     */
     private void patrol() {
         if (movingRight) {
             if (currentPatrolPosition < PATROL_RANGE) {
@@ -133,9 +225,7 @@ public class Drone extends Entity {
                 int wallCheckX = wallCheckCol * ScreenSettings.TILE_SIZE;
                 wallInFront = isPointOnSolidTile(wallCheckX, getY() + getHeight()/2);
 
-                if (!wallInFront &&
-                        newX < ScreenSettings.SCREEN_WIDTH - getWidth() &&
-                        groundAhead) {
+                if (!wallInFront && newX < ScreenSettings.SCREEN_WIDTH - getWidth() && groundAhead) {
 
                     setX(newX);
                     setDirection("right");
@@ -178,6 +268,11 @@ public class Drone extends Entity {
         }
     }
 
+    /**
+     * contains chase logic.
+     * drone's base speed is boosted. checks if there's a wall and ground ahead of the drone.
+     * if not, it will stop chasing and patrol normally. it uses {@link #movingRight} flag to move left or right
+     */
     private void chasePlayer() {
         int chaseSpeed = (int) (SPEED * 1.8);
 
@@ -223,9 +318,7 @@ public class Drone extends Entity {
             int wallCheckX = wallCheckCol * ScreenSettings.TILE_SIZE;
             wallInFront = isPointOnSolidTile(wallCheckX, getY() + getHeight()/2);
 
-            if (!wallInFront &&
-                    newX > 0 &&
-                    groundAhead) {
+            if (!wallInFront && newX > 0 && groundAhead) {
 
                 setX(newX);
                 isChasing = true;
@@ -243,6 +336,9 @@ public class Drone extends Entity {
         }
     }
 
+    /**representing the drone hit box and the player's hit box as rectangles, and checking if these rectangle intersect or not.
+     * @return true if the drone hit box intersects with the player's hit box
+     */
     private boolean checkCollisionWithPlayer() {
         Rectangle droneHitbox = new Rectangle(getX() + 10, getY() + 25, getWidth() - 20, getHeight() - 25);
         Rectangle playerHitbox = new Rectangle(player.getX() + 10, player.getY() + 3, player.getWidth() - 20, player.getHeight());
@@ -250,9 +346,9 @@ public class Drone extends Entity {
     }
 
     /**
-     * checks if a single point is on a solid tile
-     * @param x Pixel x-coordinate to check
-     * @param y Pixel y-coordinate to check
+     * checks if a single point at the provided x and y is on a solid tile
+     * @param x  x-coordinate to check
+     * @param y y-coordinate to check
      * @return true if the point is on a solid tile
      */
     private boolean isPointOnSolidTile(int x, int y) {
@@ -273,6 +369,11 @@ public class Drone extends Entity {
         return tileNum > 0 && levelManager.getTile(tileNum).collision;
     }
 
+    /**
+     * disabled the drone.
+     * sets the {@link #isDisabled} flag to true, it is used mainly in {@link model.levels.Room},
+     * for disabling drones in the room
+     */
     public void deactivate() {       //used in room, to disable drone through computer.
         isDisabled = true;
     }
@@ -281,34 +382,58 @@ public class Drone extends Entity {
     // GETTERS
     //----------------------------------------------------------------------------------------//
 
+    /**
+     * @return true if the drone is idle
+     */
     public boolean getIsIdle() {
         return isIdle;
     }
 
+    /**
+     * @return the drone's patrol range
+     */
     public int getPATROL_RANGE() {
         return PATROL_RANGE;
     }
 
+    /**
+     * @return if the drone is moving or not
+     */
     public boolean getIsMoving() {
         return isMoving;
     }
 
+    /**
+     * @return the drone's current patrol position
+     */
     public int getCurrentPatrolPosition() {
         return currentPatrolPosition;
     }
 
+    /**
+     * @return if the there's a wall in front of the drone or not
+     */
     public boolean getWallInFront() {
         return wallInFront;
     }
 
+    /**
+     * @return if there's ground ahead of the drone or not
+     */
     public boolean getGroundAhead() {
         return groundAhead;
     }
 
+    /**
+     * @return if the drone is chasing or not
+     */
     public boolean getIsChasing() {
         return isChasing;
     }
 
+    /**
+     * @return if the drone is disabled or not
+     */
     public boolean getIsDisabled() {
         return isDisabled;
     }
