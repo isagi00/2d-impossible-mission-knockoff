@@ -1,5 +1,6 @@
 package controller;
 
+import main.JImpossibleMissionKnockoff;
 import view.AudioManager;
 import view.gamePanelViews.GameView;
 import view.gamePanelViews.PauseMenuView;
@@ -15,7 +16,7 @@ import java.util.Observable;
  */
 public class PauseMenuController extends Observable implements KeyListener{
     /**
-     * reference to the JFrame created during startup in {@link main.Main}
+     * reference to the JFrame created during startup in {@link JImpossibleMissionKnockoff}
      */
     private final JFrame window;
     /**
@@ -33,7 +34,7 @@ public class PauseMenuController extends Observable implements KeyListener{
 
     /**controller, helps out processing the user keyboard inputs when he is in the pause menu.
      * {@link PauseMenuView}.
-     * @param window JFrame created in {@link main.Main}
+     * @param window JFrame created in {@link JImpossibleMissionKnockoff}
      * @param pauseMenuView {@link PauseMenuView} view
      * @param gameView {@link GameView} view
      * @param gameController {@link GameController} controller

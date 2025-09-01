@@ -1,7 +1,7 @@
 package model.interactableObjects;
 
-import model.entities.Player;
 import model.ScreenSettings;
+import model.entities.Player;
 
 /**
  * computer interactable object model used to control the enemies ({@link model.entities.Drone}, {@link model.entities.Dog} in the room, just like in the original impossible mission.

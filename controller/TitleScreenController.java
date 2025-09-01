@@ -1,10 +1,11 @@
 package controller;
 
+import main.JImpossibleMissionKnockoff;
 import model.Leaderboard;
 import model.ScreenSettings;
 import model.entities.Player;
 import model.levels.LevelManager;
-import model.levels.TileManager;
+
 import view.AudioManager;
 import view.gamePanelViews.*;
 
@@ -23,7 +24,7 @@ import java.util.Set;
 public class TitleScreenController extends Observable implements KeyListener {
 
     /**
-     * reference to the JFrame created in the {@link main.Main}
+     * reference to the JFrame created in the {@link JImpossibleMissionKnockoff}
      */
     private final JFrame window;
     /**
@@ -43,7 +44,7 @@ public class TitleScreenController extends Observable implements KeyListener {
     /**controller, handles the user keyboard inputs when he is in the title screen.
      * entry point of the game, so it handles the game startup via {@link #startMainGame(boolean)} or the leaderboard view if the user selects
      * 'leaderboard' in the title screen.
-     * @param window JFrame window created in {@link main.Main}
+     * @param window JFrame window created in {@link JImpossibleMissionKnockoff}
      * @param titleScreenView {@link TitleScreenView} view
      */
     public TitleScreenController(JFrame window, TitleScreenView titleScreenView) {
@@ -153,9 +154,9 @@ public class TitleScreenController extends Observable implements KeyListener {
 
         //load game model components
         InputHandler inputHandler = new InputHandler();
-        TileManager tileManager = new TileManager();
+//        TileManager tileManager = new TileManager();
         Player player = new Player();
-        LevelManager levelManager = new LevelManager(tileManager, player);
+        LevelManager levelManager = new LevelManager(player);
         player.setLevelManager(levelManager);
 
         //load game view components
@@ -164,7 +165,7 @@ public class TitleScreenController extends Observable implements KeyListener {
         resultScreenView.setBounds(0, 0, window.getWidth(), window.getHeight());
         resultScreenView.setVisible(false);
         resultScreenView.addKeyListener(new ResultScreenController(resultScreenView, window));
-        GameView gameView = new GameView(player, tileManager, levelManager, window);
+        GameView gameView = new GameView(player, levelManager, window);
         gameView.setBounds(0,0 , window.getWidth(), window.getHeight());
         gameView.setResultScreenView(resultScreenView);
         PauseMenuView pauseMenuView = new PauseMenuView();
@@ -188,7 +189,7 @@ public class TitleScreenController extends Observable implements KeyListener {
         //attach the pause menu controller
         PauseMenuController pauseMenuController = new PauseMenuController(window, pauseMenuView, gameView, gameController);
         pauseMenuView.addKeyListener(pauseMenuController);
-        GameKeyListener gameKeyListener = new GameKeyListener(gameController, inputHandler, gameView,pauseMenuView, window);
+        GameKeyListener gameKeyListener = new GameKeyListener(gameController, inputHandler, gameView, pauseMenuView, window);
         gameView.addKeyListener(gameKeyListener);
 
         //load current level

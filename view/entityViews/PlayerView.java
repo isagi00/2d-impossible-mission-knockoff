@@ -390,7 +390,7 @@ public class PlayerView {
 
         //BELOW IS EVERYTHING IS FOR DEBUGGING
         //player hitbox
-        drawPlayerInfo(g2d);
+//        drawPlayerInfo(g2d);
         //draw collision points
 //        drawCollisionPoints(g2d);
 

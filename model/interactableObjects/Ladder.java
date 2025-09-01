@@ -1,7 +1,7 @@
 package model.interactableObjects;
 
-import model.entities.Player;
 import model.ScreenSettings;
+import model.entities.Player;
 
 
 /**

@@ -1,8 +1,10 @@
 package view.itemViews;
 
-import model.inventoryrelated.*;
 import model.ScreenSettings;
-
+import model.inventoryrelated.ComputerCard;
+import model.inventoryrelated.Inventory;
+import model.inventoryrelated.Item;
+import model.inventoryrelated.PokerCard;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

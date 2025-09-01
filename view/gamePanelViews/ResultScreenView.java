@@ -5,9 +5,9 @@ import model.ScoreTracker;
 import model.ScreenSettings;
 import model.entities.Player;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.InputStream;
-import javax.swing.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +22,7 @@ public class ResultScreenView extends JPanel  {
     private final Font titleFont = loadCustomFont("fonts/ThaleahFat.ttf", 70f);
     /**
      * default font used to display the results of the player.
-     * the font is used to display the total interactable objects opened, card points, the total points got from the interactable
+     * the font is usRed to display the total interactable objects opened, card points, the total points got from the interactable
      * objects + card points and the multipliers.
      */
     private final Font resultFont = loadCustomFont("fonts/ThaleahFat.ttf", 40f);

@@ -3,7 +3,6 @@ package model.interactableObjects;
 
 import model.ScreenSettings;
 import model.entities.Player;
-
 import model.inventoryrelated.PokerCard;
 import view.AudioManager;
 
@@ -55,9 +54,9 @@ public class PaperBox extends InteractableObject {
                     clearChanged();
                 }
 
-                System.out.println("paperbox : open() -> added new pokercard to inventory -> " + pokerCard);
+//                System.out.println("[paperbox] : open() -> added new pokercard to inventory -> " + pokerCard);
             }
-            System.out.println("paperbox -> paperbox opened!");
+//            System.out.println("[paperbox] -> paperbox opened");
         }
     }
 

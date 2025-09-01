@@ -228,22 +228,22 @@ public class DroneView {
         //drone is chasing indicator
         g2d.drawImage(drone.getIsChasing() ? chasing : notChasing, drone.getX() + 10, drone.getY() - 20, null);
 
-//        debug info:
-        //drone image size
-        g2d.drawRect(drone.getX(), drone.getY(), drone.getWidth(), drone.getHeight());
-        //drone hitbox
-        g2d.setColor(Color.GREEN);
-        g2d.drawRect(drone.getX() + 10, drone.getY() + 25, drone.getWidth() - 20, drone.getHeight() - 25);
-        //info
-        g2d.drawString("drone direction: " + drone.getDirection(), drone.getX(), drone.getY() - 10);
-        g2d.drawString("current patrol position: " + drone.getCurrentPatrolPosition(), drone.getX(), drone.getY() - 20);
-        g2d.drawString("wall in front: " + drone.getWallInFront(), drone.getX(), drone.getY() - 30);
-        g2d.drawString("is chasing: " + drone.getIsChasing(), drone.getX(), drone.getY() - 40);
-        g2d.drawString("x: " + drone.getX() + "y:" + drone.getY(), drone.getX(), drone.getY() - 50);
-        g2d.drawString("drone width, height: " + drone.getWidth() + " " + drone.getHeight(), drone.getX(), drone.getY() - 60);
-        g2d.drawOval(drone.getX(), drone.getY(), 3, 3);
-        g2d.drawOval(drone.getX() + drone.getWidth(), drone.getY() + drone.getHeight(), 5, 5); //bottom right corner of the drone
-        g2d.drawOval(drone.getX(), drone.getY() + drone.getHeight(), 5, 5); //bottom left corner of the drone
+////        debug info:
+//        //drone image size
+//        g2d.drawRect(drone.getX(), drone.getY(), drone.getWidth(), drone.getHeight());
+//        //drone hitbox
+//        g2d.setColor(Color.GREEN);
+//        g2d.drawRect(drone.getX() + 10, drone.getY() + 25, drone.getWidth() - 20, drone.getHeight() - 25);
+//        //info
+//        g2d.drawString("drone direction: " + drone.getDirection(), drone.getX(), drone.getY() - 10);
+//        g2d.drawString("current patrol position: " + drone.getCurrentPatrolPosition(), drone.getX(), drone.getY() - 20);
+//        g2d.drawString("wall in front: " + drone.getWallInFront(), drone.getX(), drone.getY() - 30);
+//        g2d.drawString("is chasing: " + drone.getIsChasing(), drone.getX(), drone.getY() - 40);
+//        g2d.drawString("x: " + drone.getX() + "y:" + drone.getY(), drone.getX(), drone.getY() - 50);
+//        g2d.drawString("drone width, height: " + drone.getWidth() + " " + drone.getHeight(), drone.getX(), drone.getY() - 60);
+//        g2d.drawOval(drone.getX(), drone.getY(), 3, 3);
+//        g2d.drawOval(drone.getX() + drone.getWidth(), drone.getY() + drone.getHeight(), 5, 5); //bottom right corner of the drone
+//        g2d.drawOval(drone.getX(), drone.getY() + drone.getHeight(), 5, 5); //bottom left corner of the drone
 
     }
 

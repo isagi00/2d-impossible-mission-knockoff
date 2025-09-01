@@ -199,6 +199,7 @@ public class Player extends Entity {
         isOnGround = false;
         isJumping = false;
         gameOver = false;
+        this.levelManager = getLevelManager();
     }
 
 
@@ -378,6 +379,10 @@ public class Player extends Entity {
                 else{
                     isMoving = true;
                 }
+            }
+            else{
+                isMoving = false;
+                setX(playerX);
             }
             //horizontal movement sound logic
             if(isMoving && !gameOver) {
@@ -574,22 +579,22 @@ public class Player extends Entity {
                 if (currentInteractable instanceof PaperBox) {
                     setChanged();
                     notifyObservers("paper box opened");
-                    System.out.println("notifiying observers paper box opened");
+//                    System.out.println("notifiying observers paper box opened");
                 }
                 else if (currentInteractable instanceof RedBox) {
                     setChanged();
                     notifyObservers("red box opened");
-                    System.out.println("notifiying observers red box opened");
+//                    System.out.println("notifiying observers red box opened");
                 }
                 else if (currentInteractable instanceof MetalLocker){
                     setChanged();
                     notifyObservers("metal locker opened");
-                    System.out.println("notifiying observers metal locker opened");
+//                    System.out.println("notifiying observers metal locker opened");
                 }
                 else if (currentInteractable instanceof WoodLocker){
                     setChanged();
                     notifyObservers("wood locker opened");
-                    System.out.println("notifiying observers wood locker opened");
+//                    System.out.println("notifiying observers wood locker opened");
                 }
             }
         }

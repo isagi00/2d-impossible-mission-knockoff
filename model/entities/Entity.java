@@ -2,6 +2,7 @@ package model.entities;
 
 import model.ScreenSettings;
 import model.levels.LevelManager;
+
 import java.util.Observable;
 
 /**

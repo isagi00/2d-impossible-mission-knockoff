@@ -2,11 +2,10 @@ package model.levels;
 
 import model.ScreenSettings;
 
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
@@ -77,6 +76,21 @@ public class TileManager {
             tiles[6].width = ScreenSettings.TILE_SIZE;
             tiles[6].height = ScreenSettings.TILE_SIZE;
 
+            Tile metalBottomLeftInner = new Tile();
+            tiles[8] = metalBottomLeftInner;
+            tiles[8].image = ImageIO.read(requireNonNull(getClass().getClassLoader().getResourceAsStream("tiles/IndustrialTile_08.png")));
+            tiles[8].collision = true;
+            tiles[8].width = ScreenSettings.TILE_SIZE;
+            tiles[8].height = ScreenSettings.TILE_SIZE;
+
+            Tile metalBottomRightInner = new Tile();
+            tiles[7] = metalBottomRightInner;
+            tiles[7].image = ImageIO.read(requireNonNull(getClass().getClassLoader().getResourceAsStream("tiles/IndustrialTile_07.png")));
+            tiles[7].collision = true;
+            tiles[7].width = ScreenSettings.TILE_SIZE;
+            tiles[7].height = ScreenSettings.TILE_SIZE;
+
+
             Tile deathTile = new Tile();
             tiles[9] = deathTile;
             tiles[9].image = ImageIO.read(requireNonNull(getClass().getClassLoader().getResourceAsStream("tiles/IndustrialTile_09.png")));
@@ -97,6 +111,24 @@ public class TileManager {
             tiles[15].collision = true;
             tiles[15].width = ScreenSettings.TILE_SIZE;
             tiles[15].height = ScreenSettings.TILE_SIZE;
+
+            Tile metalTopRightInnerIntersect = new Tile();
+            tiles[16] = metalTopRightInnerIntersect;
+            tiles[16].image = ImageIO.read(requireNonNull(getClass().getClassLoader().getResourceAsStream("tiles/IndustrialTile_16.png")));
+            tiles[16].collision = true;
+            tiles[16].width = ScreenSettings.TILE_SIZE;
+            tiles[16].height = ScreenSettings.TILE_SIZE;
+
+            Tile metalTopLeftInnerIntersect = new Tile();
+            tiles[17] = metalTopLeftInnerIntersect;
+            tiles[17].image = ImageIO.read(requireNonNull(getClass().getClassLoader().getResourceAsStream("tiles/IndustrialTile_17.png")));
+            tiles[17].collision = true;
+            tiles[17].width = ScreenSettings.TILE_SIZE;
+            tiles[17].height = ScreenSettings.TILE_SIZE;
+
+
+
+
 
             Tile metalBottomLeft = new Tile();
             tiles[22] = metalBottomLeft;

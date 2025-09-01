@@ -1,5 +1,6 @@
 package controller;
 
+import main.JImpossibleMissionKnockoff;
 import view.AudioManager;
 import view.gamePanelViews.LeaderboardView;
 import view.gamePanelViews.TitleScreenView;
@@ -20,12 +21,12 @@ public class LeaderboardViewController extends Observable implements KeyListener
      */
     private final LeaderboardView leaderboardView;
     /**
-     * JFrame created in the {@link main.Main} class
+     * JFrame created in the {@link JImpossibleMissionKnockoff} class
      */
     private final JFrame window;
 
     /**the controller to navigate around the leaderboard view. handles the key presses when the user is in the leaderboard panel
-     * @param window game window, the JFrame created in the {@link main.Main}
+     * @param window game window, the JFrame created in the {@link JImpossibleMissionKnockoff}
      * @param leaderboardView {@link LeaderboardView}.
      */
     public LeaderboardViewController(JFrame window, LeaderboardView leaderboardView) {

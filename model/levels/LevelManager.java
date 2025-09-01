@@ -56,14 +56,16 @@ public class LevelManager extends Observable {      // -> observers: interactabl
      * -the {@link #currentRoomData} integer matrix,
      * -the first Room {@link #worldLayout} as a Room: this was done to solve a null pointer issue.
      * and adds the players as its observer
-     * @param tileManager tile manager instance
+     *
      * @param player player instance
      */
-    public LevelManager(TileManager tileManager, Player player) {
-        this.tileManager = tileManager;
+    public LevelManager( Player player) {
+        this.tileManager = new TileManager();
         this.player = player;
         this.currentWorldRow = 0;
         this.currentWorldCol = 0;
+
+
         worldLayout = new Room[5][8];   //world size
         currentRoomData = new int[50][50];   //a room is at most 32x16 tiles. however,  i am generating the matrix to be slightly bigger because there could be
         //some unhandled edge cases when player changes room. did this to prevent index out of bounds errors...
@@ -117,9 +119,9 @@ public class LevelManager extends Observable {      // -> observers: interactabl
         worldLayout[3][7] = null;
 
         //row 4: underground depth 4
-        worldLayout[4][0] = null;
+        worldLayout[4][0] = new Room(Room.RoomType.LEVEL, 6, true);
         worldLayout[4][1] = new Room(Room.RoomType.ELEVATOR, 4, true);
-        worldLayout[4][2] = null;
+        worldLayout[4][2] = new Room(Room.RoomType.LEVEL, 7, true);
         worldLayout[4][3] = null;
         worldLayout[4][4] = null;
         worldLayout[4][5] = null;
@@ -406,31 +408,6 @@ public class LevelManager extends Observable {      // -> observers: interactabl
 //            printWorld();
         }
     }
-    //----------------------------------------------------------------------------------------------------------------//
-    // ENEMY RELATED
-    //----------------------------------------------------------------------------------------------------------------//
-    /**
-     * @param currentRoom current room where {@link Player} is
-     * @param x x coordinate to place the {@link Drone}
-     * @param y y coordinate to place the {@link Drone}
-     */
-    private void placeDrone(Room currentRoom, int x, int y) {
-        Drone drone = new Drone(x, y, player, this);
-        currentRoom.addDrone(drone);
-//        System.out.println("[LevelManager][placeDrone()] :  placed drone");
-    }
-
-    /**
-     * @param currentRoom current room where {@link Player} is
-     * @param x x coordinate to place the {@link Dog}
-     * @param y y coordinate to place the {@link Dog}
-     */
-    private void placeDog(Room currentRoom, int x, int y) {
-        Dog dog = new Dog(x, y, player, this);
-        currentRoom.addDog(dog);
-//        System.out.println("[LevelManager][placeDog()] :  placed dog");
-    }
-
 
     /**
      * @return the current which the {@link Player} is in
@@ -483,6 +460,10 @@ public class LevelManager extends Observable {      // -> observers: interactabl
      */
     public Room[][] getWorldLayout() {
         return worldLayout;
+    }
+
+    public TileManager getTileManager() {
+        return tileManager;
     }
 
 

@@ -3,6 +3,7 @@ package main;
 import controller.TitleScreenController;
 import view.AudioManager;
 import view.gamePanelViews.TitleScreenView;
+
 import javax.swing.*;
 
 
@@ -10,7 +11,7 @@ import javax.swing.*;
  * Impossible Mission knockoff, made for Sapienza's university's first year java course.
  *
  */
-public class Main {
+public class JImpossibleMissionKnockoff {
 
 
     /** game entry point.

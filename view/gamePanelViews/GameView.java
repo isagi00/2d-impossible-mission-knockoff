@@ -1,11 +1,12 @@
 package view.gamePanelViews;
 
-import model.levels.LevelManager;
+import main.JImpossibleMissionKnockoff;
+import model.ScreenSettings;
 import model.entities.Player;
 import model.interactableObjects.InteractableObject;
+import model.levels.LevelManager;
 import model.levels.Room;
 import model.levels.TileManager;
-import model.ScreenSettings;
 import view.LevelView;
 import view.entityViews.EnemyView;
 import view.entityViews.PlayerView;
@@ -39,6 +40,8 @@ public class GameView extends JPanel {
      */
     private final LevelManager levelManager;
 
+    private final TileManager tileManager;
+
 
     //helpers (subviews)
     /**
@@ -69,7 +72,7 @@ public class GameView extends JPanel {
     private final LevelView levelView;
     //game window
     /**
-     *reference to the JFrame window created in {@link main.Main}
+     *reference to the JFrame window created in {@link JImpossibleMissionKnockoff}
      */
     private final JFrame window;
 
@@ -112,14 +115,13 @@ public class GameView extends JPanel {
      * so that it displays when the player successfully extracts.
      *  it calls each entity's draw method
      * @param player {@link Player} model
-     * @param tileManager {@link TileManager} model
      * @param levelManager {@link LevelManager} model
-     * @param window the JFrame created in {@link main.Main}
+     * @param window the JFrame created in {@link JImpossibleMissionKnockoff}
      */
     //----------------------------------------------------------------------------------------------------------------//
     // CONSTRUCTOR, ! DEPENDS PURELY ON MODELS !
     //----------------------------------------------------------------------------------------------------------------//
-    public GameView(Player player, TileManager tileManager, LevelManager levelManager, JFrame window) {
+    public GameView(Player player, LevelManager levelManager, JFrame window) {
         this.window = window;
 
         //models
@@ -131,7 +133,9 @@ public class GameView extends JPanel {
         this.inventoryView = new InventoryView(player.getInventory());
         this.interactableObjectsView = new InteractableObjectsView(levelManager);
         this.enemyView = new EnemyView(levelManager);
+        this.tileManager = levelManager.getTileManager();
         this.levelView = new LevelView(levelManager, tileManager);
+
 
         //other
         window.setPreferredSize(new Dimension(ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT));
@@ -283,7 +287,7 @@ public class GameView extends JPanel {
             this.backgroundImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("backgrounds/background.png"));
         }
         catch(Exception e) {
-            System.out.println("Couldn't find background");
+            System.out.println("[GameView]couldn't find background");
             e.printStackTrace();
         }
     }
@@ -306,6 +310,9 @@ public class GameView extends JPanel {
         }
         else if (currentRoom == world[3][0] || currentRoom == world[3][1] || currentRoom == world[3][2]  ) {     //depth 3
             this.setBackground(new Color(55, 68, 110)); //dark blue
+        }
+        else if (currentRoom == world[4][0] || currentRoom == world[4][1] || currentRoom == world[4][2]  ) {     //depth 3
+            this.setBackground(new Color(41,51,83));
         }
         else{
             g2d.drawImage(backgroundImage, 0,0, ScreenSettings.SCREEN_WIDTH, ScreenSettings.SCREEN_HEIGHT, null);

@@ -211,7 +211,11 @@ public class Dog extends Entity {
                 }
             }
             wasMoving = isMoving;
-
+        }
+        else {  //dog is disabled
+            isMoving = false;
+            isChasing = false;
+            isIdle = false;
         }
     }
 

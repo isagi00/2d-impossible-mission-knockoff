@@ -1,8 +1,8 @@
 package model.interactableObjects;
 
+import model.ScreenSettings;
 import model.entities.Player;
 import model.inventoryrelated.PokerCard;
-import model.ScreenSettings;
 import view.AudioManager;
 
 /**

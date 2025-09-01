@@ -1,6 +1,7 @@
 package controller;
 
 
+import main.JImpossibleMissionKnockoff;
 import view.AudioManager;
 import view.gamePanelViews.GameView;
 import view.gamePanelViews.PauseMenuView;
@@ -36,7 +37,7 @@ public class GameKeyListener extends Observable implements KeyListener {
      */
     private final PauseMenuView pauseMenuView;
     /**
-     * reference to the JFrame created in {@link main.Main}. used to request a repaint of the game window
+     * reference to the JFrame created in {@link JImpossibleMissionKnockoff}. used to request a repaint of the game window
      */
     private final JFrame window;
 
@@ -46,7 +47,7 @@ public class GameKeyListener extends Observable implements KeyListener {
      * @param inputHandler {@link InputHandler} controller
      * @param gameView {@link GameView} view
      * @param pauseMenuView {@link PauseMenuView}
-     * @param window JFrame created in {@link main.Main}
+     * @param window JFrame created in {@link JImpossibleMissionKnockoff}
      */
     public GameKeyListener(GameController gameController, InputHandler inputHandler, GameView gameView, PauseMenuView pauseMenuView, JFrame window) {
         this.gameController = gameController;

@@ -1,5 +1,6 @@
 package controller;
 
+import main.JImpossibleMissionKnockoff;
 import model.ScreenSettings;
 import view.AudioManager;
 import view.gamePanelViews.ResultScreenView;
@@ -22,13 +23,13 @@ public class ResultScreenController extends Observable implements KeyListener{
      */
     private final ResultScreenView resultScreenView;
     /**
-     * reference to the JFrame created in the {@link main.Main}
+     * reference to the JFrame created in the {@link JImpossibleMissionKnockoff}
      */
     private final JFrame window;
 
     /**controller that handles the enter input when the user extracts and is in the result screen. {@link ResultScreenView}.
      * @param resultScreenView {@link ResultScreenView} view
-     * @param window JFrame created in the {@link main.Main}
+     * @param window JFrame created in the {@link JImpossibleMissionKnockoff}
      */
     public ResultScreenController(ResultScreenView resultScreenView, JFrame window) {
         this.resultScreenView = resultScreenView;

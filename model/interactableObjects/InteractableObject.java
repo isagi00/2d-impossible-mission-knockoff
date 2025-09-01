@@ -3,7 +3,6 @@ package model.interactableObjects;
 
 import model.entities.Player;
 
-
 import java.util.Observable;
 
 /**

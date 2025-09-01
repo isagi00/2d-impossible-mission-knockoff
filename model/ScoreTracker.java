@@ -54,7 +54,7 @@ public class ScoreTracker implements Observer {
             if (arg.equals("paper box opened")) {
                 this.paperBoxesOpened++;
                 getObjectPoints();
-                System.out.println("[ScoreTracker] paper box opened: " + paperBoxesOpened);
+//                System.out.println("[ScoreTracker] paper box opened: " + paperBoxesOpened);
             }
             else if (arg.equals("red box opened")) {
                 this.redBoxesOpened++;
