@@ -6,6 +6,4 @@ This projects follows an MVC architecture, with design patterns such as Observer
 first ever project, made with prayers, caffeine and nicotine.
 
 ## demo
-<p align="center">
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/GGRqmVQM444" title="demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</p>
+[![Game Demo](https://img.youtube.com/vi/GGRqmVQM444/0.jpg)](https://www.youtube.com/watch?v=GGRqmVQM444)
